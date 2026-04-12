@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Enceladus.vcxproj" Id="890b8f79-10cf-4d18-83b2-173f01f7a856" />
+</Solution>
