@@ -37,7 +37,7 @@ public:
 	bool LoadFromTmj(const std::string& filePath, TextureManager& textureManager);
 	void Clear(TextureManager* textureManager = nullptr);
 
-	void Render(RenderSystem& renderSystem, const SDL_Rect& camera) const;
+	void Render(RenderSystem& renderSystem, const SDL_Rect& camera, Registry& registry) const;
 
 	bool IsLoaded() const;
 

@@ -4,6 +4,7 @@
 #include "../ECS/TransformComponent.h"
 #include "../ECS/ControllerComponent.h"
 #include "../ECS/MovementComponent.h"
+#include "../Systems/AnimationStateSystem.h"
 #include "../Systems/ControllerSystem.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/MapConstraintSystem.h"
@@ -14,19 +15,42 @@
 void PlayState::OnEnter(Engine& engine)
 {
 	engine.GetTextureManager().LoadTexture("player_idle", "Assets/sprites/witch_idle.png");
+	engine.GetTextureManager().LoadTexture("player_walk", "Assets/sprites/witch_walk.png");
 	engine.GetTextureManager().LoadTexture("player_v2_idle", "Assets/sprites/witch_v2_idle.png");
+	engine.GetTextureManager().LoadTexture("player_v2_walk", "Assets/sprites/witch_v2_walk.png");
 	engine.GetSoundManager().LoadSound("background_forest_music", "Assets/sounds/forest.ogg");
 
 	m_player = m_registry.CreateEntity(); 
 	m_player.Add<TransformComponent>(2000.0f, 480.0f);
 	m_player.Add<MovementComponent>();
-	//m_player.Add<SpriteComponent>("player_idle", 128, 120);
-	m_player.Add<SpriteComponent>("player_v2_idle", 128, 120);
-	m_player.Add<SpriteAnimationComponent>(480, 500, 5, 0.16f);
 	m_player.Add<ControllerComponent>();
+	auto& sprite = m_player.Add<SpriteComponent>("player_v2_idle", 128, 120);
+	auto& playerAnim = m_player.Add<SpriteAnimationComponent>();
+	playerAnim.m_animations[AnimationState::Idle] = AnimationClip
+	{ 
+		.frameWidth = 480, 
+		.frameHeight = 500, 
+		.frameCount = 5, 
+		.frameDuration = 0.16f, 
+		.isLooping = true, 
+		.textureName = "player_v2_idle",
+	};
+
+	playerAnim.m_animations[AnimationState::Walking] = AnimationClip
+	{
+		.frameWidth = 480,
+		.frameHeight = 480,
+		.frameCount = 5,
+		.frameDuration = 0.16f,
+		.row = 3,
+		.isLooping = true,
+		.textureName = "player_v2_walk",
+	};
+
+	AnimationUtils::PlayAnimation(sprite, playerAnim, AnimationState::Idle);
 
 	m_camera = m_registry.CreateEntity();
-	m_camera.Add<CameraComponent>(0, 0, 800, 600);
+	m_camera.Add<CameraComponent>(2000, 0, 800, 600);
 
 	m_tileMap.LoadFromTmj("Assets/map/test.tmj", engine.GetTextureManager());
 
@@ -81,6 +105,7 @@ void PlayState::Update(Engine& engine, float deltaTime)
 
 	MapConstraintSystem::ClampToTileMap(*transform, *sprite, m_tileMap);
 	CameraSystem::UpdateFollow(*camera, *transform, *sprite, engine.GetRenderSystem(), m_tileMap);
+	AnimationStateSystem::UpdateAnimationStates(m_registry);
 	SpriteAnimationSystem::Update(m_registry, deltaTime);
 }
 
@@ -98,24 +123,5 @@ void PlayState::Render(Engine& engine, SDL_Renderer* renderer)
 		return;
 	}
 
-	m_tileMap.Render(engine.GetRenderSystem(), camera->m_viewport);
-
-	const TransformComponent* transform = m_player.Get<TransformComponent>();
-	const SpriteComponent* sprite = m_player.Get<SpriteComponent>();
-
-	if (transform == nullptr || sprite == nullptr || !sprite->m_isVisible)
-	{
-		return;
-	}
-
-	SDL_Rect destinationRect
-	{
-		static_cast<int>(transform->x) - camera->m_viewport.x,
-		static_cast<int>(transform->y) - camera->m_viewport.y,
-		sprite->m_width,
-		sprite->m_height
-	};
-
-	const SDL_Rect* sourceRect = sprite->m_hasSourceRect ? &sprite->m_sourceRect : nullptr;
-	engine.GetRenderSystem().RenderTexture(sprite->m_textureName, sourceRect, &destinationRect);
+	m_tileMap.Render(engine.GetRenderSystem(), camera->m_viewport, m_registry);
 }

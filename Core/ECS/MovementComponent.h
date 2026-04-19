@@ -4,5 +4,5 @@
 struct MovementComponent
 {
 	Vector2f velocity{};
-	float moveSpeed{ 300.0f };
+	float moveSpeed{ 200.0f };
 };

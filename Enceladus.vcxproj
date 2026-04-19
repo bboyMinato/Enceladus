@@ -135,6 +135,7 @@
     <ClCompile Include="Core\Managers\TextureManager.cpp" />
     <ClCompile Include="Core\States\MainMenuState.cpp" />
     <ClCompile Include="Core\States\PlayState.cpp" />
+    <ClCompile Include="Core\Systems\AnimationStateSystem.cpp" />
     <ClCompile Include="Core\Systems\CameraSystem.cpp" />
     <ClCompile Include="Core\Systems\ControllerSystem.cpp" />
     <ClCompile Include="Core\Systems\InputSystem.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="Core\Systems\SpriteAnimationSystem.cpp" />
     <ClCompile Include="Core\UI\Button.cpp" />
     <ClCompile Include="Core\UI\Menu.cpp" />
+    <ClCompile Include="Core\Utility\AnimationUtils.cpp" />
     <ClCompile Include="Core\World\TileMap.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -167,6 +169,7 @@
     <ClInclude Include="Core\States\IState.h" />
     <ClInclude Include="Core\States\MainMenuState.h" />
     <ClInclude Include="Core\States\PlayState.h" />
+    <ClInclude Include="Core\Systems\AnimationStateSystem.h" />
     <ClInclude Include="Core\Systems\CameraSystem.h" />
     <ClInclude Include="Core\Systems\ControllerSystem.h" />
     <ClInclude Include="Core\Systems\InputSystem.h" />
@@ -176,6 +179,8 @@
     <ClInclude Include="Core\Systems\SpriteAnimationSystem.h" />
     <ClInclude Include="Core\UI\Button.h" />
     <ClInclude Include="Core\UI\Menu.h" />
+    <ClInclude Include="Core\Utility\AnimationClip.h" />
+    <ClInclude Include="Core\Utility\AnimationUtils.h" />
     <ClInclude Include="Core\World\TileMap.h" />
   </ItemGroup>
   <ItemGroup>
@@ -197,8 +202,8 @@
     <Image Include="Assets\map\Texture\TX Tileset Grass.png" />
     <Image Include="Assets\map\Texture\TX Tileset Stone Ground.png" />
     <Image Include="Assets\map\Texture\TX Tileset Wall.png" />
-    <Image Include="Assets\sprites\idle01.png" />
     <Image Include="Assets\sprites\witch_idle.png" />
+    <Image Include="Assets\sprites\witch_walk.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

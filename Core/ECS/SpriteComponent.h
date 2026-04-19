@@ -2,6 +2,12 @@
 #include <SDL2/SDL.h>
 #include <string>
 
+enum class FacingDirection
+{
+	Left,
+	Right
+};
+
 struct SpriteComponent
 {
 	SpriteComponent() = default;
@@ -24,4 +30,5 @@ struct SpriteComponent
 	bool m_isVisible{ true };
 	bool m_hasSourceRect{ false };
 	SDL_RendererFlip m_flip{ SDL_FLIP_NONE };
+	FacingDirection m_facingDirection{ FacingDirection::Left };
 };

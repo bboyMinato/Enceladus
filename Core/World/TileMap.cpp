@@ -265,12 +265,14 @@ void TileMap::Clear(TextureManager* textureManager)
 	m_tileLayers.clear();
 }
 
-void TileMap::Render(RenderSystem& renderSystem, const SDL_Rect& camera) const
+void TileMap::Render(RenderSystem& renderSystem, const SDL_Rect& camera, Registry& registry) const
 {
 	if (!IsLoaded())
 	{
 		return;
 	}
+
+	bool hasRenderedEntities = false;
 
 	for (const TileLayer& layer : m_tileLayers)
 	{
@@ -280,6 +282,13 @@ void TileMap::Render(RenderSystem& renderSystem, const SDL_Rect& camera) const
 		}
 
 		RenderLayer(renderSystem, layer, camera);
+
+		if (layer.name == "walls" && !hasRenderedEntities)
+		{
+			renderSystem.RenderEntites(registry, CameraComponent{ camera.x, camera.y, camera.w, camera.h });
+
+			hasRenderedEntities = true;
+		}
 	}
 }
 

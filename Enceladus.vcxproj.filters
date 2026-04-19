@@ -72,6 +72,12 @@
     <ClCompile Include="Core\Systems\SpriteAnimationSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Utility\AnimationUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Systems\AnimationStateSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Engine.h">
@@ -161,6 +167,15 @@
     <ClInclude Include="Core\ECS\SpriteAnimationComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Utility\AnimationUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Utility\AnimationClip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Systems\AnimationStateSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
@@ -172,9 +187,6 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Assets\backgrounds\Enceladus_background.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="Assets\sprites\idle01.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Assets\map\Texture\TX Plant with Shadow.png">
@@ -211,6 +223,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Assets\sprites\witch_idle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\sprites\witch_walk.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
