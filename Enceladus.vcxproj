@@ -137,6 +137,7 @@
     <ClCompile Include="Core\States\PlayState.cpp" />
     <ClCompile Include="Core\Systems\AnimationStateSystem.cpp" />
     <ClCompile Include="Core\Systems\CameraSystem.cpp" />
+    <ClCompile Include="Core\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Core\Systems\ControllerSystem.cpp" />
     <ClCompile Include="Core\Systems\InputSystem.cpp" />
     <ClCompile Include="Core\Systems\MapConstraintSystem.cpp" />
@@ -152,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="Core\Config\AppSetting.h" />
     <ClInclude Include="Core\ECS\CameraComponent.h" />
+    <ClInclude Include="Core\ECS\ColliderComponent.h" />
     <ClInclude Include="Core\ECS\Component.h" />
     <ClInclude Include="Core\ECS\ControllerComponent.h" />
     <ClInclude Include="Core\ECS\Entity.h" />
@@ -171,6 +173,7 @@
     <ClInclude Include="Core\States\PlayState.h" />
     <ClInclude Include="Core\Systems\AnimationStateSystem.h" />
     <ClInclude Include="Core\Systems\CameraSystem.h" />
+    <ClInclude Include="Core\Systems\CollisionSystem.h" />
     <ClInclude Include="Core\Systems\ControllerSystem.h" />
     <ClInclude Include="Core\Systems\InputSystem.h" />
     <ClInclude Include="Core\Systems\MapConstraintSystem.h" />

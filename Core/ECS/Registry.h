@@ -127,6 +127,23 @@ public:
 			}
 		}
 	}
+
+	template<typename... TComponents>
+	std::vector<Entity> GetEntitiesWithComponents()
+	{
+		std::vector<Entity> result;
+
+		for (const Entity::EntityId entityId : m_entities)
+		{
+			Entity entity(entityId, *this);
+			if ((HasComponent<TComponents>(entity) && ...))
+			{
+				result.push_back(entity);
+			}
+		}
+
+		return result;
+	}
 	
 private:
 	template<typename TComponent>
@@ -205,7 +222,7 @@ const TComponent* Entity::Get() const
 }
 
 template<typename TComponent>
-bool Entity::Has() const
+bool Entity::HasComponent() const
 {
 	assert(IsValid() && "Entity is not valid.");
 	return m_registry->HasComponent<TComponent>(*this);
