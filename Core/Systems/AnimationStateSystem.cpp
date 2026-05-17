@@ -24,7 +24,7 @@ void AnimationStateSystem::UpdateAnimationStates(Registry& registry)
                     sprite.m_facingDirection = FacingDirection::Left;
                 }
 
-                sprite.m_flip =(sprite.m_facingDirection == FacingDirection::Right)
+                sprite.m_flip = (sprite.m_facingDirection == FacingDirection::Right)
                                  ? SDL_FLIP_HORIZONTAL
                                  : SDL_FLIP_NONE;
 

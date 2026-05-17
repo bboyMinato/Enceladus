@@ -26,7 +26,7 @@ public:
 	const TComponent* Get() const;
 
 	template<typename TComponent>
-	bool Has() const;
+	bool HasComponent() const;
 
 	template<typename TComponent>
 	void Remove();

@@ -3,18 +3,18 @@
 
 void CameraSystem::UpdateFollow(CameraComponent& camera, const TransformComponent& target, const SpriteComponent& sprite, RenderSystem& renderSystem, const TileMap& tileMap)
 {
+	if (!camera.m_shouldFollow)
+	{
+		return;
+	}
+	
 	int windowWidth = 0;
 	int windowHeight = 0;
 	renderSystem.GetOutputSize(windowWidth, windowHeight);
 
 	camera.m_viewport.w = windowWidth;
 	camera.m_viewport.h = windowHeight;
-
-	if (!camera.m_shouldFollow)
-	{
-		return;
-	}
-
+	
 	const int targetCenterX = static_cast<int>(target.x) + (sprite.m_width / 2);
 	const int targetCenterY = static_cast<int>(target.y) + (sprite.m_height / 2);
 
