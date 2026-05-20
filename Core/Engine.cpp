@@ -1,6 +1,12 @@
 #include "Engine.h"
 #include "States/MainMenuState.h"
 
+#ifdef _DEBUG
+#include <imgui.h>
+#include <imgui_impl_sdl2.h>
+#include <imgui_impl_sdlrenderer2.h>
+#endif
+
 Engine::Engine() 
 	: m_stateManager(*this)
 {
@@ -90,6 +96,16 @@ void Engine::Init(const EngineConfig& config)
 		return;
 	}
 
+#ifdef _DEBUG
+	if (!InitImGui())
+	{
+		SDL_Log("Failed to initialize ImGui.");
+		Shutdown();
+	
+		return;
+	}
+#endif
+
 	m_stateManager.PushState<MainMenuState>();
 
 	m_lastFrameTicks = SDL_GetTicks64();
@@ -135,8 +151,12 @@ void Engine::HandleEvents()
 
 	while (SDL_PollEvent(&event))
 	{
-		m_inputSystem.ProcessEvent(event);
-
+#ifdef _DEBUG
+		if (m_isImGuiInitialized)
+		{
+			ImGui_ImplSDL2_ProcessEvent(&event);
+		}
+#endif
 
 		if (event.type == SDL_QUIT)
 		{
@@ -159,7 +179,35 @@ void Engine::HandleEvents()
 			}
 		}
 
-		m_stateManager.HandleEvent(*this, event);
+		bool blockedByImGui = false;
+
+#ifdef _DEBUG
+		if (m_isImGuiInitialized)
+		{
+			const ImGuiIO& io = ImGui::GetIO();
+
+			const bool isMouseEvent =
+				event.type == SDL_MOUSEMOTION ||
+				event.type == SDL_MOUSEBUTTONDOWN ||
+				event.type == SDL_MOUSEBUTTONUP ||
+				event.type == SDL_MOUSEWHEEL;
+
+			const bool isKeyboardEvent =
+				event.type == SDL_KEYDOWN ||
+				event.type == SDL_KEYUP ||
+				event.type == SDL_TEXTINPUT;
+
+			blockedByImGui =
+				(isMouseEvent && io.WantCaptureMouse) ||
+				(isKeyboardEvent && io.WantCaptureKeyboard);
+		}
+#endif
+
+		if (!blockedByImGui)
+		{
+			m_inputSystem.ProcessEvent(event);
+			m_stateManager.HandleEvent(*this, event);
+		}
 	}
 }
 
@@ -188,13 +236,26 @@ void Engine::Render()
 	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(m_renderer);
 	
+#ifdef _DEBUG
+	BeginImGuiFrame();
+#endif
+
 	m_stateManager.Render(*this, m_renderer);
+
+#ifdef _DEBUG
+	m_stateManager.RenderImGui(*this);
+	RenderImGui();
+#endif
 
 	SDL_RenderPresent(m_renderer);
 }
 
 void Engine::Shutdown()
 {
+#ifdef _DEBUG
+	ShutdownImGui();
+#endif
+
 	m_stateManager.Clear();
 	m_stateManager.ApplyPendingStateChanges(*this);
 
@@ -230,3 +291,71 @@ void Engine::ApplyAudioSettings()
 	m_soundManager.SetMusicVolume(m_settings.audioSettings.musicVolume);
 	m_soundManager.SetSoundVolume(m_settings.audioSettings.soundVolume);
 }
+
+#ifdef _DEBUG
+bool Engine::InitImGui()
+{
+	if (m_isImGuiInitialized)
+	{
+		return true;
+	}
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui::StyleColorsDark();
+
+	if (!ImGui_ImplSDL2_InitForSDLRenderer(m_window, m_renderer))
+	{
+		ImGui::DestroyContext();
+		return false;
+	}
+
+	if (!ImGui_ImplSDLRenderer2_Init(m_renderer))
+	{
+		ImGui_ImplSDL2_Shutdown();
+		ImGui::DestroyContext();
+		return false;
+	}
+
+	m_isImGuiInitialized = true;
+
+	return true;
+}
+
+void Engine::ShutdownImGui()
+{
+	if (!m_isImGuiInitialized)
+	{
+		return;
+	}
+
+	ImGui_ImplSDLRenderer2_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+
+	m_isImGuiInitialized = false;	
+}
+
+void Engine::BeginImGuiFrame() const
+{
+	if (!m_isImGuiInitialized)
+	{
+		return;
+	}
+
+	ImGui_ImplSDLRenderer2_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
+}
+
+void Engine::RenderImGui()
+{
+	if (!m_isImGuiInitialized)
+	{
+		return;
+	}
+
+	ImGui::Render();
+	ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), m_renderer);
+}
+#endif

@@ -99,3 +99,13 @@ void StateManager::Render(Engine& engine, SDL_Renderer* renderer)
 		m_stateStack.back()->Render(engine, renderer);
 	}
 }
+
+#ifdef _DEBUG
+void StateManager::RenderImGui(Engine& engine)
+{
+	if (HasState())
+	{
+		m_stateStack.back()->RenderImGui(engine);
+	}
+}
+#endif

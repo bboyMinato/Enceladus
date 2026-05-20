@@ -14,6 +14,11 @@
 #include "../Systems/CollisionSystem.h"
 #include <algorithm>
 
+#ifdef _DEBUG
+#include <imgui.h>
+#include <vector>
+#endif
+
 void PlayState::OnEnter(Engine& engine)
 {
 	engine.GetTextureManager().LoadTexture("player_idle", "Assets/sprites/witch_idle.png");
@@ -25,7 +30,7 @@ void PlayState::OnEnter(Engine& engine)
 	m_testEntity = m_registry.CreateEntity();
 	m_testEntity.Add<TransformComponent>(1500.0f, 500.0f);
 	m_testEntity.Add<SpriteComponent>("player_idle", 128, 120);
-	m_testEntity.Add<ColliderComponent>(128, 120, 0, 0);
+	m_testEntity.Add<ColliderComponent>(35, 55, 45, 35);
 	auto& testAnim = m_testEntity.Add<SpriteAnimationComponent>();
 	testAnim.m_animations[AnimationState::Idle] = AnimationClip
 	{
@@ -42,7 +47,7 @@ void PlayState::OnEnter(Engine& engine)
 	m_player.Add<MovementComponent>();
 	m_player.Add<ControllerComponent>();
 	auto& sprite = m_player.Add<SpriteComponent>("player_v2_idle", 128, 120);
-	auto& collider = m_player.Add<ColliderComponent>(128, 120, 0, 0);
+	auto& collider = m_player.Add<ColliderComponent>(35, 55, 45, 35);
 	auto& playerAnim = m_player.Add<SpriteAnimationComponent>();
 	playerAnim.m_animations[AnimationState::Idle] = AnimationClip
 	{ 
@@ -73,6 +78,11 @@ void PlayState::OnEnter(Engine& engine)
 	m_tileMap.LoadFromTmj("Assets/map/test.tmj", engine.GetTextureManager());
 
 	engine.GetSoundManager().PlaySound("background_forest_music", true);
+
+#ifdef _DEBUG
+	m_showDebugWindow = true;
+	m_showColliderDebug = true;
+#endif
 }
 
 void PlayState::OnExit(Engine& engine)
@@ -146,6 +156,12 @@ void PlayState::Render(Engine& engine, SDL_Renderer* renderer)
 
 	m_tileMap.Render(engine.GetRenderSystem(), camera->m_viewport, m_registry);
 
+#ifdef _DEBUG
+	if (!m_showColliderDebug)
+	{
+		return;
+	}
+
 	const auto& collider = m_player.Get<ColliderComponent>();
 	const auto& transform = m_player.Get<TransformComponent>();
 
@@ -171,4 +187,250 @@ void PlayState::Render(Engine& engine, SDL_Renderer* renderer)
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	SDL_RenderDrawRect(renderer, &colliderRect);
 	SDL_RenderDrawRect(renderer, &testColliderRect);
+#endif
 }
+
+#ifdef _DEBUG
+void PlayState::RenderImGui(Engine& engine)
+{
+	(void)engine;
+
+	if (!m_showDebugWindow)
+	{
+		return;
+	}
+
+	ImGui::Begin("PlayState Debug", &m_showDebugWindow);
+
+	ImGui::Checkbox("Show Collider Debug", &m_showColliderDebug);
+
+	const char* entities[]
+	{
+		"Player",
+		"Test Entity"
+	};
+
+	ImGui::Combo("Selected Entity", &m_selectedDebugEntityIndex, entities, IM_ARRAYSIZE(entities));
+
+	Entity selectedEntity = (m_selectedDebugEntityIndex == 0) ? m_player : m_testEntity;
+
+	if (!selectedEntity.IsValid())
+	{
+		ImGui::Text("Selected entity is not valid.");
+		ImGui::End();
+		return;
+	}
+
+	TransformComponent* transform = selectedEntity.Get<TransformComponent>();
+	MovementComponent* movement = selectedEntity.Get<MovementComponent>();
+	ColliderComponent* collider = selectedEntity.Get<ColliderComponent>();
+	SpriteComponent* sprite = selectedEntity.Get<SpriteComponent>();
+	SpriteAnimationComponent* animation = selectedEntity.Get<SpriteAnimationComponent>();
+	CameraComponent* camera = m_camera.Get<CameraComponent>();
+
+	if (ImGui::BeginTabBar("PlayStateDebugTabs"))
+	{
+		if (ImGui::BeginTabItem("Entity"))
+		{
+			ImGui::Text("Entity: %s", entities[m_selectedDebugEntityIndex]);
+			ImGui::Text("Entity Id: %u", selectedEntity.GetId());
+
+			if (transform != nullptr)
+			{
+				ImGui::SeparatorText("Transform");
+				ImGui::Text("Position: (%.2f, %.2f)", transform->x, transform->y);
+				ImGui::DragFloat2("Edit Position", &transform->x, 2.0f);
+			}
+			else
+			{
+				ImGui::TextDisabled("No TransformComponent");
+			}
+
+			if (movement != nullptr)
+			{
+				ImGui::SeparatorText("Movement");
+				ImGui::Text("Velocity: (%.2f, %.2f)", movement->velocity.x, movement->velocity.y);
+				ImGui::DragFloat2("Edit Velocity", &movement->velocity.x, 1.0f);
+				ImGui::DragFloat("Move Speed", &movement->moveSpeed, 1.0f, 0.0f, 1000.0f);
+			}
+			else
+			{
+				ImGui::TextDisabled("No MovementComponent");
+			}
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Collider"))
+		{
+			if (collider != nullptr)
+			{
+				ImGui::DragInt("Collider Width", &collider->m_width, 1.0f, 1, 2000);
+				ImGui::DragInt("Collider Height", &collider->m_height, 1.0f, 1, 2000);
+				ImGui::DragInt("Collider Offset X", &collider->m_offsetX, 1.0f, -1000, 1000);
+				ImGui::DragInt("Collider Offset Y", &collider->m_offsetY, 1.0f, -1000, 1000);
+
+				collider->m_width = std::max(collider->m_width, 1);
+				collider->m_height = std::max(collider->m_height, 1);
+
+				ImGui::Checkbox("Is Trigger", &collider->m_isTrigger);
+				ImGui::Checkbox("Is Static", &collider->m_isStatic);
+			}
+			else
+			{
+				ImGui::TextDisabled("No ColliderComponent");
+			}
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Animation"))
+		{
+			if (animation != nullptr)
+			{
+				ImGui::Checkbox("Manual Animation Override", &animation->m_useManualState);
+				ImGui::Checkbox("Is Playing", &animation->m_isPlaying);
+				ImGui::Text("Current Frame: %d", animation->m_currentFrame);
+				ImGui::Text("Elapsed Time: %.3f", animation->m_elapsedTime);
+
+				struct AnimationOption
+				{
+					AnimationState state;
+					const char* label;
+				};
+
+				static constexpr AnimationOption allAnimationOptions[]
+				{
+					{ AnimationState::Idle, "Idle" },
+					{ AnimationState::Walking, "Walking" },
+					{ AnimationState::Running, "Running" },
+					{ AnimationState::Jumping, "Jumping" },
+					{ AnimationState::Falling, "Falling" },
+					{ AnimationState::Attacking, "Attacking" },
+					{ AnimationState::Dying, "Dying" }
+				};
+
+				std::vector<AnimationOption> availableAnimations;
+				availableAnimations.reserve(IM_ARRAYSIZE(allAnimationOptions));
+
+				int currentAnimationIndex = -1;
+
+				for (const AnimationOption& option : allAnimationOptions)
+				{
+					if (animation->m_animations.find(option.state) == animation->m_animations.end())
+					{
+						continue;
+					}
+
+					if (option.state == animation->m_currentState)
+					{
+						currentAnimationIndex = static_cast<int>(availableAnimations.size());
+					}
+
+					availableAnimations.push_back(option);
+				}
+
+				if (!availableAnimations.empty())
+				{
+					std::vector<const char*> animationLabels;
+					animationLabels.reserve(availableAnimations.size());
+
+					for (const AnimationOption& option : availableAnimations)
+					{
+						animationLabels.push_back(option.label);
+					}
+
+					if (currentAnimationIndex < 0)
+					{
+						currentAnimationIndex = 0;
+					}
+
+					const bool canEditState = animation->m_useManualState;
+
+					if (!canEditState)
+					{
+						ImGui::BeginDisabled();
+					}
+
+					if (ImGui::Combo("Current State", &currentAnimationIndex, animationLabels.data(), static_cast<int>(animationLabels.size())))
+					{
+						const AnimationState newState = availableAnimations[currentAnimationIndex].state;
+
+						if (sprite != nullptr)
+						{
+							AnimationUtils::PlayAnimation(*sprite, *animation, newState);
+						}
+					}
+
+					if (!canEditState)
+					{
+						ImGui::EndDisabled();
+					}
+				}
+				else
+				{
+					ImGui::TextDisabled("No animation clips available");
+				}
+
+				auto clipIt = animation->m_animations.find(animation->m_currentState);
+				if (clipIt != animation->m_animations.end())
+				{
+					AnimationClip& clip = clipIt->second;
+
+					ImGui::SeparatorText("Current Clip");
+					ImGui::Text("Texture: %s", clip.textureName.c_str());
+					ImGui::DragInt("Frame Width", &clip.frameWidth, 1.0f, 1, 4096);
+					ImGui::DragInt("Frame Height", &clip.frameHeight, 1.0f, 1, 4096);
+					ImGui::DragInt("Frame Count", &clip.frameCount, 1.0f, 1, 256);
+					ImGui::DragFloat("Frame Duration", &clip.frameDuration, 0.01f, 0.01f, 10.0f, "%.2f");
+					ImGui::DragInt("Row", &clip.row, 1.0f, 0, 128);
+					ImGui::DragInt("Start Frame", &clip.startFrame, 1.0f, 0, 256);
+					ImGui::Checkbox("Looping", &clip.isLooping);
+
+					clip.frameWidth = std::max(clip.frameWidth, 1);
+					clip.frameHeight = std::max(clip.frameHeight, 1);
+					clip.frameCount = std::max(clip.frameCount, 1);
+					clip.frameDuration = std::max(clip.frameDuration, 0.01f);
+
+					if (ImGui::Button("Restart Animation"))
+					{
+						animation->m_currentFrame = 0;
+						animation->m_elapsedTime = 0.0f;
+						animation->m_isPlaying = true;
+
+						if (sprite != nullptr)
+						{
+							sprite->m_textureName = clip.textureName;
+						}
+					}
+				}
+			}
+			else
+			{
+				ImGui::TextDisabled("No SpriteAnimationComponent");
+			}
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Camera"))
+		{
+			if (camera != nullptr)
+			{
+				ImGui::Text("Viewport Position: (%d, %d)", camera->m_viewport.x, camera->m_viewport.y);
+				ImGui::Text("Viewport Size: %d x %d", camera->m_viewport.w, camera->m_viewport.h);
+			}
+			else
+			{
+				ImGui::TextDisabled("No CameraComponent");
+			}
+
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
+	}
+
+	ImGui::End();
+}
+#endif

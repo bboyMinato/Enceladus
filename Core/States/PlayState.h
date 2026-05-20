@@ -15,10 +15,20 @@ public:
 	void Update(Engine& engine, float deltaTime) override;
 	void Render(Engine& engine, SDL_Renderer* renderer) override;
 
+#ifdef _DEBUG
+	void RenderImGui(Engine& engine) override;
+#endif 
+
 private:
 	Registry m_registry;
 	Entity m_player;
 	Entity m_camera;
 	Entity m_testEntity;
 	TileMap m_tileMap;
+
+#ifdef _DEBUG
+	bool m_showDebugWindow{ true };
+	bool m_showColliderDebug{ true };
+	int m_selectedDebugEntityIndex{ 0 };	
+#endif
 };

@@ -1,5 +1,8 @@
 # Copilot Instructions
 
+## General Guidelines
+- Provide improved, higher-quality code suggestions by default; present refined, better versions automatically.
+
 ## Project Guidelines
 - User prefers classic vcpkg package installation over manifest mode for this C++ project.
 - Use classic vcpkg commands and avoid assuming package feature names without verification.
