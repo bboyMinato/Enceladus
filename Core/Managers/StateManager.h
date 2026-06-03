@@ -49,6 +49,10 @@ public:
 
 	inline bool HasState() const { return !m_stateStack.empty(); }
 
+#ifdef _DEBUG
+	void RenderImGui(Engine& engine);
+#endif
+
 private:
 	enum class StateCommandType
 	{

@@ -16,4 +16,8 @@ public:
 	virtual void HandleEvent(Engine& engine, const SDL_Event& event) = 0;
 	virtual void Update(Engine& engine, float deltaTime) = 0;
 	virtual void Render(Engine& engine, SDL_Renderer* renderer) = 0;
+
+#ifdef _DEBUG
+	virtual void RenderImGui(Engine& engine) {}
+#endif 
 };

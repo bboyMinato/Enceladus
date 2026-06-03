@@ -60,6 +60,13 @@ private:
 	void ApplyWindowSettings();
 	void ApplyAudioSettings();
 
+#ifdef _DEBUG
+	bool InitImGui();
+	void ShutdownImGui();
+	void BeginImGuiFrame() const;
+	void RenderImGui();
+#endif
+
 private:
 	SDL_Window* m_window{ nullptr };
 	SDL_Renderer* m_renderer{ nullptr };
@@ -82,4 +89,8 @@ private:
 
 	float m_deltaTime{ 0.0f };
 	float m_fps{ 0.0f };
+
+#ifdef _DEBUG
+	bool m_isImGuiInitialized{ false };
+#endif
 };

@@ -28,6 +28,13 @@ void AnimationStateSystem::UpdateAnimationStates(Registry& registry)
                                  ? SDL_FLIP_HORIZONTAL
                                  : SDL_FLIP_NONE;
 
+#ifdef _DEBUG
+                if (anim.m_useManualState)
+                {
+                    return;
+                }
+#endif               
+
                 if (isMoving)
                 {
                     AnimationUtils::PlayAnimation(sprite, anim, AnimationState::Walking);

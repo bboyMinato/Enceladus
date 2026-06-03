@@ -26,4 +26,8 @@ struct SpriteAnimationComponent
 	float m_elapsedTime{ 0.0f };
 
 	bool m_isPlaying{ true };
+
+#ifdef _DEBUG
+	bool m_useManualState{ false };
+#endif
 };

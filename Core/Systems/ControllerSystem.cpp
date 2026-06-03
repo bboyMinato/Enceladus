@@ -29,6 +29,13 @@ void ControllerSystem::Update(Registry& registry, const InputSystem& input)
 
 void ControllerSystem::UpdateMovement(const InputSystem& input, const ControllerComponent& controller, MovementComponent& movement)
 {
+#ifdef _DEBUG
+	if (movement.m_useManualMovement)
+	{
+		return;
+	}
+#endif
+
 	movement.velocity = {};
 
 	if (!controller.isEnabled)
