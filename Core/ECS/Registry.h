@@ -145,6 +145,20 @@ public:
 		return result;
 	}
 	
+	std::vector<Entity> GetAllEntities()
+	{
+		std::vector<Entity> result;
+
+		result.reserve(m_entities.size());
+
+		for (const Entity::EntityId entityId : m_entities)
+		{
+			result.emplace_back(entityId, *this);
+		}
+
+		return result;
+	}
+
 private:
 	template<typename TComponent>
 	Component<TComponent>& GetOrCreateStorage()

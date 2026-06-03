@@ -183,6 +183,7 @@
     <ClInclude Include="Core\ECS\Registry.h" />
     <ClInclude Include="Core\ECS\SpriteAnimationComponent.h" />
     <ClInclude Include="Core\ECS\SpriteComponent.h" />
+    <ClInclude Include="Core\ECS\TagComponent.h" />
     <ClInclude Include="Core\ECS\TransformComponent.h" />
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\Managers\SoundManager.h" />

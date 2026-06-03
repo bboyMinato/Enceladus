@@ -20,6 +20,14 @@ public:
 #endif 
 
 private:
+#ifdef _DEBUG
+	void RenderEntityTab(Entity selectedEntity);
+	void RenderColliderTab(Entity selectedEntity);
+	void RenderAnimationTab(Entity selectedEntity);
+	void RenderCameraTab(Entity cameraEntity);
+#endif 
+
+private:
 	Registry m_registry;
 	Entity m_player;
 	Entity m_camera;
@@ -29,6 +37,6 @@ private:
 #ifdef _DEBUG
 	bool m_showDebugWindow{ true };
 	bool m_showColliderDebug{ true };
-	int m_selectedDebugEntityIndex{ 0 };	
+	int m_selectedDebugEntityId{ 0 };	
 #endif
 };
