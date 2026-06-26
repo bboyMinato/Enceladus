@@ -1,0 +1,112 @@
+{
+  "textures": [
+    {
+      "name": "player_idle",
+      "filePath": "Assets/sprites/witch_idle.png"
+    },
+    {
+      "name": "player_walk",
+      "filePath": "Assets/sprites/witch_walk.png"
+    },
+    {
+      "name": "player_v2_idle",
+      "filePath": "Assets/sprites/witch_v2_idle.png"
+    },
+    {
+      "name": "player_v2_walk",
+      "filePath": "Assets/sprites/witch_v2_walk.png"
+    }
+  ],
+  "music": [
+    {
+      "name": "background_forest_music",
+      "filePath": "Assets/sounds/forest.ogg"
+    }
+  ],
+  "tileMap": {
+    "filePath": "Assets/map/test.tmj"
+  },
+  "sounds": [],
+  "entities": [
+    {
+      "key": "player",
+      "tag": "Player",
+      "transform": {
+        "x": 2000.0,
+        "y": 480.0
+      },
+      "movement": {
+        "moveSpeed": 200.0
+      },
+      "controller": {},
+      "sprite": {
+        "texture": "player_v2_idle",
+        "width": 128,
+        "height": 120
+      },
+      "collider": {
+        "width": 35,
+        "height": 55,
+        "offsetX": 45,
+        "offsetY": 35
+      },
+      "animations": {
+        "Idle": {
+          "frameWidth": 480,
+          "frameHeight": 480,
+          "frameCount": 5,
+          "frameDuration": 0.16,
+          "isLooping": true,
+          "textureName": "player_v2_idle"
+        },
+        "Walking": {
+          "frameWidth": 480,
+          "frameHeight": 480,
+          "frameCount": 5,
+          "frameDuration": 0.16,
+          "row": 3,
+          "isLooping": true,
+          "textureName": "player_v2_walk"
+        }
+      }
+    },
+    {
+      "tag": "Test Entity",
+      "transform": {
+        "x": 1500.0,
+        "y": 500.0
+      },
+      "sprite": {
+        "texture": "player_idle",
+        "width": 128,
+        "height": 120
+      },
+      "collider": {
+        "width": 35,
+        "height": 55,
+        "offsetX": 45,
+        "offsetY": 35
+      },
+      "animations": {
+        "Idle": {
+          "frameWidth": 480,
+          "frameHeight": 500,
+          "frameCount": 5,
+          "frameDuration": 0.16,
+          "isLooping": true,
+          "textureName": "player_idle"
+        }
+      }
+    },
+    {
+      "key": "main_camera",
+      "tag": "Main Camera",
+      "camera": {
+        "x": 2000,
+        "y": 0,
+        "width": 800,
+        "height": 600
+      }
+    }
+  ]
+}

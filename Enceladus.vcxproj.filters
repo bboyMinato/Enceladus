@@ -102,6 +102,9 @@
     <ClCompile Include="ThirdParty\ImGui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\World\SceneLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Engine.h">
@@ -209,11 +212,15 @@
     <ClInclude Include="Core\ECS\TagComponent.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\World\SceneLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
     <None Include="config.ini" />
     <None Include="Assets\map\test.tmj" />
+    <None Include="Assets\play_scene.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\backgrounds\shinobu.jpg">

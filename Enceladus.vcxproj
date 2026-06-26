@@ -148,6 +148,7 @@
     <ClCompile Include="Core\UI\Button.cpp" />
     <ClCompile Include="Core\UI\Menu.cpp" />
     <ClCompile Include="Core\Utility\AnimationUtils.cpp" />
+    <ClCompile Include="Core\World\SceneLoader.cpp" />
     <ClCompile Include="Core\World\TileMap.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ThirdParty\ImGui\backends\imgui_impl_sdl2.cpp">
@@ -207,11 +208,13 @@
     <ClInclude Include="Core\UI\Menu.h" />
     <ClInclude Include="Core\Utility\AnimationClip.h" />
     <ClInclude Include="Core\Utility\AnimationUtils.h" />
+    <ClInclude Include="Core\World\SceneLoader.h" />
     <ClInclude Include="Core\World\TileMap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
     <None Include="Assets\map\test.tmj" />
+    <None Include="Assets\play_scene.json" />
     <None Include="config.ini" />
   </ItemGroup>
   <ItemGroup>

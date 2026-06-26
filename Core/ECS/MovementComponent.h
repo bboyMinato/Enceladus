@@ -3,6 +3,17 @@
 
 struct MovementComponent
 {
+	MovementComponent() = default;
+	MovementComponent(float velocityX, float velocityY, float moveSpeed)
+		: velocity(velocityX, velocityY), moveSpeed(moveSpeed)
+	{
+	}
+
+	MovementComponent(Vector2f velocity, float moveSpeed)
+		: velocity(velocity), moveSpeed(moveSpeed)
+	{
+	}
+
 	Vector2f velocity{ 0, 0 };
 	float moveSpeed{ 200.0f };
 

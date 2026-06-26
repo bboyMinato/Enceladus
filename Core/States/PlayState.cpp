@@ -13,6 +13,7 @@
 #include "../Systems/CameraSystem.h"
 #include "../Systems/SpriteAnimationSystem.h"
 #include "../Systems/CollisionSystem.h"
+#include "../World/SceneLoader.h"
 #include <algorithm>
 
 #ifdef _DEBUG
@@ -21,65 +22,33 @@
 #endif
 
 void PlayState::OnEnter(Engine& engine)
-{
-	engine.GetTextureManager().LoadTexture("player_idle", "Assets/sprites/witch_idle.png");
-	engine.GetTextureManager().LoadTexture("player_walk", "Assets/sprites/witch_walk.png");
-	engine.GetTextureManager().LoadTexture("player_v2_idle", "Assets/sprites/witch_v2_idle.png");
-	engine.GetTextureManager().LoadTexture("player_v2_walk", "Assets/sprites/witch_v2_walk.png");
-	engine.GetSoundManager().LoadSound("background_forest_music", "Assets/sounds/forest.ogg");
-
-	m_testEntity = m_registry.CreateEntity();
-	m_testEntity.Add<TransformComponent>(1500.0f, 500.0f);
-	m_testEntity.Add<SpriteComponent>("player_idle", 128, 120);
-	m_testEntity.Add<ColliderComponent>(35, 55, 45, 35);
-	m_testEntity.Add<TagComponent>("Test Entity");
-	auto& testAnim = m_testEntity.Add<SpriteAnimationComponent>();
-	testAnim.m_animations[AnimationState::Idle] = AnimationClip
+{	
+	SceneLoader loader; 
+	const SceneLoadResult result = loader.LoadScene("Assets/play_scene.json", engine, m_registry, m_tileMap);
+	
+	if (!result.loaded)
 	{
-		.frameWidth = 480,
-		.frameHeight = 500,
-		.frameCount = 5,
-		.frameDuration = 0.16f,
-		.isLooping = true,
-		.textureName = "player_idle",
-	};
+		SDL_Log("Failed to load scene.");
+		return;
+	}	
 
-	m_player = m_registry.CreateEntity(); 
-	m_player.Add<TransformComponent>(2000.0f, 480.0f);
-	m_player.Add<MovementComponent>();
-	m_player.Add<ControllerComponent>();
-	m_player.Add<TagComponent>("Player");
-	auto& sprite = m_player.Add<SpriteComponent>("player_v2_idle", 128, 120);
-	auto& collider = m_player.Add<ColliderComponent>(35, 55, 45, 35);
-	auto& playerAnim = m_player.Add<SpriteAnimationComponent>();
-	playerAnim.m_animations[AnimationState::Idle] = AnimationClip
-	{ 
-		.frameWidth = 480, 
-		.frameHeight = 480, 
-		.frameCount = 5, 
-		.frameDuration = 0.16f, 
-		.isLooping = true, 
-		.textureName = "player_v2_idle",
-	};
-
-	playerAnim.m_animations[AnimationState::Walking] = AnimationClip
+	if (const auto playerIt = result.entities.find("player"); playerIt != result.entities.end())
 	{
-		.frameWidth = 480,
-		.frameHeight = 480,
-		.frameCount = 5,
-		.frameDuration = 0.16f,
-		.row = 3,
-		.isLooping = true,
-		.textureName = "player_v2_walk",
-	};
+		m_player = playerIt->second;
+	}
 
-	m_camera = m_registry.CreateEntity();
-	m_camera.Add<CameraComponent>(2000, 0, 800, 600);
-	m_camera.Add<TagComponent>("Main Camera");
+	if (const auto cameraIt = result.entities.find("main_camera"); cameraIt != result.entities.end())
+	{
+		m_camera = cameraIt->second;
+	}
 
-	m_tileMap.LoadFromTmj("Assets/map/test.tmj", engine.GetTextureManager());
+	if (!m_player || !m_camera)
+	{
+		SDL_Log("Scene loaded but player or camera entity is missing.");
+		return;
+	}
 
-	engine.GetSoundManager().PlaySound("background_forest_music", true);
+	engine.GetSoundManager().PlayMusic("background_forest_music", true);
 
 #ifdef _DEBUG
 	m_showDebugWindow = true;
@@ -105,6 +74,7 @@ void PlayState::OnExit(Engine& engine)
 	engine.GetTextureManager().UnloadTexture("player_v2_idle");
 	engine.GetTextureManager().UnloadTexture("player_walk");
 	engine.GetTextureManager().UnloadTexture("player_v2_walk");
+	engine.GetSoundManager().UnloadSound("background_forest_music");
 	m_tileMap.Clear(&engine.GetTextureManager());
 }
 

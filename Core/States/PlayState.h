@@ -31,7 +31,6 @@ private:
 	Registry m_registry;
 	Entity m_player;
 	Entity m_camera;
-	Entity m_testEntity;
 	TileMap m_tileMap;
 
 #ifdef _DEBUG
