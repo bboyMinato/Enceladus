@@ -363,4 +363,10 @@ MigrationBackup/
 FodyWeavers.xsd
 /imgui.ini
 /.github/copilot-instructions.md
-/.gitignore
+/vcpkg/buildtrees
+/vcpkg/packages
+/vcpkg/downloads
+/vcpkg/installed
+/build
+/out
+.vs/

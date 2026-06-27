@@ -215,7 +215,9 @@
     <None Include=".github\copilot-instructions.md" />
     <None Include="Assets\map\test.tmj" />
     <None Include="Assets\play_scene.json" />
+    <None Include="CMakePresets.json" />
     <None Include="config.ini" />
+    <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\backgrounds\Enceladus_background.png" />
@@ -233,6 +235,9 @@
     <Image Include="Assets\map\Texture\TX Tileset Wall.png" />
     <Image Include="Assets\sprites\witch_idle.png" />
     <Image Include="Assets\sprites\witch_walk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
