@@ -70,6 +70,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgInstalledDir>vcpkg_installed</VcpkgInstalledDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -130,6 +136,7 @@
   <ItemGroup>
     <ClCompile Include="Core\Config\AppSetting.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
+    <ClCompile Include="Core\Managers\DialogManager.cpp" />
     <ClCompile Include="Core\Managers\SoundManager.cpp" />
     <ClCompile Include="Core\Managers\StateManager.cpp" />
     <ClCompile Include="Core\Managers\TextManager.cpp" />
@@ -140,6 +147,7 @@
     <ClCompile Include="Core\Systems\CameraSystem.cpp" />
     <ClCompile Include="Core\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Core\Systems\ControllerSystem.cpp" />
+    <ClCompile Include="Core\Systems\DialogSystem.cpp" />
     <ClCompile Include="Core\Systems\InputSystem.cpp" />
     <ClCompile Include="Core\Systems\MapConstraintSystem.cpp" />
     <ClCompile Include="Core\Systems\MovementSystem.cpp" />
@@ -179,6 +187,7 @@
     <ClInclude Include="Core\ECS\ColliderComponent.h" />
     <ClInclude Include="Core\ECS\Component.h" />
     <ClInclude Include="Core\ECS\ControllerComponent.h" />
+    <ClInclude Include="Core\ECS\DialogComponent.h" />
     <ClInclude Include="Core\ECS\Entity.h" />
     <ClInclude Include="Core\ECS\MovementComponent.h" />
     <ClInclude Include="Core\ECS\Registry.h" />
@@ -187,6 +196,7 @@
     <ClInclude Include="Core\ECS\TagComponent.h" />
     <ClInclude Include="Core\ECS\TransformComponent.h" />
     <ClInclude Include="Core\Engine.h" />
+    <ClInclude Include="Core\Managers\DialogManager.h" />
     <ClInclude Include="Core\Managers\SoundManager.h" />
     <ClInclude Include="Core\Managers\StateManager.h" />
     <ClInclude Include="Core\Managers\TextManager.h" />
@@ -199,6 +209,7 @@
     <ClInclude Include="Core\Systems\CameraSystem.h" />
     <ClInclude Include="Core\Systems\CollisionSystem.h" />
     <ClInclude Include="Core\Systems\ControllerSystem.h" />
+    <ClInclude Include="Core\Systems\DialogSystem.h" />
     <ClInclude Include="Core\Systems\InputSystem.h" />
     <ClInclude Include="Core\Systems\MapConstraintSystem.h" />
     <ClInclude Include="Core\Systems\MovementSystem.h" />

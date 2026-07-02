@@ -2,7 +2,7 @@
 
 bool ControllerSystem::PopState(Registry& registry, const InputSystem& input)
 {
-	bool wantsBack = false; 
+	bool wantsBack = false;
 
 	registry.ForEach<ControllerComponent>(
 		[&](Entity entity, const ControllerComponent& controller)
@@ -27,7 +27,8 @@ void ControllerSystem::Update(Registry& registry, const InputSystem& input)
 	);
 }
 
-void ControllerSystem::UpdateMovement(const InputSystem& input, const ControllerComponent& controller, MovementComponent& movement)
+void ControllerSystem::UpdateMovement(const InputSystem& input, const ControllerComponent& controller,
+                                      MovementComponent& movement)
 {
 #ifdef _DEBUG
 	if (movement.m_useManualMovement)

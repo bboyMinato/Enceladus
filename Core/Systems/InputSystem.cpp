@@ -14,43 +14,43 @@ void InputSystem::ProcessEvent(const SDL_Event& event)
 	switch (event.type)
 	{
 	case SDL_KEYDOWN:
-	{
-		if (event.key.repeat != 0)
 		{
+			if (event.key.repeat != 0)
+			{
+				break;
+			}
+
+			const SDL_Scancode scancode = event.key.keysym.scancode;
+			if (scancode < 0 || scancode >= SDL_NUM_SCANCODES)
+			{
+				break;
+			}
+
+			if (!m_keysDown[scancode])
+			{
+				m_keysPressed[scancode] = true;
+			}
+
+			m_keysDown[scancode] = true;
 			break;
 		}
-
-		const SDL_Scancode scancode = event.key.keysym.scancode;
-		if (scancode < 0 || scancode >= SDL_NUM_SCANCODES)
-		{
-			break;
-		}
-
-		if (!m_keysDown[scancode])
-		{
-			m_keysPressed[scancode] = true;
-		}
-
-		m_keysDown[scancode] = true;
-		break;
-	}
 
 	case SDL_KEYUP:
-	{
-		const SDL_Scancode scancode = event.key.keysym.scancode;
-		if (scancode < 0 || scancode >= SDL_NUM_SCANCODES)
 		{
+			const SDL_Scancode scancode = event.key.keysym.scancode;
+			if (scancode < 0 || scancode >= SDL_NUM_SCANCODES)
+			{
+				break;
+			}
+
+			if (m_keysDown[scancode])
+			{
+				m_keysReleased[scancode] = true;
+			}
+
+			m_keysDown[scancode] = false;
 			break;
 		}
-
-		if (m_keysDown[scancode])
-		{
-			m_keysReleased[scancode] = true;
-		}
-
-		m_keysDown[scancode] = false;
-		break;
-	}
 
 	case SDL_MOUSEMOTION:
 		m_mouseX = event.motion.x;
@@ -58,44 +58,44 @@ void InputSystem::ProcessEvent(const SDL_Event& event)
 		break;
 
 	case SDL_MOUSEBUTTONDOWN:
-	{
-		m_mouseX = event.button.x;
-		m_mouseY = event.button.y;
-
-		const std::size_t button = static_cast<std::size_t>(event.button.button);
-		if (button >= m_mouseButtonsDown.size())
 		{
+			m_mouseX = event.button.x;
+			m_mouseY = event.button.y;
+
+			const std::size_t button = event.button.button;
+			if (button >= m_mouseButtonsDown.size())
+			{
+				break;
+			}
+
+			if (!m_mouseButtonsDown[button])
+			{
+				m_mouseButtonsPressed[button] = true;
+			}
+
+			m_mouseButtonsDown[button] = true;
 			break;
 		}
-
-		if (!m_mouseButtonsDown[button])
-		{
-			m_mouseButtonsPressed[button] = true;
-		}
-
-		m_mouseButtonsDown[button] = true;
-		break;
-	}
 
 	case SDL_MOUSEBUTTONUP:
-	{
-		m_mouseX = event.button.x;
-		m_mouseY = event.button.y;
-
-		const std::size_t button = static_cast<std::size_t>(event.button.button);
-		if (button >= m_mouseButtonsDown.size())
 		{
+			m_mouseX = event.button.x;
+			m_mouseY = event.button.y;
+
+			const std::size_t button = event.button.button;
+			if (button >= m_mouseButtonsDown.size())
+			{
+				break;
+			}
+
+			if (m_mouseButtonsDown[button])
+			{
+				m_mouseButtonsReleased[button] = true;
+			}
+
+			m_mouseButtonsDown[button] = false;
 			break;
 		}
-
-		if (m_mouseButtonsDown[button])
-		{
-			m_mouseButtonsReleased[button] = true;
-		}
-
-		m_mouseButtonsDown[button] = false;
-		break;
-	}
 
 	case SDL_WINDOWEVENT:
 		if (event.window.event == SDL_WINDOWEVENT_FOCUS_LOST)
@@ -152,7 +152,7 @@ bool InputSystem::WasKeyReleased(SDL_Scancode scancode) const
 
 bool InputSystem::IsMouseButtonDown(Uint8 button) const
 {
-	const std::size_t index = static_cast<std::size_t>(button);
+	const std::size_t index = button;
 	if (index >= m_mouseButtonsDown.size())
 	{
 		return false;
@@ -163,7 +163,7 @@ bool InputSystem::IsMouseButtonDown(Uint8 button) const
 
 bool InputSystem::WasMouseButtonPressed(Uint8 button) const
 {
-	const std::size_t index = static_cast<std::size_t>(button);
+	const std::size_t index = button;
 	if (index >= m_mouseButtonsPressed.size())
 	{
 		return false;
@@ -174,7 +174,7 @@ bool InputSystem::WasMouseButtonPressed(Uint8 button) const
 
 bool InputSystem::WasMouseButtonReleased(Uint8 button) const
 {
-	const std::size_t index = static_cast<std::size_t>(button);
+	const std::size_t index = button;
 	if (index >= m_mouseButtonsReleased.size())
 	{
 		return false;

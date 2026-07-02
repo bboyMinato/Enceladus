@@ -13,7 +13,7 @@ class StateManager
 public:
 	explicit StateManager(Engine& engine);
 
-	template<typename TState, typename... TArgs>
+	template <typename TState, typename... TArgs>
 	void PushState(TArgs&&... args)
 	{
 		static_assert(std::derived_from<TState, IGameState>, "TState must derive from IGameState");
@@ -26,7 +26,7 @@ public:
 			});
 	}
 
-	template<typename TState, typename... TArgs>
+	template <typename TState, typename... TArgs>
 	void ReplaceState(TArgs&&... args)
 	{
 		static_assert(std::derived_from<TState, IGameState>, "TState must derive from IGameState");
@@ -40,14 +40,14 @@ public:
 	}
 
 	void Pop();
-	void Clear(); 
+	void Clear();
 	void ApplyPendingStateChanges(Engine& engine);
 
 	void HandleEvent(Engine& engine, const SDL_Event& event);
 	void Update(Engine& engine, float deltaTime);
 	void Render(Engine& engine, SDL_Renderer* renderer);
 
-	inline bool HasState() const { return !m_stateStack.empty(); }
+	bool HasState() const { return !m_stateStack.empty(); }
 
 #ifdef _DEBUG
 	void RenderImGui(Engine& engine);

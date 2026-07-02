@@ -96,7 +96,11 @@
           "isLooping": true,
           "textureName": "player_idle"
         }
+      },
+      "dialog": {
+        "name": "greet"
       }
+
     },
     {
       "key": "main_camera",

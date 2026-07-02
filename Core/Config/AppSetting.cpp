@@ -13,7 +13,7 @@ namespace
 		}
 
 		const std::size_t end = str.find_last_not_of(" \t\n\r");
-		
+
 		return str.substr(start, end - start + 1);
 	}
 
@@ -34,7 +34,7 @@ AppSettings AppSettings::LoadFromFile(const std::string& filePath)
 	}
 
 	std::string currentSection;
-	std::string line; 
+	std::string line;
 
 	while (std::getline(file, line))
 	{

@@ -8,7 +8,7 @@ class InputSystem
 public:
 	void BeginFrame();
 	void ProcessEvent(const SDL_Event& event);
-	void Reset(); 
+	void Reset();
 
 	bool IsKeyDown(SDL_Scancode scancode) const;
 	bool WasKeyPressed(SDL_Scancode scancode) const;
@@ -32,6 +32,6 @@ private:
 	std::array<bool, s_mouseButtonCount> m_mouseButtonsPressed{};
 	std::array<bool, s_mouseButtonCount> m_mouseButtonsReleased{};
 
-	int m_mouseX{ 0 };
-	int m_mouseY{ 0 };
+	int m_mouseX{0};
+	int m_mouseY{0};
 };

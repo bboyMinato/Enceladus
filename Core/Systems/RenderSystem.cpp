@@ -4,9 +4,9 @@
 
 bool RenderSystem::Init(SDL_Renderer* renderer, TextureManager* textureManager)
 {
-    if (!renderer || !textureManager)
-    {
-        return false;
+	if (!renderer || !textureManager)
+	{
+		return false;
 	}
 
 	m_renderer = renderer;
@@ -38,7 +38,8 @@ void RenderSystem::RenderTexture(SDL_Texture* texture, const SDL_Rect* dstRect) 
 	RenderTexture(texture, nullptr, dstRect, SDL_FLIP_NONE);
 }
 
-void RenderSystem::RenderTexture(SDL_Texture* texture, const SDL_Rect* srcRect, const SDL_Rect* dstRect, SDL_RendererFlip flip) const
+void RenderSystem::RenderTexture(SDL_Texture* texture, const SDL_Rect* srcRect, const SDL_Rect* dstRect,
+                                 SDL_RendererFlip flip) const
 {
 	if (!m_renderer || !texture)
 	{
@@ -53,7 +54,8 @@ void RenderSystem::RenderTexture(const std::string& textureName, const SDL_Rect*
 	RenderTexture(textureName, nullptr, dstRect);
 }
 
-void RenderSystem::RenderTexture(const std::string& textureName, const SDL_Rect* srcRect, const SDL_Rect* dstRect, SDL_RendererFlip flip) const
+void RenderSystem::RenderTexture(const std::string& textureName, const SDL_Rect* srcRect, const SDL_Rect* dstRect,
+                                 SDL_RendererFlip flip) const
 {
 	RenderTexture(m_textureManager->GetTexture(textureName), srcRect, dstRect, flip);
 }
@@ -79,5 +81,5 @@ void RenderSystem::RenderEntites(Registry& registry, const CameraComponent& came
 			const SDL_Rect* srcRect = sprite.m_hasSourceRect ? &sprite.m_sourceRect : nullptr;
 			RenderTexture(sprite.m_textureName, srcRect, &dstRect, sprite.m_flip);
 		}
-	);		
+	);
 }

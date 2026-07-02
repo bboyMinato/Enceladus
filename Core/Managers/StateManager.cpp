@@ -6,12 +6,12 @@ StateManager::StateManager(Engine& engine)
 
 void StateManager::Pop()
 {
-	m_pendingStateChanges.push_back(StateCommand{ StateCommandType::Pop, nullptr });
+	m_pendingStateChanges.push_back(StateCommand{StateCommandType::Pop, nullptr});
 }
 
 void StateManager::Clear()
 {
-	m_pendingStateChanges.push_back(StateCommand{ StateCommandType::Clear, nullptr });
+	m_pendingStateChanges.push_back(StateCommand{StateCommandType::Clear, nullptr});
 }
 
 void StateManager::ApplyPendingStateChanges(Engine& engine)
@@ -54,7 +54,7 @@ void StateManager::ApplyPendingStateChanges(Engine& engine)
 				m_stateStack.pop_back();
 			}
 			break;
-		
+
 		case StateCommandType::Replace:
 			if (!command.state)
 			{
@@ -70,7 +70,7 @@ void StateManager::ApplyPendingStateChanges(Engine& engine)
 			m_stateStack.push_back(std::move(command.state));
 			m_stateStack.back()->OnEnter(engine);
 			break;
-		}		
+		}
 	}
 
 	m_pendingStateChanges.clear();

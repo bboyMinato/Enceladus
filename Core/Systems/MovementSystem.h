@@ -8,7 +8,7 @@
 
 class MovementSystem final
 {
-public: 
+public:
 	static void Update(Registry& registry, float deltaTime);
 	static void ApplyMovement(Entity& entity, Registry& registry, float deltaTime);
 

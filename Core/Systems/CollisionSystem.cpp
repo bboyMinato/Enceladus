@@ -119,5 +119,5 @@ void CollisionSystem::ResolveCollision(Entity* a, Entity* b, SDL_Rect& rectA, SD
 			transformA->y += separation * 0.5f;
 			transformB->y -= separation * 0.5f;
 		}
-	}	
+	}
 }

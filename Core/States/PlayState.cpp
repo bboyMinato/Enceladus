@@ -16,21 +16,23 @@
 #include "../World/SceneLoader.h"
 #include <algorithm>
 
+#include "../Systems/DialogSystem.h"
+
 #ifdef _DEBUG
 #include <imgui.h>
 #include <vector>
 #endif
 
 void PlayState::OnEnter(Engine& engine)
-{	
-	SceneLoader loader; 
+{
+	SceneLoader loader;
 	const SceneLoadResult result = loader.LoadScene("Assets/play_scene.json", engine, m_registry, m_tileMap);
-	
+
 	if (!result.loaded)
 	{
 		SDL_Log("Failed to load scene.");
 		return;
-	}	
+	}
 
 	if (const auto playerIt = result.entities.find("player"); playerIt != result.entities.end())
 	{
@@ -111,6 +113,7 @@ void PlayState::Update(Engine& engine, float deltaTime)
 	CameraSystem::UpdateFollow(*camera, *transform, *sprite, engine.GetRenderSystem(), m_tileMap);
 	AnimationStateSystem::UpdateAnimationStates(m_registry);
 	SpriteAnimationSystem::Update(m_registry, deltaTime);
+	DialogSystem::Update(m_registry, deltaTime);
 }
 
 void PlayState::Render(Engine& engine, SDL_Renderer* renderer)
@@ -140,7 +143,7 @@ void PlayState::Render(Engine& engine, SDL_Renderer* renderer)
 		const auto& collider = entity.Get<ColliderComponent>();
 		const auto& transform = entity.Get<TransformComponent>();
 
-		SDL_Rect colliderRect = SDL_Rect
+		auto colliderRect = SDL_Rect
 		{
 			.x = static_cast<int>(transform->x + collider->m_offsetX - camera->m_viewport.x),
 			.y = static_cast<int>(transform->y + collider->m_offsetY - camera->m_viewport.y),
@@ -173,7 +176,7 @@ void PlayState::RenderImGui(Engine& engine)
 	ImGui::Begin("PlayState Debug", &m_showDebugWindow);
 
 	ImGui::Checkbox("Show Collider Debug", &m_showColliderDebug);
-		
+
 	std::vector<Entity> entities = m_registry.GetAllEntities();
 
 	Entity selectedEntity;
@@ -187,12 +190,12 @@ void PlayState::RenderImGui(Engine& engine)
 	}
 
 	std::string selectedTag = selectedEntity.IsValid() && selectedEntity.HasComponent<TagComponent>()
-		? selectedEntity.Get<TagComponent>()->Tag
-		: "Unknown";
+		                          ? selectedEntity.Get<TagComponent>()->Tag
+		                          : "Unknown";
 
 	std::string selectedLabel = selectedEntity.IsValid()
-		? ("Entity [" + std::to_string(selectedEntity.GetId()) + "] - " + selectedTag)
-		: "None";
+		                            ? ("Entity [" + std::to_string(selectedEntity.GetId()) + "] - " + selectedTag)
+		                            : "None";
 
 	if (ImGui::BeginCombo("Selected Entity", selectedLabel.c_str()))
 	{
@@ -215,7 +218,7 @@ void PlayState::RenderImGui(Engine& engine)
 
 		ImGui::EndCombo();
 	}
-	
+
 	if (ImGui::BeginTabBar("PlayStateDebugTabs"))
 	{
 		if (ImGui::BeginTabItem("Entity"))
@@ -337,13 +340,13 @@ void PlayState::RenderAnimationTab(Entity selectedEntity)
 
 		static constexpr AnimationOption allAnimationOptions[]
 		{
-			{ AnimationState::Idle, "Idle" },
-			{ AnimationState::Walking, "Walking" },
-			{ AnimationState::Running, "Running" },
-			{ AnimationState::Jumping, "Jumping" },
-			{ AnimationState::Falling, "Falling" },
-			{ AnimationState::Attacking, "Attacking" },
-			{ AnimationState::Dying, "Dying" }
+			{AnimationState::Idle, "Idle"},
+			{AnimationState::Walking, "Walking"},
+			{AnimationState::Running, "Running"},
+			{AnimationState::Jumping, "Jumping"},
+			{AnimationState::Falling, "Falling"},
+			{AnimationState::Attacking, "Attacking"},
+			{AnimationState::Dying, "Dying"}
 		};
 
 		std::vector<AnimationOption> availableAnimations;
@@ -353,7 +356,7 @@ void PlayState::RenderAnimationTab(Entity selectedEntity)
 
 		for (const AnimationOption& option : allAnimationOptions)
 		{
-			if (animation->m_animations.find(option.state) == animation->m_animations.end())
+			if (!animation->m_animations.contains(option.state))
 			{
 				continue;
 			}
@@ -388,7 +391,8 @@ void PlayState::RenderAnimationTab(Entity selectedEntity)
 				ImGui::BeginDisabled();
 			}
 
-			if (ImGui::Combo("Current State", &currentAnimationIndex, animationLabels.data(), static_cast<int>(animationLabels.size())))
+			if (ImGui::Combo("Current State", &currentAnimationIndex, animationLabels.data(),
+			                 static_cast<int>(animationLabels.size())))
 			{
 				const AnimationState newState = availableAnimations[currentAnimationIndex].state;
 

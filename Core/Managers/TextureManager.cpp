@@ -19,7 +19,7 @@ bool TextureManager::Init(SDL_Renderer* renderer)
 
 	m_renderer = renderer;
 
-	const int imageFlags = IMG_INIT_PNG | IMG_INIT_JPG;
+	constexpr int imageFlags = IMG_INIT_PNG;
 
 	if ((IMG_Init(imageFlags) & imageFlags) != imageFlags)
 	{
@@ -92,7 +92,7 @@ void TextureManager::GetTextureSize(const std::string& textureName, int& width, 
 SDL_Texture* TextureManager::GetTexture(const std::string& textureName) const
 {
 	const auto it = m_textures.find(textureName);
-	
+
 	if (it != m_textures.end())
 	{
 		return it->second;

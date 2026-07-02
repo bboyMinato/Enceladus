@@ -27,7 +27,7 @@ bool SoundManager::Init()
 		return true;
 	}
 
-	const int requestedFlags = MIX_INIT_OGG;
+	constexpr int requestedFlags = MIX_INIT_OGG;
 	m_mixInitFlags = Mix_Init(requestedFlags);
 
 	if ((m_mixInitFlags & requestedFlags) != requestedFlags)
@@ -52,7 +52,7 @@ bool SoundManager::Init()
 
 	Mix_AllocateChannels(32);
 	m_initialized = true;
-	
+
 	return true;
 }
 
@@ -78,7 +78,7 @@ bool SoundManager::LoadSound(const std::string& soundName, const std::string& fi
 	}
 
 	m_sounds[soundName] = sound;
-	
+
 	return true;
 }
 
@@ -89,22 +89,22 @@ bool SoundManager::LoadMusic(const std::string& musicName, const std::string& fi
 		SDL_Log("SoundManager not initialized. Call Init() before loading music.");
 		return false;
 	}
-	
+
 	Mix_Music* music = Mix_LoadMUS(filePath.c_str());
 	if (!music)
 	{
 		SDL_Log("Failed to load music: %s", Mix_GetError());
 		return false;
 	}
-	
+
 	auto existingMusicIt = m_music.find(musicName);
 	if (existingMusicIt != m_music.end())
 	{
 		Mix_FreeMusic(existingMusicIt->second);
 	}
-	
+
 	m_music[musicName] = music;
-	
+
 	return true;
 }
 
@@ -158,11 +158,10 @@ void SoundManager::PlaySound(const std::string& soundName, int loops, int channe
 		SDL_Log("Sound '%s' not found. Make sure it is loaded before playing.", soundName.c_str());
 		return;
 	}
-	
+
 	if (Mix_PlayChannel(channel, sound, loops) == -1)
 	{
 		SDL_Log("Failed to play sound '%s': %s", soundName.c_str(), Mix_GetError());
-		return;
 	}
 }
 
@@ -179,11 +178,10 @@ void SoundManager::PlayMusic(const std::string& musicName, int loops) const
 		SDL_Log("Music '%s' not found. Make sure it is loaded before playing.", musicName.c_str());
 		return;
 	}
-	
+
 	if (Mix_PlayMusic(music, loops) == -1)
 	{
 		SDL_Log("Failed to play music '%s': %s", musicName.c_str(), Mix_GetError());
-		return;
 	}
 }
 

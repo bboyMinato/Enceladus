@@ -160,10 +160,10 @@ bool TileMap::LoadFromTmj(const std::string& filePath, TextureManager& textureMa
 	}
 
 	std::sort(m_tileSets.begin(), m_tileSets.end(),
-		[](const TileSet& a, const TileSet& b)
-		{
-			return a.firstGid < b.firstGid;
-		});
+	          [](const TileSet& a, const TileSet& b)
+	          {
+		          return a.firstGid < b.firstGid;
+	          });
 
 	if (!document.contains("layers") || !document["layers"].is_array())
 	{
@@ -220,13 +220,13 @@ bool TileMap::LoadFromTmj(const std::string& filePath, TextureManager& textureMa
 		}
 
 		m_tileLayers.push_back(TileLayer
-		{
-			layer.name,
-			layer.width,
-			layer.height,
-			layer.isVisible,
-			std::move(layer.tiles)
-		});
+			{
+				layer.name,
+				layer.width,
+				layer.height,
+				layer.isVisible,
+				std::move(layer.tiles)
+			});
 	}
 
 	if (m_tileLayers.empty())
@@ -285,7 +285,7 @@ void TileMap::Render(RenderSystem& renderSystem, const SDL_Rect& camera, Registr
 
 		if (layer.name == "walls" && !hasRenderedEntities)
 		{
-			renderSystem.RenderEntites(registry, CameraComponent{ camera.x, camera.y, camera.w, camera.h });
+			renderSystem.RenderEntites(registry, CameraComponent{camera.x, camera.y, camera.w, camera.h});
 
 			hasRenderedEntities = true;
 		}
@@ -339,7 +339,8 @@ void TileMap::RenderLayer(RenderSystem& renderSystem, const TileLayer& layer, co
 	{
 		for (int column = startColumn; column < endColumn; ++column)
 		{
-			const size_t tileIndex = static_cast<size_t>(row) * static_cast<size_t>(layer.width) + static_cast<size_t>(column);
+			const size_t tileIndex = static_cast<size_t>(row) * static_cast<size_t>(layer.width) + static_cast<size_t>(
+				column);
 			const std::uint32_t gid = StripTileFlags(layer.tiles[tileIndex]);
 
 			if (gid == 0)

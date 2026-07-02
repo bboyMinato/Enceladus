@@ -38,9 +38,7 @@ void Button::HandleEvent(const SDL_Event& event)
 		if (m_isHovered && ContainsPoint(event.button.x, event.button.y))
 		{
 			OnClick();
-
-			return;
-		}		
+		}
 	}
 }
 
@@ -65,12 +63,12 @@ void Button::Render(SDL_Renderer* renderer, TextManager& textManager) const
 	SDL_RenderFillRect(renderer, &shadowRect);
 
 	const SDL_Color baseFill = m_isHovered
-		? SDL_Color{ 92, 68, 32, 210 }
-	: SDL_Color{ 52, 38, 18, 190 };
+		                           ? SDL_Color{92, 68, 32, 210}
+		                           : SDL_Color{52, 38, 18, 190};
 
 	const SDL_Color borderColor = m_isHovered
-		? SDL_Color{ 212, 175, 55, 255 }
-	: SDL_Color{ 120, 90, 40, 220 };
+		                              ? SDL_Color{212, 175, 55, 255}
+		                              : SDL_Color{120, 90, 40, 220};
 
 	SDL_SetRenderDrawColor(renderer, baseFill.r, baseFill.g, baseFill.b, baseFill.a);
 	SDL_RenderFillRect(renderer, &m_bounds);
@@ -161,7 +159,7 @@ void Button::Click()
 
 bool Button::ContainsPoint(int x, int y) const
 {
-	const SDL_Point point{ x, y };
+	const SDL_Point point{x, y};
 	return SDL_PointInRect(&point, &m_bounds);
 }
 

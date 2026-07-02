@@ -7,7 +7,7 @@
 #include <imgui_impl_sdlrenderer2.h>
 #endif
 
-Engine::Engine() 
+Engine::Engine()
 	: m_stateManager(*this)
 {
 }
@@ -16,6 +16,7 @@ Engine::~Engine()
 {
 	Shutdown();
 }
+
 void Engine::Init()
 {
 	Init(m_config);
@@ -26,7 +27,7 @@ void Engine::Init(const EngineConfig& config)
 	m_settings = AppSettings::LoadFromFile("config.ini");
 
 	m_config = config;
-	
+
 	ApplyWindowSettings();
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
@@ -35,14 +36,14 @@ void Engine::Init(const EngineConfig& config)
 		SDL_Quit();
 
 		return;
-	}	
+	}
 
 	m_window = SDL_CreateWindow(
-		m_config.windowTitle, 
-		m_config.windowPosX, 
-		m_config.windowPosY, 
-		m_config.windowWidth, 
-		m_config.windowHeight, 
+		m_config.windowTitle,
+		m_config.windowPosX,
+		m_config.windowPosY,
+		m_config.windowWidth,
+		m_config.windowHeight,
 		m_config.windowFlags);
 
 	if (!m_window)
@@ -66,7 +67,7 @@ void Engine::Init(const EngineConfig& config)
 	{
 		SDL_Log("Failed to initialize TextureManager.");
 		Shutdown();
-	
+
 		return;
 	}
 
@@ -74,7 +75,7 @@ void Engine::Init(const EngineConfig& config)
 	{
 		SDL_Log("Failed to initialize TextManager.");
 		Shutdown();
-	
+
 		return;
 	}
 
@@ -96,17 +97,27 @@ void Engine::Init(const EngineConfig& config)
 		return;
 	}
 
+	if (!m_dialogManager.Init())
+	{
+		SDL_Log("Failed to initialize DialogSystem.");
+		Shutdown();
+
+		return;
+	}
+
 #ifdef _DEBUG
 	if (!InitImGui())
 	{
 		SDL_Log("Failed to initialize ImGui.");
 		Shutdown();
-	
+
 		return;
 	}
 #endif
 
 	m_stateManager.PushState<MainMenuState>();
+
+	auto *mainMenuState = new MainMenuState();
 
 	m_lastFrameTicks = SDL_GetTicks64();
 	m_isRunning = true;
@@ -125,7 +136,7 @@ void Engine::Run()
 		}
 
 		const Uint32 frameStart = SDL_GetTicks64();
-				
+
 		m_deltaTime = (frameStart - m_lastFrameTicks) / 1000.0f;
 		m_lastFrameTicks = frameStart;
 
@@ -235,7 +246,7 @@ void Engine::Render()
 
 	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 	SDL_RenderClear(m_renderer);
-	
+
 #ifdef _DEBUG
 	BeginImGuiFrame();
 #endif
@@ -260,7 +271,7 @@ void Engine::Shutdown()
 	m_stateManager.ApplyPendingStateChanges(*this);
 
 	if (m_renderer)
-	{	
+	{
 		SDL_DestroyRenderer(m_renderer);
 		m_renderer = nullptr;
 	}
@@ -333,7 +344,7 @@ void Engine::ShutdownImGui()
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
-	m_isImGuiInitialized = false;	
+	m_isImGuiInitialized = false;
 }
 
 void Engine::BeginImGuiFrame() const

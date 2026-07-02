@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL2/SDL_mixer.h>
-#include <string> 
+#include <string>
 #include <unordered_map>
 
 class SoundManager
@@ -8,7 +8,7 @@ class SoundManager
 public:
 	~SoundManager();
 
-	bool Init(); 
+	bool Init();
 	bool LoadSound(const std::string& soundName, const std::string& filePath);
 	bool LoadMusic(const std::string& musicName, const std::string& filePath);
 
@@ -31,8 +31,8 @@ private:
 	Mix_Chunk* GetSound(const std::string& soundName) const;
 	Mix_Music* GetMusic(const std::string& musicName) const;
 
-	bool m_initialized{ false };
-	int m_mixInitFlags{ 0 };
+	bool m_initialized{false};
+	int m_mixInitFlags{0};
 
 	std::unordered_map<std::string, Mix_Chunk*> m_sounds;
 	std::unordered_map<std::string, Mix_Music*> m_music;

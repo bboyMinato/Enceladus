@@ -3,12 +3,12 @@
 
 int main()
 {
-    SDL_SetMainReady();
+	SDL_SetMainReady();
 
 	Engine engine;
 
 	engine.Init();
 	engine.Run();
-	
-    return 0;
+
+	return 0;
 }

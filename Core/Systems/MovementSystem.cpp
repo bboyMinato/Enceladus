@@ -23,7 +23,7 @@ void MovementSystem::ApplyMovement(Entity& entity, Registry& registry, float del
 	if (velocityX != 0.0f || velocityY != 0.0f)
 	{
 		const float magnitude = std::sqrt((velocityX * velocityX) + (velocityY * velocityY));
-		
+
 		if (magnitude > 0.0001f)
 		{
 			velocityX /= magnitude;

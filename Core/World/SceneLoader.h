@@ -10,8 +10,8 @@ class TileMap;
 
 struct SceneLoadResult
 {
-	bool loaded{ false };	
-	
+	bool loaded{false};
+
 	std::unordered_map<std::string, Entity> entities;
 
 	std::vector<std::string> loadedTextures;
@@ -25,5 +25,6 @@ struct SceneLoadResult
 class SceneLoader final
 {
 public:
-	static SceneLoadResult LoadScene(const std::string& sceneFilePath, Engine& engine, Registry& registry, TileMap& tileMap);
+	static SceneLoadResult LoadScene(const std::string& sceneFilePath, Engine& engine, Registry& registry,
+	                                 TileMap& tileMap);
 };

@@ -4,6 +4,7 @@
 struct MovementComponent
 {
 	MovementComponent() = default;
+
 	MovementComponent(float velocityX, float velocityY, float moveSpeed)
 		: velocity(velocityX, velocityY), moveSpeed(moveSpeed)
 	{
@@ -14,10 +15,10 @@ struct MovementComponent
 	{
 	}
 
-	Vector2f velocity{ 0, 0 };
-	float moveSpeed{ 200.0f };
+	Vector2f velocity{0, 0};
+	float moveSpeed{200.0f};
 
 #ifdef _DEBUG
-	bool m_useManualMovement{ false };
+	bool m_useManualMovement{false};
 #endif
 };

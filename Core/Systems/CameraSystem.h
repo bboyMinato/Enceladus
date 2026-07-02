@@ -9,5 +9,6 @@
 class CameraSystem final
 {
 public:
-	static void UpdateFollow(CameraComponent& camera, const TransformComponent& target, const SpriteComponent& sprite, RenderSystem& renderSystem, const TileMap& tileMap);
+	static void UpdateFollow(CameraComponent& camera, const TransformComponent& target, const SpriteComponent& sprite,
+	                         RenderSystem& renderSystem, const TileMap& tileMap);
 };

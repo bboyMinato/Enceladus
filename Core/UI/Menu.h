@@ -39,7 +39,7 @@ public:
 	void SetOnSelectionChanged(Callback callback);
 	void SetOnItemActivated(Callback callback);
 
-	inline bool IsEmpty() const { return m_menuItems.empty(); }
+	bool IsEmpty() const { return m_menuItems.empty(); }
 
 private:
 	void UpdateSelection();
@@ -49,9 +49,8 @@ private:
 	void SyncSelectionFromMouse(int mouseX, int mouseY);
 	void SetSelectedIndex(std::size_t index, bool notify = true);
 
-private:
 	std::vector<MenuItem> m_menuItems;
-	std::size_t m_selectedIndex{ 0 };
+	std::size_t m_selectedIndex{0};
 
 	Callback m_onSelectionChanged;
 	Callback m_onItemActivated;

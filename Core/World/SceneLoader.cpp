@@ -15,6 +15,8 @@
 #include <fstream>
 #include <unordered_map>
 
+#include "../ECS/DialogComponent.h"
+
 using Json = nlohmann::json;
 
 namespace
@@ -23,13 +25,13 @@ namespace
 	{
 		static const std::unordered_map<std::string, AnimationState> animationMap
 		{
-			{ "Idle", AnimationState::Idle },
-			{ "Walking", AnimationState::Walking },
-			{ "Running", AnimationState::Running },
-			{ "Jumping", AnimationState::Jumping },
-			{ "Falling", AnimationState::Falling },
-			{ "Attacking", AnimationState::Attacking },
-			{ "Dying", AnimationState::Dying }
+			{"Idle", AnimationState::Idle},
+			{"Walking", AnimationState::Walking},
+			{"Running", AnimationState::Running},
+			{"Jumping", AnimationState::Jumping},
+			{"Falling", AnimationState::Falling},
+			{"Attacking", AnimationState::Attacking},
+			{"Dying", AnimationState::Dying}
 		};
 
 		const auto it = animationMap.find(animationStr);
@@ -371,6 +373,25 @@ namespace
 		movement.moveSpeed = movementDef.value("moveSpeed", movement.moveSpeed);
 	}
 
+	void ApplyDialogComponent(const Json& entityDef, Entity& entity)
+	{
+		if (!entityDef.contains("dialog") || !entityDef["dialog"].is_object())
+		{
+			return;
+		}
+
+		const auto& dialogDef = entityDef["dialog"];
+		auto& dialog = entity.Add<DialogComponent>();
+
+		if (!dialogDef.contains("name"))
+		{
+			SDL_Log("Dialog component doesn't contain 'name' property");
+			return;
+		}
+
+		dialog.name = dialogDef["name"];
+	}
+
 	bool LoadEntities(const Json& document, Registry& registry, SceneLoadResult& result)
 	{
 		if (!document.contains("entities") || !document["entities"].is_array())
@@ -397,6 +418,7 @@ namespace
 			ApplyTagComponent(entityDef, entity);
 			ApplyColliderComponent(entityDef, entity);
 			ApplyCameraComponent(entityDef, entity);
+			ApplyDialogComponent(entityDef, entity);
 
 			/*if (entity.IsValid())
 			{
@@ -421,7 +443,8 @@ namespace
 	}
 }
 
-SceneLoadResult SceneLoader::LoadScene(const std::string& filePath, Engine& engine, Registry& registry, TileMap& tileMap)
+SceneLoadResult SceneLoader::LoadScene(const std::string& filePath, Engine& engine, Registry& registry,
+                                       TileMap& tileMap)
 {
 	SceneLoadResult result;
 	std::ifstream file(filePath);
@@ -433,7 +456,7 @@ SceneLoadResult SceneLoader::LoadScene(const std::string& filePath, Engine& engi
 	}
 
 	Json document;
-	
+
 	try
 	{
 		file >> document;

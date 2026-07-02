@@ -21,19 +21,17 @@ public:
 
 	bool ContainsPoint(int x, int y) const;
 
-	inline bool IsHovered() const { return m_isHovered; }
-	inline const SDL_Rect& GetBounds() const { return m_bounds; }
-
+	bool IsHovered() const { return m_isHovered; }
+	const SDL_Rect& GetBounds() const { return m_bounds; }
 
 private:
 	ClickCallBack m_onClick;
 
-	SDL_Rect m_bounds{ 0, 0, 0, 0 };
+	SDL_Rect m_bounds{0, 0, 0, 0};
 	std::string m_textName;
 
-	bool m_isHovered{ false };
+	bool m_isHovered{false};
 
 
-private: 
 	void OnClick();
 };

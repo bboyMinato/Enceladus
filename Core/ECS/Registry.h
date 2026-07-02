@@ -15,19 +15,19 @@ public:
 	Entity CreateEntity()
 	{
 		const Entity::EntityId newId = ++m_nextEntityId;
-		
+
 		m_entities.insert(newId);
-		
+
 		return Entity(newId, *this);
 	}
 
 	void DestroyEntity(Entity entity)
 	{
 		assert(entity.IsValid() && &entity.GetRegistry() == this && "Entity does not belong to this registry.");
-		
+
 		const Entity::EntityId entityId = entity.GetId();
 
-		if (m_entities.find(entityId) == m_entities.end())
+		if (!m_entities.contains(entityId))
 		{
 			return; // Entity does not exist
 		}
@@ -42,13 +42,13 @@ public:
 	}
 
 	bool IsValid(Entity entity) const
-	{		
+	{
 		return entity.IsValid() &&
-			   &entity.GetRegistry() == this &&
-			   m_entities.find(entity.GetId()) != m_entities.end();
+			&entity.GetRegistry() == this &&
+			m_entities.contains(entity.GetId());
 	}
 
-	template<typename TComponent>
+	template <typename TComponent>
 	TComponent* GetComponent(Entity entity)
 	{
 		assert(IsValid(entity) && "Entity is not valid.");
@@ -63,15 +63,15 @@ public:
 		return nullptr;
 	}
 
-	template<typename TComponent, typename... TArgs>
+	template <typename TComponent, typename... TArgs>
 	TComponent& AddComponent(Entity entity, TArgs&&... args)
 	{
 		assert(IsValid(entity) && "Entity is not valid.");
-		
+
 		return GetOrCreateStorage<TComponent>().Add(entity.GetId(), std::forward<TArgs>(args)...);
 	}
 
-	template<typename TComponent>
+	template <typename TComponent>
 	const TComponent* GetComponent(Entity entity) const
 	{
 		assert(IsValid(entity) && "Entity is not valid.");
@@ -86,13 +86,13 @@ public:
 		return nullptr;
 	}
 
-	template<typename TComponent>
+	template <typename TComponent>
 	bool HasComponent(Entity entity) const
 	{
 		assert(IsValid(entity) && "Entity is not valid.");
-		
+
 		const Component<TComponent>* component = GetComponentStorage<TComponent>();
-		
+
 		if (!component)
 		{
 			return false;
@@ -101,20 +101,20 @@ public:
 		return component->Has(entity.GetId());
 	}
 
-	template<typename TComponent>
+	template <typename TComponent>
 	void RemoveComponent(Entity entity)
 	{
 		assert(IsValid(entity) && "Entity is not valid.");
-		
+
 		Component<TComponent>* component = GetComponentStorage<TComponent>();
-		
+
 		if (component)
 		{
 			component->Remove(entity.GetId());
 		}
 	}
 
-	template<typename... TComponents, typename TFunc>
+	template <typename... TComponents, typename TFunc>
 	void ForEach(TFunc&& func)
 	{
 		for (const Entity::EntityId entityId : m_entities)
@@ -128,7 +128,7 @@ public:
 		}
 	}
 
-	template<typename... TComponents>
+	template <typename... TComponents>
 	std::vector<Entity> GetEntitiesWithComponents()
 	{
 		std::vector<Entity> result;
@@ -144,7 +144,7 @@ public:
 
 		return result;
 	}
-	
+
 	std::vector<Entity> GetAllEntities()
 	{
 		std::vector<Entity> result;
@@ -160,7 +160,7 @@ public:
 	}
 
 private:
-	template<typename TComponent>
+	template <typename TComponent>
 	Component<TComponent>& GetOrCreateStorage()
 	{
 		const std::type_index typeIndex(typeid(TComponent));
@@ -178,7 +178,7 @@ private:
 		return *static_cast<Component<TComponent>*>(it->second.get());
 	}
 
-	template<typename TComponent>
+	template <typename TComponent>
 	Component<TComponent>* GetComponentStorage()
 	{
 		const std::type_index typeIndex(typeid(TComponent));
@@ -191,7 +191,7 @@ private:
 		return static_cast<Component<TComponent>*>(it->second.get());
 	}
 
-	template<typename TComponent>
+	template <typename TComponent>
 	const Component<TComponent>* GetComponentStorage() const
 	{
 		const std::type_index typeIndex(typeid(TComponent));
@@ -205,7 +205,6 @@ private:
 		return static_cast<const Component<TComponent>*>(it->second.get());
 	}
 
-private:
 	Entity::EntityId m_nextEntityId = 0;
 
 	std::unordered_set<Entity::EntityId> m_entities;
@@ -214,35 +213,35 @@ private:
 
 // Entity functions that forward to the registry
 // These functions are defined here to avoid circular dependencies between Entity and Registry
-template<typename TComponent, typename... TArgs>
+template <typename TComponent, typename... TArgs>
 TComponent& Entity::Add(TArgs&&... args)
 {
 	assert(IsValid() && "Entity is not valid.");
 	return m_registry->AddComponent<TComponent>(*this, std::forward<TArgs>(args)...);
 }
 
-template<typename TComponent>
+template <typename TComponent>
 TComponent* Entity::Get()
 {
 	assert(IsValid() && "Entity is not valid.");
 	return m_registry->GetComponent<TComponent>(*this);
 }
 
-template<typename TComponent>
+template <typename TComponent>
 const TComponent* Entity::Get() const
 {
 	assert(IsValid() && "Entity is not valid.");
 	return m_registry->GetComponent<TComponent>(*this);
 }
 
-template<typename TComponent>
+template <typename TComponent>
 bool Entity::HasComponent() const
 {
 	assert(IsValid() && "Entity is not valid.");
 	return m_registry->HasComponent<TComponent>(*this);
 }
 
-template<typename TComponent>
+template <typename TComponent>
 void Entity::Remove()
 {
 	assert(IsValid() && "Entity is not valid.");

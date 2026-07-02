@@ -18,8 +18,8 @@ public:
 	void GetTextureSize(const std::string& textureName, int& width, int& height) const;
 
 	SDL_Texture* GetTexture(const std::string& textureName) const;
-	
+
 private:
-	SDL_Renderer* m_renderer{ nullptr };
+	SDL_Renderer* m_renderer{nullptr};
 	std::unordered_map<std::string, SDL_Texture*> m_textures;
 };

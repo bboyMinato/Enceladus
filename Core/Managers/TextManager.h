@@ -7,7 +7,6 @@
 class TextManager
 {
 public:
-
 	~TextManager();
 
 	bool Init(SDL_Renderer* renderer);
@@ -27,9 +26,8 @@ public:
 private:
 	TTF_Font* GetFont(const std::string& fontName) const;
 
-private:
-	SDL_Renderer* m_renderer{ nullptr };
-	bool m_isInitialized{ false };
+	SDL_Renderer* m_renderer{nullptr};
+	bool m_isInitialized{false};
 
 	std::unordered_map<std::string, TTF_Font*> m_fonts;
 	std::unordered_map<std::string, SDL_Texture*> m_texts;

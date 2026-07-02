@@ -15,14 +15,14 @@ bool TextManager::Init(SDL_Renderer* renderer)
 	if (!renderer)
 	{
 		SDL_Log("Failed to initialize SDL_ttf: %s", TTF_GetError());
-	
+
 		return false;
 	}
 
 	if (TTF_Init() == -1)
 	{
 		SDL_Log("Failed to initialize SDL_ttf: %s", TTF_GetError());
-	
+
 		return false;
 	}
 
@@ -99,7 +99,8 @@ void TextManager::UnloadAllFonts()
 	m_fonts.clear();
 }
 
-bool TextManager::LoadText(const std::string& textName, const std::string& fontName, const std::string& text, SDL_Color color)
+bool TextManager::LoadText(const std::string& textName, const std::string& fontName, const std::string& text,
+                           SDL_Color color)
 {
 	if (!m_isInitialized)
 	{
@@ -129,7 +130,7 @@ bool TextManager::LoadText(const std::string& textName, const std::string& fontN
 
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
 	SDL_FreeSurface(surface);
-	
+
 	if (!texture)
 	{
 		SDL_Log("Failed to create text texture: %s", SDL_GetError());
@@ -182,10 +183,10 @@ SDL_Texture* TextManager::GetText(const std::string& textName) const
 void TextManager::GetTextSize(const std::string& textName, int& width, int& height) const
 {
 	width = 0;
-	height = 0; 
+	height = 0;
 
 	SDL_Texture* texture = GetText(textName);
-	
+
 	if (!texture)
 	{
 		return;

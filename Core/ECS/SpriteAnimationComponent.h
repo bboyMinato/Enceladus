@@ -20,14 +20,14 @@ struct SpriteAnimationComponent
 
 	std::unordered_map<AnimationState, AnimationClip> m_animations;
 
-	AnimationState m_currentState{ AnimationState::Idle };
+	AnimationState m_currentState{AnimationState::Idle};
 
-	int m_currentFrame{ 0 };
-	float m_elapsedTime{ 0.0f };
+	int m_currentFrame{0};
+	float m_elapsedTime{0.0f};
 
-	bool m_isPlaying{ true };
+	bool m_isPlaying{true};
 
 #ifdef _DEBUG
-	bool m_useManualState{ false };
+	bool m_useManualState{false};
 #endif
 };
