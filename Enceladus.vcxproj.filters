@@ -105,6 +105,9 @@
     <ClCompile Include="Core\World\SceneLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Events\Handlers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Engine.h">
@@ -213,6 +216,15 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\World\SceneLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Events\Event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Events\EventBus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Events\Handlers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

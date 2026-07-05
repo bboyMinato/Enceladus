@@ -17,5 +17,7 @@ struct ControllerComponent
 	SDL_Scancode moveDownPrimary{ SDL_SCANCODE_S };
 	SDL_Scancode moveDownSecondary{ SDL_SCANCODE_DOWN };
 
+	// Action keys
+	SDL_Scancode interactKey{ SDL_SCANCODE_E };
 	SDL_Scancode backKey{ SDL_SCANCODE_ESCAPE };
 };

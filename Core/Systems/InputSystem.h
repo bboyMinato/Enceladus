@@ -3,6 +3,11 @@
 #include <array>
 #include <cstddef>
 
+struct InputState
+{
+	bool interactPressed = false;
+};
+
 class InputSystem
 {
 public:
@@ -21,6 +26,8 @@ public:
 	int GetMouseX() const { return m_mouseX; }
 	int GetMouseY() const { return m_mouseY; }
 
+	InputState& GetInputState();
+
 private:
 	static constexpr size_t s_mouseButtonCount = 8;
 
@@ -31,6 +38,8 @@ private:
 	std::array<bool, s_mouseButtonCount> m_mouseButtonsDown{};
 	std::array<bool, s_mouseButtonCount> m_mouseButtonsPressed{};
 	std::array<bool, s_mouseButtonCount> m_mouseButtonsReleased{};
+
+	InputState m_inputState{};
 
 	int m_mouseX{ 0 };
 	int m_mouseY{ 0 };

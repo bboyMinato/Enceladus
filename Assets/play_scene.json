@@ -96,6 +96,14 @@
           "isLooping": true,
           "textureName": "player_idle"
         }
+      },
+      "interactable": {
+        "interactionType": "Dialogue",
+        "interactionRange": 50,
+        "requiresKey": true,
+        "oneShot": false,
+        "used": false,
+        "dialogueId": "test_dialogue"
       }
     },
     {
@@ -106,6 +114,26 @@
         "y": 0,
         "width": 800,
         "height": 600
+      }
+    },
+    {
+      "tag": "Interactable Test Entity",
+      "transform": {
+        "x": 2000.0,
+        "y": 500.0
+      },
+      "collider": {
+        "width": 35,
+        "height": 55,
+        "offsetX": 45,
+        "offsetY": 35
+      },
+      "interactable": {
+        "interactionType": "Dialogue",
+        "requiresKey": true,
+        "oneShot": false,
+        "used": false,
+        "dialogueId": "test_dialogue"
       }
     }
   ]

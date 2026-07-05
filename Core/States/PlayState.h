@@ -3,6 +3,7 @@
 #include "../ECS/Registry.h"
 #include "../ECS/CameraComponent.h"
 #include "../World/TileMap.h"
+#include "../Events/EventBus.h"
 
 class PlayState final : public IGameState
 {
@@ -25,6 +26,7 @@ private:
 	void RenderColliderTab(Entity selectedEntity);
 	void RenderAnimationTab(Entity selectedEntity);
 	void RenderCameraTab(Entity cameraEntity);
+	void RenderInteractionTab(Entity selectedEntity);
 #endif 
 
 private:
@@ -32,6 +34,7 @@ private:
 	Entity m_player;
 	Entity m_camera;
 	TileMap m_tileMap;
+	EventBus m_eventBus;
 
 #ifdef _DEBUG
 	bool m_showDebugWindow{ true };
