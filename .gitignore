@@ -365,3 +365,8 @@ FodyWeavers.xsd
 /.github/copilot-instructions.md
 
 vcpkg*
+!vcpkg.json
+!vcpkg-configuration.json
+
+# CMake/CLion build trees
+cmake-build-*/

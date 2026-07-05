@@ -1,102 +1,86 @@
 #include "TextureManager.h"
 #include <SDL2/SDL_image.h>
 
-TextureManager::~TextureManager()
-{
-	UnloadAllTextures();
-	IMG_Quit();
+TextureManager::~TextureManager() {
+    UnloadAllTextures();
+    IMG_Quit();
 
-	m_renderer = nullptr;
+    m_renderer = nullptr;
 }
 
-bool TextureManager::Init(SDL_Renderer* renderer)
-{
-	if (!renderer)
-	{
-		SDL_Log("TextureManager initialization failed: Renderer is null.");
-		return false;
-	}
+bool TextureManager::Init(SDL_Renderer *renderer) {
+    if (!renderer) {
+        SDL_Log("TextureManager initialization failed: Renderer is null.");
+        return false;
+    }
 
-	m_renderer = renderer;
+    m_renderer = renderer;
 
-	constexpr int imageFlags = IMG_INIT_PNG;
+    constexpr int imageFlags = IMG_INIT_PNG;
 
-	if ((IMG_Init(imageFlags) & imageFlags) != imageFlags)
-	{
-		SDL_Log("Failed to initialize SDL_image: %s", IMG_GetError());
+    if ((IMG_Init(imageFlags) & imageFlags) != imageFlags) {
+        SDL_Log("Failed to initialize SDL_image: %s", IMG_GetError());
 
-		return false;
-	}
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
-bool TextureManager::LoadTexture(const std::string& textureName, const std::string& filePath)
-{
-	SDL_Texture* texture = IMG_LoadTexture(m_renderer, filePath.c_str());
-	if (!texture)
-	{
-		SDL_Log("Failed to load texture '%s': %s", filePath.c_str(), IMG_GetError());
-		return false;
-	}
+bool TextureManager::LoadTexture(const std::string &textureName, const std::string &filePath) {
+    SDL_Texture *texture = IMG_LoadTexture(m_renderer, filePath.c_str());
+    if (!texture) {
+        SDL_Log("Failed to load texture '%s': %s", filePath.c_str(), IMG_GetError());
+        return false;
+    }
 
-	auto existingTextureIt = m_textures.find(textureName);
-	if (existingTextureIt != m_textures.end())
-	{
-		SDL_DestroyTexture(existingTextureIt->second);
-	}
+    auto existingTextureIt = m_textures.find(textureName);
+    if (existingTextureIt != m_textures.end()) {
+        SDL_DestroyTexture(existingTextureIt->second);
+    }
 
-	m_textures[textureName] = texture;
+    m_textures[textureName] = texture;
 
-	return true;
+    return true;
 }
 
-void TextureManager::UnloadTexture(const std::string& textureName)
-{
-	auto it = m_textures.find(textureName);
-	if (it != m_textures.end())
-	{
-		SDL_DestroyTexture(it->second);
-		m_textures.erase(it);
-	}
+void TextureManager::UnloadTexture(const std::string &textureName) {
+    auto it = m_textures.find(textureName);
+    if (it != m_textures.end()) {
+        SDL_DestroyTexture(it->second);
+        m_textures.erase(it);
+    }
 }
 
-void TextureManager::UnloadAllTextures()
-{
-	for (auto& [name, texture] : m_textures)
-	{
-		(void)name; // Suppress unused variable warning
-		SDL_DestroyTexture(texture);
-	}
+void TextureManager::UnloadAllTextures() {
+    for (auto &[name, texture] : m_textures) {
+        (void) name;  // Suppress unused variable warning
+        SDL_DestroyTexture(texture);
+    }
 
-	m_textures.clear();
+    m_textures.clear();
 }
 
-void TextureManager::GetTextureSize(SDL_Texture* texture, int& width, int& height) const
-{
-	if (!texture)
-	{
-		width = 0;
-		height = 0;
-		return;
-	}
+void TextureManager::GetTextureSize(SDL_Texture *texture, int &width, int &height) const {
+    if (!texture) {
+        width = 0;
+        height = 0;
+        return;
+    }
 
-	SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+    SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
 }
 
-void TextureManager::GetTextureSize(const std::string& textureName, int& width, int& height) const
-{
-	GetTextureSize(GetTexture(textureName), width, height);
+void TextureManager::GetTextureSize(const std::string &textureName, int &width, int &height) const {
+    GetTextureSize(GetTexture(textureName), width, height);
 }
 
-SDL_Texture* TextureManager::GetTexture(const std::string& textureName) const
-{
-	const auto it = m_textures.find(textureName);
+SDL_Texture *TextureManager::GetTexture(const std::string &textureName) const {
+    const auto it = m_textures.find(textureName);
 
-	if (it != m_textures.end())
-	{
-		return it->second;
-	}
+    if (it != m_textures.end()) {
+        return it->second;
+    }
 
-	return nullptr;
+    return nullptr;
 }

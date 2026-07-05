@@ -1,9 +1,8 @@
 #pragma once
 #include <string>
 
-struct DialogInitComponent
-{
-	DialogInitComponent() = default;
+struct DialogInitComponent {
+    DialogInitComponent() = default;
 
-	std::string name;
+    std::string name;
 };

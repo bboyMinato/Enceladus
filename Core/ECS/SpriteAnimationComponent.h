@@ -1,33 +1,31 @@
 #pragma once
-#include "../Utility/AnimationUtils.h"
 #include "../Utility/AnimationClip.h"
+#include "../Utility/AnimationUtils.h"
 #include <unordered_map>
 
-enum class AnimationState
-{
-	Idle,
-	Walking,
-	Running,
-	Jumping,
-	Falling,
-	Attacking,
-	Dying
+enum class AnimationState {
+    Idle,
+    Walking,
+    Running,
+    Jumping,
+    Falling,
+    Attacking,
+    Dying
 };
 
-struct SpriteAnimationComponent
-{
-	SpriteAnimationComponent() = default;
+struct SpriteAnimationComponent {
+    SpriteAnimationComponent() = default;
 
-	std::unordered_map<AnimationState, AnimationClip> m_animations;
+    std::unordered_map<AnimationState, AnimationClip> m_animations;
 
-	AnimationState m_currentState{AnimationState::Idle};
+    AnimationState m_currentState{AnimationState::Idle};
 
-	int m_currentFrame{0};
-	float m_elapsedTime{0.0f};
+    int m_currentFrame{0};
+    float m_elapsedTime{0.0f};
 
-	bool m_isPlaying{true};
+    bool m_isPlaying{true};
 
 #ifdef _DEBUG
-	bool m_useManualState{false};
+    bool m_useManualState{false};
 #endif
 };

@@ -8,23 +8,20 @@ class Engine;
 class Registry;
 class TileMap;
 
-struct SceneLoadResult
-{
-	bool loaded{false};
+struct SceneLoadResult {
+    bool loaded{false};
 
-	std::unordered_map<std::string, Entity> entities;
+    std::unordered_map<std::string, Entity> entities;
 
-	std::vector<std::string> loadedTextures;
-	std::vector<std::string> loadedSounds;
-	std::vector<std::string> loadedMusic;
+    std::vector<std::string> loadedTextures;
+    std::vector<std::string> loadedSounds;
+    std::vector<std::string> loadedMusic;
 
-	std::string autoPlayedSound;
-	std::string autoPlayedMusic;
+    std::string autoPlayedSound;
+    std::string autoPlayedMusic;
 };
 
-class SceneLoader final
-{
-public:
-	static SceneLoadResult LoadScene(const std::string& sceneFilePath, Engine& engine, Registry& registry,
-	                                 TileMap& tileMap);
+class SceneLoader final {
+  public:
+    static SceneLoadResult LoadScene(const std::string &sceneFilePath, Engine &engine, Registry &registry, TileMap &tileMap);
 };

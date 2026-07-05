@@ -1,47 +1,44 @@
 #pragma once
-#include "IState.h"
-#include "../ECS/Registry.h"
 #include "../ECS/CameraComponent.h"
+#include "../ECS/Registry.h"
 #include "../World/TileMap.h"
+#include "IState.h"
 
-class PlayState final : public IGameState
-{
-public:
-	void OnEnter(Engine& engine) override;
-	void OnExit(Engine& engine) override;
+class PlayState final : public IGameState {
+  public:
+    void OnEnter(Engine &engine) override;
+    void OnExit(Engine &engine) override;
 
-	void OnPause(Engine& engine) override
-	{
-	}
+    void OnPause(Engine &engine) override {
+    }
 
-	void OnResume(Engine& engine) override
-	{
-	}
+    void OnResume(Engine &engine) override {
+    }
 
-	void HandleEvent(Engine& engine, const SDL_Event& event) override;
-	void Update(Engine& engine, float deltaTime) override;
-	void Render(Engine& engine, SDL_Renderer* renderer) override;
+    void HandleEvent(Engine &engine, const SDL_Event &event) override;
+    void Update(Engine &engine, float deltaTime) override;
+    void Render(Engine &engine, SDL_Renderer *renderer) override;
 
 #ifdef _DEBUG
-	void RenderImGui(Engine& engine) override;
+    void RenderImGui(Engine &engine) override;
 #endif
 
-private:
+  private:
 #ifdef _DEBUG
-	void RenderEntityTab(Entity selectedEntity);
-	void RenderColliderTab(Entity selectedEntity);
-	void RenderAnimationTab(Entity selectedEntity);
-	void RenderCameraTab(Entity cameraEntity);
+    void RenderEntityTab(Entity selectedEntity);
+    void RenderColliderTab(Entity selectedEntity);
+    void RenderAnimationTab(Entity selectedEntity);
+    void RenderCameraTab(Entity cameraEntity);
 #endif
 
-	Registry m_registry;
-	Entity m_player;
-	Entity m_camera;
-	TileMap m_tileMap;
+    Registry m_registry;
+    Entity m_player;
+    Entity m_camera;
+    TileMap m_tileMap;
 
 #ifdef _DEBUG
-	bool m_showDebugWindow{true};
-	bool m_showColliderDebug{true};
-	int m_selectedDebugEntityId{0};
+    bool m_showDebugWindow{true};
+    bool m_showColliderDebug{true};
+    int m_selectedDebugEntityId{0};
 #endif
 };

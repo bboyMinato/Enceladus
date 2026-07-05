@@ -4,34 +4,32 @@
 #include <SDL2/SDL.h>
 #include <string>
 
-class Button final
-{
-public:
-	using ClickCallBack = std::function<void()>;
+class Button final {
+  public:
+    using ClickCallBack = std::function<void()>;
 
-	Button(const SDL_Rect& bounds);
+    Button(const SDL_Rect &bounds);
 
-	void SetBounds(const SDL_Rect& bounds);
-	void SetHovered(bool isHovered);
-	void SetOnClick(ClickCallBack onClick);
-	void SetTextName(const std::string& textName);
-	void HandleEvent(const SDL_Event& event);
-	void Render(SDL_Renderer* renderer, TextManager& textManager) const;
-	void Click();
+    void SetBounds(const SDL_Rect &bounds);
+    void SetHovered(bool isHovered);
+    void SetOnClick(ClickCallBack onClick);
+    void SetTextName(const std::string &textName);
+    void HandleEvent(const SDL_Event &event);
+    void Render(SDL_Renderer *renderer, TextManager &textManager) const;
+    void Click();
 
-	bool ContainsPoint(int x, int y) const;
+    bool ContainsPoint(int x, int y) const;
 
-	bool IsHovered() const { return m_isHovered; }
-	const SDL_Rect& GetBounds() const { return m_bounds; }
+    bool IsHovered() const { return m_isHovered; }
+    const SDL_Rect &GetBounds() const { return m_bounds; }
 
-private:
-	ClickCallBack m_onClick;
+  private:
+    ClickCallBack m_onClick;
 
-	SDL_Rect m_bounds{0, 0, 0, 0};
-	std::string m_textName;
+    SDL_Rect m_bounds{0, 0, 0, 0};
+    std::string m_textName;
 
-	bool m_isHovered{false};
+    bool m_isHovered{false};
 
-
-	void OnClick();
+    void OnClick();
 };
