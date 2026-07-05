@@ -147,8 +147,8 @@
     <ClCompile Include="Core\Systems\CameraSystem.cpp" />
     <ClCompile Include="Core\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Core\Systems\ControllerSystem.cpp" />
-    <ClCompile Include="Core\Systems\DialogSystem.cpp" />
     <ClCompile Include="Core\Systems\InputSystem.cpp" />
+    <ClCompile Include="Core\Systems\DialogSystem.cpp" />
     <ClCompile Include="Core\Systems\MapConstraintSystem.cpp" />
     <ClCompile Include="Core\Systems\MovementSystem.cpp" />
     <ClCompile Include="Core\Systems\RenderSystem.cpp" />
@@ -187,7 +187,8 @@
     <ClInclude Include="Core\ECS\ColliderComponent.h" />
     <ClInclude Include="Core\ECS\Component.h" />
     <ClInclude Include="Core\ECS\ControllerComponent.h" />
-    <ClInclude Include="Core\ECS\DialogComponent.h" />
+    <ClInclude Include="Core\ECS\DialogInitComponent.h" />
+    <ClInclude Include="Core\ECS\DialogSegmentComponent.h" />
     <ClInclude Include="Core\ECS\Entity.h" />
     <ClInclude Include="Core\ECS\MovementComponent.h" />
     <ClInclude Include="Core\ECS\Registry.h" />
@@ -209,8 +210,8 @@
     <ClInclude Include="Core\Systems\CameraSystem.h" />
     <ClInclude Include="Core\Systems\CollisionSystem.h" />
     <ClInclude Include="Core\Systems\ControllerSystem.h" />
-    <ClInclude Include="Core\Systems\DialogSystem.h" />
     <ClInclude Include="Core\Systems\InputSystem.h" />
+    <ClInclude Include="Core\Systems\DialogSystem.h" />
     <ClInclude Include="Core\Systems\MapConstraintSystem.h" />
     <ClInclude Include="Core\Systems\MovementSystem.h" />
     <ClInclude Include="Core\Systems\RenderSystem.h" />

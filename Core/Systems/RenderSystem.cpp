@@ -1,4 +1,8 @@
 #include "RenderSystem.h"
+
+#include <iostream>
+
+#include "../ECS/DialogSegmentComponent.h"
 #include "../ECS/TransformComponent.h"
 #include "../ECS/SpriteComponent.h"
 
@@ -82,4 +86,14 @@ void RenderSystem::RenderEntites(Registry& registry, const CameraComponent& came
 			RenderTexture(sprite.m_textureName, srcRect, &dstRect, sprite.m_flip);
 		}
 	);
+}
+
+
+void RenderSystem::RenderDialog(Registry &registry, RenderSystem renderSystem) const
+{
+	for (const auto& entity: registry.GetEntitiesWithComponents<DialogSegmentComponent>())
+	{
+		auto dialogSegment = entity.Get<DialogSegmentComponent>();
+		std::cout << dialogSegment->text << std::endl;
+	}
 }

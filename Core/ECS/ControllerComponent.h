@@ -18,4 +18,6 @@ struct ControllerComponent
 	SDL_Scancode moveDownSecondary{SDL_SCANCODE_DOWN};
 
 	SDL_Scancode backKey{SDL_SCANCODE_ESCAPE};
+
+	SDL_Scancode confirmKey{SDL_SCANCODE_KP_ENTER};
 };

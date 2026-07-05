@@ -46,6 +46,11 @@ Dialog::Dialog(const std::filesystem::path& path)
 	}
 }
 
+const std::list<DialogEntry> Dialog::GetEntries() const
+{
+	return m_entries;
+}
+
 DialogEntry::DialogEntry(const std::string_view& chunk)
 {
 	constexpr std::string_view delimiter = ": ";
@@ -54,12 +59,12 @@ DialogEntry::DialogEntry(const std::string_view& chunk)
 	m_speech = std::string(chunk.substr(index + delimiter.length()));
 }
 
-const std::string& DialogEntry::GetName()
+const std::string& DialogEntry::GetName() const
 {
 	return m_name;
 }
 
-const std::string& DialogEntry::GetSpeech()
+const std::string& DialogEntry::GetSpeech() const
 {
 	return m_speech;
 }

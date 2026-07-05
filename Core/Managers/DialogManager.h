@@ -25,9 +25,8 @@ class Dialog
 {
 public:
 	Dialog(const std::filesystem::path& path);
+	const std::list<DialogEntry> GetEntries() const;
 
-
-	
 private:
 	std::list<DialogEntry> m_entries;
 };
@@ -36,8 +35,8 @@ class DialogEntry
 {
 public:
 	DialogEntry(const std::string_view& chunk);
-	const std::string& GetName();
-	const std::string& GetSpeech();
+	const std::string& GetName() const;
+	const std::string& GetSpeech() const;
 
 private:
 	std::string m_name;

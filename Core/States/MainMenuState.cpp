@@ -51,12 +51,10 @@ void MainMenuState::OnExit(Engine& engine)
 
 void MainMenuState::OnPause(Engine& engine)
 {
-	
 }
 
 void MainMenuState::OnResume(Engine& engine)
 {
-	
 }
 
 void MainMenuState::HandleEvent(Engine& engine, const SDL_Event& event)
@@ -97,5 +95,4 @@ void MainMenuState::Render(Engine& engine, SDL_Renderer* renderer)
 
 void MainMenuState::RenderImGui(Engine& engine)
 {
-	
 }

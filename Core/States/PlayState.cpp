@@ -14,6 +14,7 @@
 #include "../Systems/SpriteAnimationSystem.h"
 #include "../Systems/CollisionSystem.h"
 #include "../World/SceneLoader.h"
+#include "../Systems/DialogSystem.h"
 #include <algorithm>
 
 #include "../Systems/DialogSystem.h"
@@ -113,7 +114,7 @@ void PlayState::Update(Engine& engine, float deltaTime)
 	CameraSystem::UpdateFollow(*camera, *transform, *sprite, engine.GetRenderSystem(), m_tileMap);
 	AnimationStateSystem::UpdateAnimationStates(m_registry);
 	SpriteAnimationSystem::Update(m_registry, deltaTime);
-	DialogSystem::Update(m_registry, deltaTime);
+	DialogSystem::Update(m_player, input, m_registry, engine.GetDialogManager());
 }
 
 void PlayState::Render(Engine& engine, SDL_Renderer* renderer)
@@ -130,7 +131,9 @@ void PlayState::Render(Engine& engine, SDL_Renderer* renderer)
 		return;
 	}
 
-	m_tileMap.Render(engine.GetRenderSystem(), camera->m_viewport, m_registry);
+	auto& renderSystem = engine.GetRenderSystem();
+	m_tileMap.Render(renderSystem, camera->m_viewport, m_registry);
+	renderSystem.RenderDialog(m_registry, renderSystem);
 
 #ifdef _DEBUG
 	if (!m_showColliderDebug)

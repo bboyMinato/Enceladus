@@ -42,6 +42,7 @@ public:
 	SoundManager& GetSoundManager() { return m_soundManager; }
 	TextManager& GetTextManager() { return m_textManager; }
 	DialogManager& GetDialogManager() { return m_dialogManager; }
+
 	const AppSettings& GetAppSettings() const { return m_settings; }
 
 	void RequestShutdown() { m_isRunning = false; }
@@ -94,6 +95,6 @@ private:
 
 #ifdef _DEBUG
 	bool m_isImGuiInitialized{false};
-	
+
 #endif
 };

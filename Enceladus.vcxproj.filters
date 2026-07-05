@@ -221,13 +221,16 @@
     <ClInclude Include="Core\World\SceneLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\ECS\DialogComponent.h">
+    <ClInclude Include="Core\ECS\DialogInitComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Managers\DialogManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Systems\DialogSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ECS\DialogSegmentComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

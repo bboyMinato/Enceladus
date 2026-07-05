@@ -117,7 +117,7 @@ void Engine::Init(const EngineConfig& config)
 
 	m_stateManager.PushState<MainMenuState>();
 
-	auto *mainMenuState = new MainMenuState();
+	auto* mainMenuState = new MainMenuState();
 
 	m_lastFrameTicks = SDL_GetTicks64();
 	m_isRunning = true;

@@ -19,7 +19,7 @@ public:
 	                   SDL_RendererFlip flip = SDL_FLIP_NONE) const;
 
 	void RenderEntites(Registry& registry, const CameraComponent& camera) const;
-
+	void RenderDialog(Registry& registry, RenderSystem renderSystem) const;
 private:
 	SDL_Renderer* m_renderer{nullptr};
 	TextureManager* m_textureManager{nullptr};

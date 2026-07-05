@@ -15,7 +15,7 @@
 #include <fstream>
 #include <unordered_map>
 
-#include "../ECS/DialogComponent.h"
+#include "../ECS/DialogInitComponent.h"
 
 using Json = nlohmann::json;
 
@@ -381,7 +381,7 @@ namespace
 		}
 
 		const auto& dialogDef = entityDef["dialog"];
-		auto& dialog = entity.Add<DialogComponent>();
+		auto& dialog = entity.Add<DialogInitComponent>();
 
 		if (!dialogDef.contains("name"))
 		{

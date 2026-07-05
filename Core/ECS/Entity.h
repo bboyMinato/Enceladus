@@ -36,7 +36,7 @@ public:
 
 	EntityId GetId() const { return m_id; }
 
-	Registry& GetRegistry() const
+	const Registry& GetRegistry() const
 	{
 		assert(m_registry != nullptr && "Entity has no owning registry.");
 		return *m_registry;

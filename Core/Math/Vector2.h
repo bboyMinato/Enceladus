@@ -1,5 +1,6 @@
 #pragma once
 #include <type_traits>
+#include <cmath>
 
 template <typename T>
 struct Vector2
@@ -51,6 +52,11 @@ struct Vector2
 	}
 
 	constexpr bool operator==(const Vector2& other) const = default;
+
+	constexpr T Length() const
+	{
+		return sqrt(pow(x,2) + pow(y,2));
+	}
 };
 
 using Vector2i = Vector2<int>;
