@@ -15,10 +15,28 @@ void SetupInteractionHandlers(EventBus& eventBus, Registry& registry)
 			switch (interactable->interactionType)
 			{
 				case InteractionType::Dialogue:			
+					//TODO: remove println and replace with actual dialogue system logic
 					std::println("Triggering event with entity: {}", event.target.GetId());
+					
 					eventBus.Emit(DialogueEvent{ event.player, event.target, interactable->dialogueId });
 					break;
 				
+				case InteractionType::Open:
+					throw std::logic_error("Open interaction not implemented yet.");
+					break;
+
+				case InteractionType::Activate:
+					throw std::logic_error("Activate interaction not implemented yet.");
+					break;
+
+				case InteractionType::Pickup:
+					throw std::logic_error("Pickup interaction not implemented yet.");
+					break;
+
+				case InteractionType::Examine:
+					throw std::logic_error("Examine interaction not implemented yet.");
+					break;
+
 				default:
 					break;
 			}
