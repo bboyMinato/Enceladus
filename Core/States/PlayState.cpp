@@ -15,11 +15,13 @@
 #include "../Systems/CollisionSystem.h"
 #include "../World/SceneLoader.h"
 #include <algorithm>
+#include <string>
 
 #ifdef _DEBUG
 #include <imgui.h>
 #include <vector>
 #endif
+#include "../Events/Handlers.h"
 
 void PlayState::OnEnter(Engine& engine)
 {	
@@ -49,6 +51,8 @@ void PlayState::OnEnter(Engine& engine)
 	}
 
 	engine.GetSoundManager().PlayMusic("background_forest_music", true);
+
+	SetupInteractionHandlers(m_eventBus, m_registry);
 
 #ifdef _DEBUG
 	m_showDebugWindow = true;
@@ -94,7 +98,7 @@ void PlayState::Update(Engine& engine, float deltaTime)
 		return;
 	}
 
-	ControllerSystem::Update(m_registry, input);
+	ControllerSystem::Update(m_registry, input, m_eventBus);
 	MovementSystem::Update(m_registry, deltaTime);
 	CollisionSystem::Update(m_registry);
 
@@ -239,6 +243,12 @@ void PlayState::RenderImGui(Engine& engine)
 		if (ImGui::BeginTabItem("Camera"))
 		{
 			RenderCameraTab(m_camera);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Interaction"))
+		{
+			RenderInteractionTab(selectedEntity);
 			ImGui::EndTabItem();
 		}
 
@@ -459,6 +469,29 @@ void PlayState::RenderCameraTab(Entity cameraEntity)
 	else
 	{
 		ImGui::TextDisabled("No CameraComponent");
+	}
+}
+void PlayState::RenderInteractionTab(Entity selectedEntity)
+{
+	Interactable* interactable = selectedEntity.Get<Interactable>();
+
+	if (interactable != nullptr)
+	{
+		const char* interactionTypes[] = { "Dialogue", "Open", "Activate", "Pickup", "Examine", "Default" };
+		int currentTypeIndex = static_cast<int>(interactable->interactionType);
+		if (ImGui::Combo("Interaction Type", &currentTypeIndex, interactionTypes, IM_ARRAYSIZE(interactionTypes)))
+		{
+			interactable->interactionType = static_cast<InteractionType>(currentTypeIndex);
+		}
+		ImGui::DragFloat("Interaction Distance", &interactable->interactionDistance, 1.0f, 0.0f, 1000.0f);
+		ImGui::Checkbox("Requires Key", &interactable->requiresKey);
+		ImGui::Checkbox("One Shot", &interactable->oneShot);
+		ImGui::Checkbox("Used", &interactable->used);
+		ImGui::InputText("Dialogue ID", &interactable->dialogueId[0], interactable->dialogueId.size() + 1);
+	}
+	else
+	{
+		ImGui::TextDisabled("No Interactable Component");
 	}
 }
 #endif

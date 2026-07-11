@@ -14,6 +14,8 @@
 #include <SDL2/SDL.h>
 #include <fstream>
 #include <unordered_map>
+#include <algorithm>
+#include "../Events/Event.h"
 
 using Json = nlohmann::json;
 
@@ -40,6 +42,28 @@ namespace
 
 		outState = it->second;
 		return true;
+	}
+
+	InteractionType StringToInteractionType(std::string str)
+	{
+		std::transform(str.begin(), str.end(), str.begin(),
+			[](unsigned char c) { return std::tolower(c); });
+
+		static const std::unordered_map<std::string, InteractionType> map = {
+		{ "open",     InteractionType::Open },
+		{ "pickup",   InteractionType::Pickup },
+		{ "activate", InteractionType::Activate },
+		{ "dialogue", InteractionType::Dialogue },
+		{ "examine",  InteractionType::Examine } };
+
+		auto it = map.find(str);
+		if (it != map.end())
+		{
+			return it->second;
+		}
+
+		SDL_Log("Unknown interactionType '%s', defaulting", str.c_str());
+		return InteractionType::Default;
 	}
 
 	bool LoadTextureDefinitions(const Json& document, Engine& engine, SceneLoadResult& result)
@@ -371,6 +395,24 @@ namespace
 		movement.moveSpeed = movementDef.value("moveSpeed", movement.moveSpeed);
 	}
 
+	void ApplyInteractableComponent(const Json& entityDef, Entity& entity)
+	{
+		if (!entityDef.contains("interactable") || !entityDef["interactable"].is_object())
+		{
+			return;
+		}
+
+		const Json& interactableDef = entityDef["interactable"];
+		entity.Add<Interactable>(
+			StringToInteractionType(interactableDef.value("interactionType", "default")),
+			interactableDef.value("interactionRange", 200.0f),
+			interactableDef.value("requiresKey", true),
+			interactableDef.value("oneShot", false),
+			interactableDef.value("used", false),
+			interactableDef.value("dialogueId", "")
+		);
+	}
+
 	bool LoadEntities(const Json& document, Registry& registry, SceneLoadResult& result)
 	{
 		if (!document.contains("entities") || !document["entities"].is_array())
@@ -397,12 +439,7 @@ namespace
 			ApplyTagComponent(entityDef, entity);
 			ApplyColliderComponent(entityDef, entity);
 			ApplyCameraComponent(entityDef, entity);
-
-			/*if (entity.IsValid())
-			{
-				const std::string tag = entity.Get<TagComponent>() ? entity.Get<TagComponent>()->Tag : "Entity" + std::to_string(entity.GetId());
-				result.entities[tag] = entity;
-			}*/
+			ApplyInteractableComponent(entityDef, entity);
 
 			const std::string key = entityDef.value("key", "");
 			if (!key.empty() && entity.IsValid())

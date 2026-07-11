@@ -1,4 +1,6 @@
 #include "ControllerSystem.h"
+#include <optional>
+#include "../Events/Handlers.h"
 
 bool ControllerSystem::PopState(Registry& registry, const InputSystem& input)
 {
@@ -17,12 +19,13 @@ bool ControllerSystem::PopState(Registry& registry, const InputSystem& input)
 	return wantsBack;
 }
 
-void ControllerSystem::Update(Registry& registry, const InputSystem& input)
+void ControllerSystem::Update(Registry& registry, const InputSystem& input, EventBus& eventBus)
 {
 	registry.ForEach<ControllerComponent, MovementComponent>(
 		[&](Entity entity, const ControllerComponent& controller, MovementComponent& movement)
 		{
 			UpdateMovement(input, controller, movement);
+			HandleInteraction(registry, input, controller, entity, eventBus);
 		}
 	);
 }
@@ -61,6 +64,25 @@ void ControllerSystem::UpdateMovement(const InputSystem& input, const Controller
 	if (IsDown(input, controller.moveDownPrimary, controller.moveDownSecondary))
 	{
 		movement.velocity.y += 1.0f;
+	}
+}
+
+void ControllerSystem::HandleInteraction(Registry& registry, const InputSystem& input, const ControllerComponent& controller, Entity entity, EventBus& eventBus)
+{
+	if (!controller.isEnabled)
+	{
+		return;
+	}
+
+	if (input.WasKeyPressed(controller.interactKey))
+	{
+		std::optional<Entity> closestInteractable = FindClosestInteractable(entity, registry);
+
+		if (closestInteractable.has_value())
+		{
+			InteractionEvent event{ entity, closestInteractable.value() };
+			eventBus.Emit(event);
+		}
 	}
 }
 
