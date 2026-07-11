@@ -24,15 +24,15 @@
 #include "../Events/Handlers.h"
 
 void PlayState::OnEnter(Engine& engine)
-{	
-	SceneLoader loader; 
+{
+	SceneLoader loader;
 	const SceneLoadResult result = loader.LoadScene("Assets/play_scene.json", engine, m_registry, m_tileMap);
-	
+
 	if (!result.loaded)
 	{
 		SDL_Log("Failed to load scene.");
 		return;
-	}	
+	}
 
 	if (const auto playerIt = result.entities.find("player"); playerIt != result.entities.end())
 	{
@@ -53,6 +53,8 @@ void PlayState::OnEnter(Engine& engine)
 	engine.GetSoundManager().PlayMusic("background_forest_music", true);
 
 	SetupInteractionHandlers(m_eventBus, m_registry);
+
+    engine.GetTextManager().LoadFont("menuFont", "Assets/fonts/Uncial.ttf", 48);
 
 #ifdef _DEBUG
 	m_showDebugWindow = true;
@@ -117,53 +119,6 @@ void PlayState::Update(Engine& engine, float deltaTime)
 	SpriteAnimationSystem::Update(m_registry, deltaTime);
 }
 
-void PlayState::Render(Engine& engine, SDL_Renderer* renderer)
-{
-	if (renderer == nullptr)
-	{
-		return;
-	}
-
-	const CameraComponent* camera = m_camera.Get<CameraComponent>();
-
-	if (camera == nullptr)
-	{
-		return;
-	}
-
-	m_tileMap.Render(engine.GetRenderSystem(), camera->m_viewport, m_registry);
-
-#ifdef _DEBUG
-	if (!m_showColliderDebug)
-	{
-		return;
-	}
-
-	for (auto& entity : m_registry.GetEntitiesWithComponents<ColliderComponent, TransformComponent>())
-	{
-		const auto& collider = entity.Get<ColliderComponent>();
-		const auto& transform = entity.Get<TransformComponent>();
-
-		SDL_Rect colliderRect = SDL_Rect
-		{
-			.x = static_cast<int>(transform->x + collider->m_offsetX - camera->m_viewport.x),
-			.y = static_cast<int>(transform->y + collider->m_offsetY - camera->m_viewport.y),
-			.w = collider->m_width,
-			.h = collider->m_height
-		};
-
-		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
-		if (m_selectedDebugEntityId == entity.GetId())
-		{
-			SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-		}
-
-		SDL_RenderDrawRect(renderer, &colliderRect);
-	}
-#endif
-}
-
 #ifdef _DEBUG
 void PlayState::RenderImGui(Engine& engine)
 {
@@ -177,7 +132,7 @@ void PlayState::RenderImGui(Engine& engine)
 	ImGui::Begin("PlayState Debug", &m_showDebugWindow);
 
 	ImGui::Checkbox("Show Collider Debug", &m_showColliderDebug);
-		
+
 	std::vector<Entity> entities = m_registry.GetAllEntities();
 
 	Entity selectedEntity;
@@ -219,7 +174,7 @@ void PlayState::RenderImGui(Engine& engine)
 
 		ImGui::EndCombo();
 	}
-	
+
 	if (ImGui::BeginTabBar("PlayStateDebugTabs"))
 	{
 		if (ImGui::BeginTabItem("Entity"))
@@ -302,6 +257,59 @@ void PlayState::RenderEntityTab(Entity selectedEntity)
 			ImGui::TextDisabled("Enable manual override to edit velocity.");
 		}
 	}
+}
+void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
+{
+    if (renderer == nullptr)
+    {
+        return;
+    }
+
+    const CameraComponent *camera = m_camera.Get<CameraComponent>();
+
+    if (camera == nullptr)
+    {
+        return;
+    }
+
+    auto &renderSystem = engine.GetRenderSystem();
+    m_tileMap.Render(renderSystem, camera->m_viewport, m_registry);
+
+    const auto &dialogueManager = engine.GetDialogManager();
+    const auto &config = engine.GetConfig();
+
+    const auto *currentDialogue = dialogueManager.GetDialogue("test_dialogue");
+
+    auto& textManager = engine.GetTextManager();
+    renderSystem.RenderDialog(currentDialogue, config.windowWidth, config.windowHeight, textManager);
+
+#ifdef _DEBUG
+    if (!m_showColliderDebug)
+    {
+        return;
+    }
+
+    for (auto &entity : m_registry.GetEntitiesWithComponents<ColliderComponent, TransformComponent>())
+    {
+        const auto &collider = entity.Get<ColliderComponent>();
+        const auto &transform = entity.Get<TransformComponent>();
+
+        SDL_Rect colliderRect =
+            SDL_Rect{.x = static_cast<int>(transform->x + collider->m_offsetX - camera->m_viewport.x),
+                     .y = static_cast<int>(transform->y + collider->m_offsetY - camera->m_viewport.y),
+                     .w = collider->m_width,
+                     .h = collider->m_height};
+
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
+        if (m_selectedDebugEntityId == entity.GetId())
+        {
+            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        }
+
+        SDL_RenderDrawRect(renderer, &colliderRect);
+    }
+#endif
 }
 
 void PlayState::RenderColliderTab(Entity selectedEntity)

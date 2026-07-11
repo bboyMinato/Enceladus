@@ -1,5 +1,6 @@
 #include "Handlers.h"
 #include <print>
+#include <cmath>
 
 void SetupInteractionHandlers(EventBus& eventBus, Registry& registry)
 {
@@ -41,6 +42,10 @@ void SetupInteractionHandlers(EventBus& eventBus, Registry& registry)
 					break;
 			}
 		});
+
+	eventBus.Subscribe<DialogueEvent>([&eventBus, &registry](const DialogueEvent& event) -> void {
+
+	});
 }
 
 std::optional<Entity> FindClosestInteractable(Entity player, Registry& registry)

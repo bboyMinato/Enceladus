@@ -1,6 +1,8 @@
 #include "RenderSystem.h"
-#include "../ECS/TransformComponent.h"
 #include "../ECS/SpriteComponent.h"
+#include "../ECS/TransformComponent.h"
+#include "Core/Managers/DialogManager.h"
+#include "Core/Managers/TextManager.h"
 
 bool RenderSystem::Init(SDL_Renderer* renderer, TextureManager* textureManager)
 {
@@ -80,4 +82,78 @@ void RenderSystem::RenderEntites(Registry& registry, const CameraComponent& came
 			RenderTexture(sprite.m_textureName, srcRect, &dstRect, sprite.m_flip);
 		}
 	);		
+}
+
+void RenderSystem::RenderDialog(const Dialogue* dialogue, int windowWidth, int windowHeight, TextManager& textManager) const
+{
+	if (!m_renderer || !dialogue)
+	{
+		return;
+	}
+
+	const auto& entries = dialogue->GetEntries();
+	if (entries.empty())
+	{
+		return;
+	}
+
+	constexpr int padding = 16;
+	constexpr int dialogHeight = 96;
+
+	const int x = padding;
+	const int y = windowHeight - padding - dialogHeight;
+	const int w = windowWidth - 2 * padding;
+	const int h = dialogHeight;
+
+	SDL_Rect dialogRect{ x, y, w, h };
+
+	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderFillRect(m_renderer, &dialogRect);
+	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+	SDL_RenderDrawRect(m_renderer, &dialogRect);
+
+	const std::string textName = "dialogueText";
+	const std::string text = entries.front().GetSpeech();
+
+	if (!textManager.LoadText(textName, "menuFont", text, { 255, 255, 255, SDL_ALPHA_OPAQUE }))
+	{
+		return;
+	}
+
+	SDL_Texture* textTexture = textManager.GetText(textName);
+	if (!textTexture)
+	{
+		return;
+	}
+
+	int textWidth = 0;
+	int textHeight = 0;
+	textManager.GetTextSize(textName, textWidth, textHeight);
+
+	SDL_Rect textRect
+	{
+		x + (w - textWidth) / 2,
+		y + (h - textHeight) / 2,
+		textWidth,
+		textHeight
+	};
+
+	SDL_Rect textShadowRect
+	{
+		textRect.x + 3,
+		textRect.y + 3,
+		textRect.w,
+		textRect.h
+	};
+
+	SDL_SetTextureColorMod(textTexture, 0, 0, 0);
+	SDL_SetTextureAlphaMod(textTexture, 170);
+	SDL_RenderCopy(m_renderer, textTexture, nullptr, &textShadowRect);
+
+	SDL_SetTextureColorMod(textTexture, 235, 225, 210);
+	SDL_SetTextureAlphaMod(textTexture, 255);
+	SDL_RenderCopy(m_renderer, textTexture, nullptr, &textRect);
+
+	SDL_SetTextureColorMod(textTexture, 255, 255, 255);
+	SDL_SetTextureAlphaMod(textTexture, 255);
 }
