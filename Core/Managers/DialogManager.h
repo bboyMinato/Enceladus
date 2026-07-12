@@ -7,7 +7,7 @@
 class DialogEntry;
 class Dialogue;
 
-const auto dialogPath = std::filesystem::path("Assets/dialogs");
+inline const std::filesystem::path dialogPath{ "Assets/dialogs" };
 
 class DialogueManager {
 public:
@@ -23,7 +23,7 @@ private:
 class Dialogue {
 public:
     Dialogue(const std::filesystem::path &path);
-    const std::vector<DialogEntry> GetEntries() const;
+    const std::vector<DialogEntry>& GetEntries() const;
 
 private:
     std::vector<DialogEntry> m_entries;

@@ -2,9 +2,9 @@
 #include "../Managers/TextureManager.h"
 #include "../ECS/Registry.h"
 #include "../ECS/CameraComponent.h"
+#include "../Utility/DialogueRuntimeState.h"
 #include <SDL2/SDL.h>
 
-class Dialogue;
 class TextManager;
 
 class RenderSystem
@@ -21,7 +21,7 @@ public:
 
 	void RenderEntites(Registry& registry, const CameraComponent& camera) const;
 
-	void RenderDialog(const Dialogue *dialogue, int windowWidth, int windowHeight, TextManager& textManager) const;
+	void RenderDialogue(const DialogueRuntimeState& dialogueState, int windowWidth, int windowHeight, TextManager& textManager) const;
 
 private:
 	SDL_Renderer* m_renderer{ nullptr };

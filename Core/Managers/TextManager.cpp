@@ -99,7 +99,7 @@ void TextManager::UnloadAllFonts()
 	m_fonts.clear();
 }
 
-bool TextManager::LoadText(const std::string& textName, const std::string& fontName, const std::string& text, SDL_Color color)
+bool TextManager::LoadText(const std::string& textName, const std::string& fontName, const std::string& text, SDL_Color color, int wrapLength)
 {
 	if (!m_isInitialized)
 	{
@@ -120,7 +120,15 @@ bool TextManager::LoadText(const std::string& textName, const std::string& fontN
 		return false;
 	}
 
-	SDL_Surface* surface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
+	SDL_Surface* surface = nullptr;
+	if (wrapLength > 0)
+	{
+		surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, static_cast<Uint32>(wrapLength));
+	}
+	else
+	{
+		surface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
+	}
 	if (!surface)
 	{
 		SDL_Log("Failed to render text surface: %s", TTF_GetError());

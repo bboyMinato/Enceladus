@@ -1,10 +1,15 @@
 #include "Handlers.h"
+#include "../Managers/DialogManager.h"
 #include <print>
 #include <cmath>
 
-void SetupInteractionHandlers(EventBus& eventBus, Registry& registry)
+void SetupInteractionHandlers(
+	EventBus& eventBus,
+	Registry& registry,
+	DialogueRuntimeState& dialogueState,
+	const DialogueManager& dialogueManager)
 {
-	eventBus.Subscribe<InteractionEvent>([&eventBus, &registry](const InteractionEvent& event)
+	eventBus.Subscribe<InteractionEvent>([&eventBus, &registry, &dialogueState](const InteractionEvent& event)
 		{
 			auto* interactable = event.target.Get<Interactable>();
 
@@ -16,9 +21,11 @@ void SetupInteractionHandlers(EventBus& eventBus, Registry& registry)
 			switch (interactable->interactionType)
 			{
 				case InteractionType::Dialogue:			
-					//TODO: remove println and replace with actual dialogue system logic
-					std::println("Triggering event with entity: {}", event.target.GetId());
-					
+					if (dialogueState.HasDialogue())
+					{
+						return;
+					}
+
 					eventBus.Emit(DialogueEvent{ event.player, event.target, interactable->dialogueId });
 					break;
 				
@@ -43,8 +50,8 @@ void SetupInteractionHandlers(EventBus& eventBus, Registry& registry)
 			}
 		});
 
-	eventBus.Subscribe<DialogueEvent>([&eventBus, &registry](const DialogueEvent& event) -> void {
-
+	eventBus.Subscribe<DialogueEvent>([&dialogueState, &dialogueManager](const DialogueEvent& event) -> void {
+		dialogueState.SetDialogue(dialogueManager.GetDialogue(event.dialogueId), event.dialogueId);
 	});
 }
 

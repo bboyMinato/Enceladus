@@ -4,16 +4,47 @@
 #include <filesystem>
 #include <format>
 #include <fstream>
-#include <ranges>
+#include <system_error>
 
-bool DialogueManager::Init() {
-    for (const auto &entry : std::filesystem::recursive_directory_iterator(dialogPath)) {
-        const auto &path = entry.path();
-        if (path.extension() == ".dialog") {
-            const auto &stem = path.stem();
+bool DialogueManager::Init()
+{
+    std::error_code ec;
+
+    if (!std::filesystem::exists(dialogPath, ec))
+    {
+        SDL_Log("Dialogue directory does not exist: %s", dialogPath.string().c_str());
+        return false;
+    }
+
+    for (std::filesystem::recursive_directory_iterator it(
+             dialogPath,
+             std::filesystem::directory_options::skip_permission_denied,
+             ec), end;
+         it != end;
+         it.increment(ec))
+    {
+        if (ec)
+        {
+            SDL_Log("Failed to iterate dialogue directory '%s': %s", dialogPath.string().c_str(), ec.message().c_str());
+            ec.clear();
+            continue;
+        }
+
+        const auto& entry = *it;
+        if (!entry.is_regular_file(ec) || ec)
+        {
+            ec.clear();
+            continue;
+        }
+
+        const auto& path = entry.path();
+        if (path.extension() == ".dialog")
+        {
+            const auto& stem = path.stem();
             m_dialogs.emplace(stem.string(), Dialogue(path));
         }
     }
+
     return true;
 }
 
@@ -34,19 +65,40 @@ Dialogue::Dialogue(const std::filesystem::path &path) {
         throw std::runtime_error(std::format("Failed to open file '%s'.", path.string()));
     }
 
-    std::stringstream buffer;
-    buffer << inputFile.rdbuf();
+    std::string chunk;
+    std::string line;
 
-    std::string lines = buffer.str();
+    while (std::getline(inputFile, line))
+    {
+        if (!line.empty() && line.back() == '\r')
+        {
+            line.pop_back();
+        }
 
-    for (const auto &chunk : std::views::split(lines, "\n\n")) {
-        const auto substr = std::string_view(chunk);
-        const auto entry = DialogEntry(substr);
-        m_entries.push_back(entry);
+        if (line.empty())
+        {
+            if (!chunk.empty())
+            {
+                m_entries.emplace_back(chunk);
+                chunk.clear();
+            }
+            continue;
+        }
+
+        if (!chunk.empty())
+        {
+            chunk.push_back('\n');
+        }
+        chunk += line;
+    }
+
+    if (!chunk.empty())
+    {
+        m_entries.emplace_back(chunk);
     }
 }
 
-const std::vector<DialogEntry> Dialogue::GetEntries() const {
+const std::vector<DialogEntry>& Dialogue::GetEntries() const {
     return m_entries;
 }
 

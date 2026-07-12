@@ -52,7 +52,7 @@ void PlayState::OnEnter(Engine& engine)
 
 	engine.GetSoundManager().PlayMusic("background_forest_music", true);
 
-	SetupInteractionHandlers(m_eventBus, m_registry);
+	SetupInteractionHandlers(m_eventBus, m_registry, m_dialogueState, engine.GetDialogManager());
 
     engine.GetTextManager().LoadFont("menuFont", "Assets/fonts/Uncial.ttf", 48);
 
@@ -75,6 +75,8 @@ void PlayState::OnExit(Engine& engine)
 		m_camera.Destroy();
 		m_camera = {};
 	}
+
+	m_dialogueState.Clear();
 
 	engine.GetTextureManager().UnloadTexture("player_idle");
 	engine.GetTextureManager().UnloadTexture("player_v2_idle");
@@ -100,7 +102,9 @@ void PlayState::Update(Engine& engine, float deltaTime)
 		return;
 	}
 
-	ControllerSystem::Update(m_registry, input, m_eventBus);
+	m_dialogueState.Update(deltaTime);
+
+	ControllerSystem::Update(m_registry, input, m_eventBus, m_dialogueState);
 	MovementSystem::Update(m_registry, deltaTime);
 	CollisionSystem::Update(m_registry);
 
@@ -275,13 +279,10 @@ void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
     auto &renderSystem = engine.GetRenderSystem();
     m_tileMap.Render(renderSystem, camera->m_viewport, m_registry);
 
-    const auto &dialogueManager = engine.GetDialogManager();
     const auto &config = engine.GetConfig();
 
-    const auto *currentDialogue = dialogueManager.GetDialogue("test_dialogue");
-
     auto& textManager = engine.GetTextManager();
-    renderSystem.RenderDialog(currentDialogue, config.windowWidth, config.windowHeight, textManager);
+    renderSystem.RenderDialogue(m_dialogueState, config.windowWidth, config.windowHeight, textManager);
 
 #ifdef _DEBUG
     if (!m_showColliderDebug)
