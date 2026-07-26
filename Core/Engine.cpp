@@ -96,6 +96,14 @@ void Engine::Init(const EngineConfig& config)
 		return;
 	}
 
+    if (!m_dialogManager.Init())
+    {
+        SDL_Log("Failed to initialize DialogManager.");
+        Shutdown();
+
+        return;
+    }
+
 #ifdef _DEBUG
 	if (!InitImGui())
 	{

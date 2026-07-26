@@ -2,7 +2,10 @@
 #include "../Managers/TextureManager.h"
 #include "../ECS/Registry.h"
 #include "../ECS/CameraComponent.h"
+#include "../Utility/DialogueRuntimeState.h"
 #include <SDL2/SDL.h>
+
+class TextManager;
 
 class RenderSystem
 {
@@ -17,6 +20,8 @@ public:
 	void RenderTexture(const std::string& textureName, const SDL_Rect* srcRect, const SDL_Rect* dstRect, SDL_RendererFlip flip = SDL_FLIP_NONE) const;
 
 	void RenderEntites(Registry& registry, const CameraComponent& camera) const;
+
+	void RenderDialogue(const DialogueRuntimeState& dialogueState, int windowWidth, int windowHeight, TextManager& textManager) const;
 
 private:
 	SDL_Renderer* m_renderer{ nullptr };

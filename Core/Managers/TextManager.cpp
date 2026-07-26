@@ -99,52 +99,60 @@ void TextManager::UnloadAllFonts()
 	m_fonts.clear();
 }
 
-bool TextManager::LoadText(const std::string& textName, const std::string& fontName, const std::string& text, SDL_Color color)
+bool TextManager::LoadText(const std::string& textName, const std::string& fontName, const std::string& text, SDL_Color color, int wrapLength)
 {
-	if (!m_isInitialized)
-	{
-		SDL_Log("TextManager is not initialized.");
-		return false;
-	}
+    if (!m_isInitialized)
+    {
+        SDL_Log("TextManager is not initialized.");
+        return false;
+    }
 
-	if (!m_renderer)
-	{
-		SDL_Log("Renderer is not set.");
-		return false;
-	}
+    if (!m_renderer)
+    {
+        SDL_Log("Renderer is not set.");
+        return false;
+    }
 
-	TTF_Font* font = GetFont(fontName);
-	if (!font)
-	{
-		SDL_Log("Font '%s' not found.", fontName.c_str());
-		return false;
-	}
+    TTF_Font *font = GetFont(fontName);
+    if (!font)
+    {
+        SDL_Log("Font '%s' not found.", fontName.c_str());
+        return false;
+    }
 
-	SDL_Surface* surface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
-	if (!surface)
-	{
-		SDL_Log("Failed to render text surface: %s", TTF_GetError());
-		return false;
-	}
+    SDL_Surface *surface = nullptr;
+    if (wrapLength > 0)
+    {
+        surface = TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, static_cast<Uint32>(wrapLength));
+    }
+    else
+    {
+        surface = TTF_RenderUTF8_Blended(font, text.c_str(), color);
+    }
+    if (!surface)
+    {
+        SDL_Log("Failed to render text surface: %s", TTF_GetError());
+        return false;
+    }
 
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
-	SDL_FreeSurface(surface);
-	
-	if (!texture)
-	{
-		SDL_Log("Failed to create text texture: %s", SDL_GetError());
-		return false;
-	}
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+    SDL_FreeSurface(surface);
 
-	auto it = m_texts.find(textName);
-	if (it != m_texts.end())
-	{
-		SDL_DestroyTexture(it->second);
-	}
+    if (!texture)
+    {
+        SDL_Log("Failed to create text texture: %s", SDL_GetError());
+        return false;
+    }
 
-	m_texts[textName] = texture;
+    auto it = m_texts.find(textName);
+    if (it != m_texts.end())
+    {
+        SDL_DestroyTexture(it->second);
+    }
 
-	return true;
+    m_texts[textName] = texture;
+
+    return true;
 }
 
 void TextManager::UnloadText(const std::string& textName)
