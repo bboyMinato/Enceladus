@@ -110,7 +110,7 @@ void PlayState::Update(Engine& engine, float deltaTime)
 	{
 		if (const ControllerComponent* controller = m_player.Get<ControllerComponent>(); controller != nullptr)
 		{
-			if (input.WasKeyPressed(controller->interactKey))
+			if (input.WasKeyPressed(controller->interactPrimary) || input.WasKeyPressed(controller->interactSecondary))
 			{
 				(void)dialogManager.AdvanceDialogue();
 			}

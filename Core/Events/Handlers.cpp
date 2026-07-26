@@ -1,17 +1,19 @@
 #include "Handlers.h"
 #include "../Managers/DialogManager.h"
-#include <cmath>
 #include "../ECS/InteractableComponent.h"
+#include <cmath>
 #include <print>
 
 void SetupInteractionHandlers(EventBus &eventBus, Registry &registry, DialogueManager &dialogueManager)
 {
-	eventBus.Subscribe<InteractionEvent>([&eventBus, &registry](const InteractionEvent& event)
-		{
-			auto* interactable = event.target.Get<InteractableComponent>();
+    eventBus.Subscribe<InteractionEvent>([&eventBus, &registry](const InteractionEvent& event) 
+    {
+         auto* interactable = event.target.Get<InteractableComponent>();
+    });
 
-    eventBus.Subscribe<InteractionEvent>([&eventBus, &dialogueManager](const InteractionEvent &event) {
-        auto *interactable = event.target.Get<Interactable>();
+    eventBus.Subscribe<InteractionEvent>([&eventBus, &dialogueManager](const InteractionEvent &event) 
+    {
+        auto *interactable = event.target.Get<InteractableComponent>();
 
         if (interactable->oneShot && interactable->used)
         {
