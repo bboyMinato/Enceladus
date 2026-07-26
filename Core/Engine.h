@@ -83,9 +83,9 @@ private:
 	bool m_isRunning{ false };
 	bool m_hasFocus{ true };
 
-	Uint32 m_targetFPS{ 60 };
-	Uint32 m_frameDelay{ 1000 / 60 };
-	Uint32 m_lastFrameTicks{ 0 };
+	Uint64 m_targetFPS{ 60 };
+	Uint64 m_frameDelay{ 1000 / 60 };
+	Uint64 m_lastFrameTicks{ 0 };
 
 	float m_deltaTime{ 0.0f };
 	float m_fps{ 0.0f };

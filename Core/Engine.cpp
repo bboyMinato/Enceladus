@@ -124,7 +124,7 @@ void Engine::Run()
 			return;
 		}
 
-		const Uint32 frameStart = SDL_GetTicks64();
+		const Uint64 frameStart = SDL_GetTicks64();
 				
 		m_deltaTime = (frameStart - m_lastFrameTicks) / 1000.0f;
 		m_lastFrameTicks = frameStart;
@@ -135,7 +135,7 @@ void Engine::Run()
 		Update(m_deltaTime);
 		Render();
 
-		Uint32 frameTime = SDL_GetTicks() - frameStart;
+		Uint64 frameTime = SDL_GetTicks64() - frameStart;
 		if (frameTime < m_frameDelay)
 		{
 			SDL_Delay(m_frameDelay - frameTime);
