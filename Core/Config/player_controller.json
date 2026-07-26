@@ -5,7 +5,7 @@
       "primary": "W",
       "secondary": "UP"
     },
-    {
+    { 
       "action": "down",
       "primary": "S",
       "secondary": "DOWN"
@@ -23,7 +23,7 @@
     {
       "action": "interact",
       "primary": "E",
-      "secondary": "UNKNOWN"
+      "secondary": ""
     }
   ]
 }

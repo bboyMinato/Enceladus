@@ -469,6 +469,9 @@ namespace
 
 			std::string actionName = action["action"].get<std::string>();
 
+			std::transform(actionName.begin(), actionName.end(), actionName.begin(),
+				[](unsigned char c) { return std::tolower(c); });
+
 			if (actionName == "left")
 			{
 				controller.moveLeftPrimary = StringToScanCode(action.value("primary", ""));
