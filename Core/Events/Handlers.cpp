@@ -1,11 +1,12 @@
 #include "Handlers.h"
+#include "../ECS/InteractableComponent.h"
 #include <print>
 
 void SetupInteractionHandlers(EventBus& eventBus, Registry& registry)
 {
 	eventBus.Subscribe<InteractionEvent>([&eventBus, &registry](const InteractionEvent& event)
 		{
-			auto* interactable = event.target.Get<Interactable>();
+			auto* interactable = event.target.Get<InteractableComponent>();
 
 			if (interactable->oneShot && interactable->used)
 			{				
@@ -55,8 +56,8 @@ std::optional<Entity> FindClosestInteractable(Entity player, Registry& registry)
 	std::optional<Entity> closestEntity = std::nullopt;
 	float closestDistance = std::numeric_limits<float>::max();
 
-	registry.ForEach<Interactable, TransformComponent>(
-		[&](Entity entity, const Interactable& interactable, const TransformComponent& transform)
+	registry.ForEach<InteractableComponent, TransformComponent>(
+		[&](Entity entity, const InteractableComponent& interactable, const TransformComponent& transform)
 		{
 			if (interactable.used && interactable.oneShot)
 			{

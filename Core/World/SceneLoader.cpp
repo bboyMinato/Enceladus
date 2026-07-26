@@ -9,6 +9,7 @@
 #include "../ECS/TagComponent.h"
 #include "../ECS/CameraComponent.h"
 #include "../ECS/Registry.h"
+#include "../ECS/InteractableComponent.h"
 #include "../Engine.h"
 #include "../Events/Event.h"
 #include "TileMap.h"
@@ -409,7 +410,7 @@ namespace
 		}
 
 		const Json& interactableDef = entityDef["interactable"];
-		entity.Add<Interactable>(
+		entity.Add<InteractableComponent>(
 			StringToInteractionType(interactableDef.value("interactionType", "default")),
 			interactableDef.value("interactionRange", 200.0f),
 			interactableDef.value("requiresKey", true),

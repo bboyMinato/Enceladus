@@ -6,6 +6,7 @@
 #include "../ECS/MovementComponent.h"
 #include "../ECS/ColliderComponent.h"
 #include "../ECS/TagComponent.h"
+#include "../ECS/InteractableComponent.h"
 #include "../Systems/AnimationStateSystem.h"
 #include "../Systems/ControllerSystem.h"
 #include "../Systems/MovementSystem.h"
@@ -474,7 +475,7 @@ void PlayState::RenderCameraTab(Entity cameraEntity)
 
 void PlayState::RenderInteractionTab(Entity selectedEntity)
 {
-	Interactable* interactable = selectedEntity.Get<Interactable>();
+	InteractableComponent* interactable = selectedEntity.Get<InteractableComponent>();
 
 	if (interactable != nullptr)
 	{

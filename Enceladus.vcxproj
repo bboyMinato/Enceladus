@@ -181,6 +181,7 @@
     <ClInclude Include="Core\ECS\Component.h" />
     <ClInclude Include="Core\ECS\ControllerComponent.h" />
     <ClInclude Include="Core\ECS\Entity.h" />
+    <ClInclude Include="Core\ECS\InteractableComponent.h" />
     <ClInclude Include="Core\ECS\MovementComponent.h" />
     <ClInclude Include="Core\ECS\Registry.h" />
     <ClInclude Include="Core\ECS\SpriteAnimationComponent.h" />
