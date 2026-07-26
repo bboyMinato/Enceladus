@@ -1,6 +1,6 @@
 #include "DialogManager.h"
 
-#include <SDL_log.h>
+#include <SDL2/SDL_log.h>
 #include <filesystem>
 #include <system_error>
 

@@ -1,6 +1,6 @@
 #pragma once
-#include "Core/Utility/Dialogue.h"
-#include "Core/Utility/DialogueRuntimeState.h"
+#include "../Utility/Dialogue.h"
+#include "../Utility/DialogueRuntimeState.h"
 
 #include <filesystem>
 #include <map>

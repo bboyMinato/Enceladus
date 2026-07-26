@@ -1,8 +1,7 @@
 #include "RenderSystem.h"
 #include "../ECS/SpriteComponent.h"
 #include "../ECS/TransformComponent.h"
-#include "Core/Managers/TextManager.h"
-
+#include "../Managers/TextManager.h"
 #include <algorithm>
 #include <sstream>
 #include <vector>

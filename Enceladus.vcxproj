@@ -131,6 +131,7 @@
     <ClCompile Include="Core\Config\AppSetting.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\Events\Handlers.cpp" />
+    <ClCompile Include="Core\Managers\DialogManager.cpp" />
     <ClCompile Include="Core\Managers\SoundManager.cpp" />
     <ClCompile Include="Core\Managers\StateManager.cpp" />
     <ClCompile Include="Core\Managers\TextManager.cpp" />
@@ -149,6 +150,8 @@
     <ClCompile Include="Core\UI\Button.cpp" />
     <ClCompile Include="Core\UI\Menu.cpp" />
     <ClCompile Include="Core\Utility\AnimationUtils.cpp" />
+    <ClCompile Include="Core\Utility\Dialogue.cpp" />
+    <ClCompile Include="Core\Utility\DialogueRuntimeState.cpp" />
     <ClCompile Include="Core\World\SceneLoader.cpp" />
     <ClCompile Include="Core\World\TileMap.cpp" />
     <ClCompile Include="main.cpp" />
@@ -190,6 +193,7 @@
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\Events\Event.h" />
     <ClInclude Include="Core\Events\Handlers.h" />
+    <ClInclude Include="Core\Managers\DialogManager.h" />
     <ClInclude Include="Core\Managers\SoundManager.h" />
     <ClInclude Include="Core\Managers\StateManager.h" />
     <ClInclude Include="Core\Managers\TextManager.h" />
@@ -212,6 +216,8 @@
     <ClInclude Include="Core\UI\Menu.h" />
     <ClInclude Include="Core\Utility\AnimationClip.h" />
     <ClInclude Include="Core\Utility\AnimationUtils.h" />
+    <ClInclude Include="Core\Utility\Dialogue.h" />
+    <ClInclude Include="Core\Utility\DialogueRuntimeState.h" />
     <ClInclude Include="Core\World\SceneLoader.h" />
     <ClInclude Include="Core\World\TileMap.h" />
   </ItemGroup>
