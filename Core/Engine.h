@@ -3,6 +3,7 @@
 #include "Managers/TextureManager.h"
 #include "Managers/StateManager.h"
 #include "Managers/SoundManager.h"
+#include "Managers/DialogManager.h"
 #include "Managers/TextManager.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/InputSystem.h"
@@ -40,6 +41,7 @@ public:
 	inline InputSystem& GetInputSystem() { return m_inputSystem; }
 	inline SoundManager& GetSoundManager() { return m_soundManager; }
 	inline TextManager& GetTextManager() { return m_textManager; }
+	inline DialogueManager& GetDialogManager() { return m_dialogManager; }
 	inline const AppSettings& GetAppSettings() const { return m_settings; }
 
 	void RequestShutdown() { m_isRunning = false; }
@@ -78,6 +80,7 @@ private:
 	InputSystem m_inputSystem;
 	SoundManager m_soundManager;
 	TextManager m_textManager;
+	DialogueManager m_dialogManager;
 	AppSettings m_settings;
 
 	bool m_isRunning{ false };

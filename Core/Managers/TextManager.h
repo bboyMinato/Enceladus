@@ -17,14 +17,12 @@ public:
 	void UnloadFont(const std::string& fontName);
 	void UnloadAllFonts();
 
-	bool LoadText(const std::string& textName, const std::string& fontName, const std::string& text, SDL_Color color);
-	void UnloadText(const std::string& textName);
+	bool LoadText(const std::string& textName, const std::string& fontName, const std::string& text, SDL_Color color, int wrapLength = 0);
+    void UnloadText(const std::string& textName);
 	void UnloadAllTexts();
 
 	SDL_Texture* GetText(const std::string& textName) const;
 	void GetTextSize(const std::string& textName, int& width, int& height) const;
-
-private:
 	TTF_Font* GetFont(const std::string& fontName) const;
 
 private:
