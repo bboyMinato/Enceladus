@@ -9,29 +9,33 @@
 #include "../ECS/TagComponent.h"
 #include "../ECS/CameraComponent.h"
 #include "../ECS/Registry.h"
+#include "../ECS/InteractableComponent.h"
 #include "../Engine.h"
+#include "../Events/Event.h"
 #include "TileMap.h"
 #include <SDL2/SDL.h>
 #include <fstream>
 #include <unordered_map>
 #include <algorithm>
-#include "../Events/Event.h"
 
 using Json = nlohmann::json;
 
 namespace
 {
-	bool TryParseAnimation(const std::string& animationStr, AnimationState& outState)
+	bool TryParseAnimation(std::string animationStr, AnimationState& outState)
 	{
+		std::transform(animationStr.begin(), animationStr.end(), animationStr.begin(),
+			[](unsigned char c) { return std::tolower(c); });
+
 		static const std::unordered_map<std::string, AnimationState> animationMap
 		{
-			{ "Idle", AnimationState::Idle },
-			{ "Walking", AnimationState::Walking },
-			{ "Running", AnimationState::Running },
-			{ "Jumping", AnimationState::Jumping },
-			{ "Falling", AnimationState::Falling },
-			{ "Attacking", AnimationState::Attacking },
-			{ "Dying", AnimationState::Dying }
+			{ "idle",		AnimationState::Idle },
+			{ "walking",	AnimationState::Walking },
+			{ "running",	AnimationState::Running },
+			{ "jumping",	AnimationState::Jumping },
+			{ "falling",	AnimationState::Falling },
+			{ "attacking",	AnimationState::Attacking },
+			{ "dying",		AnimationState::Dying }
 		};
 
 		const auto it = animationMap.find(animationStr);
@@ -64,6 +68,19 @@ namespace
 
 		SDL_Log("Unknown interactionType '%s', defaulting", str.c_str());
 		return InteractionType::Default;
+	}
+
+	SDL_Scancode StringToScanCode(const std::string& name)
+	{
+		SDL_Keycode keycode = SDL_GetKeyFromName(name.c_str());
+
+		if (keycode == SDLK_UNKNOWN)
+		{
+			SDL_Log("Unknown key name '%s', defaulting to SDLK_UNKNOWN", name.c_str());
+			return SDL_SCANCODE_UNKNOWN;
+		}
+
+		return SDL_GetScancodeFromKey(keycode);
 	}
 
 	bool LoadTextureDefinitions(const Json& document, Engine& engine, SceneLoadResult& result)
@@ -271,16 +288,6 @@ namespace
 		sprite->m_isVisible = spriteDef.value("isVisible", sprite->m_isVisible);
 	}
 
-	void ApplyControllerComponent(const Json& entityDef, Entity& entity)
-	{
-		if (!entityDef.contains("controller") || !entityDef["controller"].is_object())
-		{
-			return;
-		}
-
-		entity.Add<ControllerComponent>();
-	}
-
 	void ApplyAnimationComponent(const Json& entityDef, Entity& entity)
 	{
 		if (!entityDef.contains("animations") || !entityDef["animations"].is_object())
@@ -403,7 +410,7 @@ namespace
 		}
 
 		const Json& interactableDef = entityDef["interactable"];
-		entity.Add<Interactable>(
+		entity.Add<InteractableComponent>(
 			StringToInteractionType(interactableDef.value("interactionType", "default")),
 			interactableDef.value("interactionRange", 200.0f),
 			interactableDef.value("requiresKey", true),
@@ -411,6 +418,87 @@ namespace
 			interactableDef.value("used", false),
 			interactableDef.value("dialogueId", "")
 		);
+	}
+
+	void ApplyControllerComponent(const Json& entityDef, Entity& entity)
+	{
+		if (!entityDef.contains("controller") || !entityDef["controller"].is_object())
+		{
+			return;
+		}
+
+		const Json& controllerDef = entityDef["controller"];
+
+		if (!controllerDef.contains("path"))
+		{
+			return;
+		}
+
+		const std::string path = controllerDef["path"].get<std::string>();
+
+		std::ifstream file(path);
+
+		if (!file.is_open())
+		{
+			SDL_Log("Failed to open controller path file: %s", path.c_str());
+			return;
+		}
+
+		Json controllerJson = Json::parse(file, nullptr, false);
+
+		if (controllerJson.is_discarded())
+		{
+			SDL_Log("Failed to parse controller JSON file: %s", path.c_str());
+			return;
+		}
+
+		if (!controllerJson.contains("actions") || !controllerJson["actions"].is_array())
+		{
+			SDL_Log("Controller JSON is missing 'actions' array or it is not an array.");
+			return;
+		}
+
+		auto& controller = entity.Add<ControllerComponent>();
+
+		// Loop through actions array
+		for (const auto& action : controllerJson["actions"])
+		{
+			if (!action.contains("action") || !action["action"].is_string())
+			{
+				continue;
+			}
+
+			std::string actionName = action["action"].get<std::string>();
+
+			std::transform(actionName.begin(), actionName.end(), actionName.begin(),
+				[](unsigned char c) { return std::tolower(c); });
+
+			if (actionName == "left")
+			{
+				controller.moveLeftPrimary = StringToScanCode(action.value("primary", ""));
+				controller.moveLeftSecondary = StringToScanCode(action.value("secondary", ""));
+			}
+			else if (actionName == "right")
+			{
+				controller.moveRightPrimary = StringToScanCode(action.value("primary", ""));
+				controller.moveRightSecondary = StringToScanCode(action.value("secondary", ""));
+			}
+			else if (actionName == "up")
+			{
+				controller.moveUpPrimary = StringToScanCode(action.value("primary", ""));
+				controller.moveUpSecondary = StringToScanCode(action.value("secondary", ""));
+			}
+			else if (actionName == "down")
+			{
+				controller.moveDownPrimary = StringToScanCode(action.value("primary", ""));
+				controller.moveDownSecondary = StringToScanCode(action.value("secondary", ""));
+			}
+			else if (actionName == "interact")
+			{
+				controller.interactPrimary = StringToScanCode(action.value("primary", ""));
+				controller.interactSecondary = StringToScanCode(action.value("secondary", ""));
+			}
+		}
 	}
 
 	bool LoadEntities(const Json& document, Registry& registry, SceneLoadResult& result)
@@ -469,18 +557,14 @@ SceneLoadResult SceneLoader::LoadScene(const std::string& filePath, Engine& engi
 		return result;
 	}
 
-	Json document;
+	Json document = Json::parse(file, nullptr, false);
 	
-	try
+	if (document.is_discarded())
 	{
-		file >> document;
-	}
-	catch (const Json::parse_error& e)
-	{
-		SDL_Log("Failed to parse scene file: %s. Error: %s", filePath.c_str(), e.what());
+		SDL_Log("Failed to parse scene JSON file: %s", filePath.c_str());
 		return result;
 	}
-
+	
 	if (!LoadTextureDefinitions(document, engine, result) ||
 		!LoadSoundDefinitions(document, engine, result) ||
 		!LoadMusicDefinitions(document, engine, result) ||

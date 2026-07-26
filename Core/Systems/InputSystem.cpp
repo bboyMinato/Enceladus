@@ -182,10 +182,3 @@ bool InputSystem::WasMouseButtonReleased(Uint8 button) const
 
 	return m_mouseButtonsReleased[index];
 }
-
-InputState& InputSystem::GetInputState()
-{
-	m_inputState.interactPressed = m_keysPressed[SDL_SCANCODE_E] || m_keysDown[SDL_SCANCODE_E];
-
-	return m_inputState;
-}

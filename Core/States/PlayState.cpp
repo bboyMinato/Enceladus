@@ -6,6 +6,7 @@
 #include "../ECS/MovementComponent.h"
 #include "../ECS/ColliderComponent.h"
 #include "../ECS/TagComponent.h"
+#include "../ECS/InteractableComponent.h"
 #include "../Systems/AnimationStateSystem.h"
 #include "../Systems/ControllerSystem.h"
 #include "../Systems/MovementSystem.h"
@@ -109,7 +110,7 @@ void PlayState::Update(Engine& engine, float deltaTime)
 	{
 		if (const ControllerComponent* controller = m_player.Get<ControllerComponent>(); controller != nullptr)
 		{
-			if (input.WasKeyPressed(controller->interactKey))
+			if (input.WasKeyPressed(controller->interactPrimary) || input.WasKeyPressed(controller->interactSecondary))
 			{
 				(void)dialogManager.AdvanceDialogue();
 			}
@@ -504,9 +505,10 @@ void PlayState::RenderCameraTab(Entity cameraEntity)
 		ImGui::TextDisabled("No CameraComponent");
 	}
 }
+
 void PlayState::RenderInteractionTab(Entity selectedEntity)
 {
-	Interactable* interactable = selectedEntity.Get<Interactable>();
+	InteractableComponent* interactable = selectedEntity.Get<InteractableComponent>();
 
 	if (interactable != nullptr)
 	{
