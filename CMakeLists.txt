@@ -24,6 +24,8 @@ set(IMGUI_SOURCES
         "${IMGUI_DIR}/imgui_widgets.cpp"
         "${IMGUI_DIR}/backends/imgui_impl_sdl2.cpp"
         "${IMGUI_DIR}/backends/imgui_impl_sdlrenderer2.cpp"
+        Core/Utility/Dialogue.cpp
+        Core/Utility/Dialogue.h
 )
 
 add_executable(Enceladus

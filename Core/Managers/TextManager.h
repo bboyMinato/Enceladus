@@ -18,7 +18,7 @@ public:
 	void UnloadAllFonts();
 
 	bool LoadText(const std::string& textName, const std::string& fontName, const std::string& text, SDL_Color color, int wrapLength = 0);
-	void UnloadText(const std::string& textName);
+    void UnloadText(const std::string& textName);
 	void UnloadAllTexts();
 
 	SDL_Texture* GetText(const std::string& textName) const;

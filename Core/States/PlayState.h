@@ -4,7 +4,6 @@
 #include "../ECS/CameraComponent.h"
 #include "../World/TileMap.h"
 #include "../Events/EventBus.h"
-#include "../Utility/DialogueRuntimeState.h"
 
 class PlayState final : public IGameState
 {
@@ -36,7 +35,6 @@ private:
 	Entity m_camera;
 	TileMap m_tileMap;
 	EventBus m_eventBus;
-	DialogueRuntimeState m_dialogueState;
 
 #ifdef _DEBUG
 	bool m_showDebugWindow{ true };

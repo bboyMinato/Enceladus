@@ -1,41 +1,28 @@
 #pragma once
+#include "Core/Utility/Dialogue.h"
+#include "Core/Utility/DialogueRuntimeState.h"
+
 #include <filesystem>
 #include <map>
 #include <string>
-#include <vector>
 
-class DialogEntry;
-class Dialogue;
+inline const std::filesystem::path dialogPath{"Assets/dialogs"};
 
-inline const std::filesystem::path dialogPath{ "Assets/dialogs" };
-
-class DialogueManager {
-public:
+class DialogueManager
+{
+  public:
     DialogueManager() = default;
-
     bool Init();
     const Dialogue *GetDialogue(const std::string &key) const;
+    bool HasActiveDialogue() const;
+    void SetDialogue(const std::string &key);
+    void ClearDialogue();
+    void Update(float deltaTime);
+    bool AdvanceDialogue();
+    const DialogueRuntimeState &GetRuntimeState() const;
+    DialogueRuntimeState &GetRuntimeState();
 
-private:
+  private:
     std::map<std::string, Dialogue> m_dialogs;
-};
-
-class Dialogue {
-public:
-    Dialogue(const std::filesystem::path &path);
-    const std::vector<DialogEntry>& GetEntries() const;
-
-private:
-    std::vector<DialogEntry> m_entries;
-};
-
-class DialogEntry {
-public:
-    DialogEntry(const std::string_view &chunk);
-    const std::string &GetName() const;
-    const std::string &GetSpeech() const;
-
-private:
-    std::string m_name;
-    std::string m_speech;
+    DialogueRuntimeState m_dialogueState;
 };

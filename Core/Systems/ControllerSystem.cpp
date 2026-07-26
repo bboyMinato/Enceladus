@@ -19,25 +19,19 @@ bool ControllerSystem::PopState(Registry& registry, const InputSystem& input)
 	return wantsBack;
 }
 
-void ControllerSystem::Update(Registry& registry, const InputSystem& input, EventBus& eventBus, DialogueRuntimeState& dialogueState)
+void ControllerSystem::Update(Registry& registry, const InputSystem& input, EventBus& eventBus)
 {
 	registry.ForEach<ControllerComponent, MovementComponent>(
 		[&](Entity entity, const ControllerComponent& controller, MovementComponent& movement)
 		{
-			UpdateMovement(input, controller, movement, dialogueState);
-			HandleInteraction(registry, input, controller, entity, eventBus, dialogueState);
+			UpdateMovement(input, controller, movement);
+			HandleInteraction(registry, input, controller, entity, eventBus);
 		}
 	);
 }
 
-void ControllerSystem::UpdateMovement(const InputSystem& input, const ControllerComponent& controller, MovementComponent& movement, const DialogueRuntimeState& dialogueState)
+void ControllerSystem::UpdateMovement(const InputSystem& input, const ControllerComponent& controller, MovementComponent& movement)
 {
-	if (dialogueState.HasDialogue())
-	{
-		movement.velocity = {};
-		return;
-	}
-
 #ifdef _DEBUG
 	if (movement.m_useManualMovement)
 	{
@@ -73,7 +67,7 @@ void ControllerSystem::UpdateMovement(const InputSystem& input, const Controller
 	}
 }
 
-void ControllerSystem::HandleInteraction(Registry& registry, const InputSystem& input, const ControllerComponent& controller, Entity entity, EventBus& eventBus, DialogueRuntimeState& dialogueState)
+void ControllerSystem::HandleInteraction(Registry& registry, const InputSystem& input, const ControllerComponent& controller, Entity entity, EventBus& eventBus)
 {
 	if (!controller.isEnabled)
 	{
@@ -82,12 +76,6 @@ void ControllerSystem::HandleInteraction(Registry& registry, const InputSystem& 
 
 	if (input.WasKeyPressed(controller.interactKey))
 	{
-		if (dialogueState.HasDialogue())
-		{
-			dialogueState.Advance();
-			return;
-		}
-
 		std::optional<Entity> closestInteractable = FindClosestInteractable(entity, registry);
 
 		if (closestInteractable.has_value())

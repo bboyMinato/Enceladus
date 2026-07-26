@@ -2,15 +2,13 @@
 
 #include <SDL_log.h>
 #include <filesystem>
-#include <format>
-#include <fstream>
 #include <system_error>
 
 bool DialogueManager::Init()
 {
-    std::error_code ec;
+    std::error_code errorCode;
 
-    if (!std::filesystem::exists(dialogPath, ec))
+    if (!std::filesystem::exists(dialogPath, errorCode))
     {
         SDL_Log("Dialogue directory does not exist: %s", dialogPath.string().c_str());
         return false;
@@ -19,21 +17,21 @@ bool DialogueManager::Init()
     for (std::filesystem::recursive_directory_iterator it(
              dialogPath,
              std::filesystem::directory_options::skip_permission_denied,
-             ec), end;
+             errorCode), end;
          it != end;
-         it.increment(ec))
+         it.increment(errorCode))
     {
-        if (ec)
+        if (errorCode)
         {
-            SDL_Log("Failed to iterate dialogue directory '%s': %s", dialogPath.string().c_str(), ec.message().c_str());
-            ec.clear();
+            SDL_Log("Failed to iterate dialogue directory '%s': %s", dialogPath.string().c_str(), errorCode.message().c_str());
+            errorCode.clear();
             continue;
         }
 
         const auto& entry = *it;
-        if (!entry.is_regular_file(ec) || ec)
+        if (!entry.is_regular_file(errorCode) || errorCode)
         {
-            ec.clear();
+            errorCode.clear();
             continue;
         }
 
@@ -58,61 +56,43 @@ const Dialogue *DialogueManager::GetDialogue(const std::string &key) const {
     return &it->second;
 }
 
-Dialogue::Dialogue(const std::filesystem::path &path) {
-    std::ifstream inputFile(path);
+bool DialogueManager::HasActiveDialogue() const
+{
+    return m_dialogueState.HasDialogue();
+}
 
-    if (!inputFile) {
-        throw std::runtime_error(std::format("Failed to open file '%s'.", path.string()));
-    }
-
-    std::string chunk;
-    std::string line;
-
-    while (std::getline(inputFile, line))
+void DialogueManager::SetDialogue(const std::string &key)
+{
+    const Dialogue *dialogue = GetDialogue(key);
+    if (!dialogue)
     {
-        if (!line.empty() && line.back() == '\r')
-        {
-            line.pop_back();
-        }
-
-        if (line.empty())
-        {
-            if (!chunk.empty())
-            {
-                m_entries.emplace_back(chunk);
-                chunk.clear();
-            }
-            continue;
-        }
-
-        if (!chunk.empty())
-        {
-            chunk.push_back('\n');
-        }
-        chunk += line;
+        return;
     }
 
-    if (!chunk.empty())
-    {
-        m_entries.emplace_back(chunk);
-    }
+    m_dialogueState.SetDialogue(dialogue, key);
 }
 
-const std::vector<DialogEntry>& Dialogue::GetEntries() const {
-    return m_entries;
+void DialogueManager::ClearDialogue()
+{
+    m_dialogueState.Clear();
 }
 
-DialogEntry::DialogEntry(const std::string_view &chunk) {
-    constexpr std::string_view delimiter = ": ";
-    const auto index = chunk.find(delimiter);
-    m_name = std::string(chunk.substr(0, index));
-    m_speech = std::string(chunk.substr(index + delimiter.length()));
+void DialogueManager::Update(float deltaTime)
+{
+    m_dialogueState.Update(deltaTime);
 }
 
-const std::string &DialogEntry::GetName() const {
-    return m_name;
+bool DialogueManager::AdvanceDialogue()
+{
+    return m_dialogueState.Advance();
 }
 
-const std::string &DialogEntry::GetSpeech() const {
-    return m_speech;
+const DialogueRuntimeState &DialogueManager::GetRuntimeState() const
+{
+    return m_dialogueState;
+}
+
+DialogueRuntimeState &DialogueManager::GetRuntimeState()
+{
+    return m_dialogueState;
 }

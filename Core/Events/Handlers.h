@@ -3,15 +3,13 @@
 #include "EventBus.h"
 #include "../ECS/Registry.h"
 #include "../ECS/TransformComponent.h"
-#include "../Utility/DialogueRuntimeState.h"
 
 class DialogueManager;
 
 void SetupInteractionHandlers(
 	EventBus& eventBus,
 	Registry& registry,
-	DialogueRuntimeState& dialogueState,
-	const DialogueManager& dialogueManager);
+	DialogueManager& dialogueManager);
 
 std::optional<Entity> FindClosestInteractable(Entity player, Registry& registry);
 
