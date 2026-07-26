@@ -220,6 +220,7 @@
     <None Include="Assets\map\test.tmj" />
     <None Include="Assets\play_scene.json" />
     <None Include="config.ini" />
+    <None Include="Core\Config\player_controller.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\backgrounds\Enceladus_background.png" />

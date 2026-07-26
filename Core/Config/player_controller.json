@@ -1,0 +1,29 @@
+{
+  "actions": [
+    {
+      "action": "up",
+      "primary": "W",
+      "secondary": "UP"
+    },
+    {
+      "action": "down",
+      "primary": "S",
+      "secondary": "DOWN"
+    },
+    {
+      "action": "left",
+      "primary": "A",
+      "secondary": "LEFT"
+    },
+    {
+      "action": "right",
+      "primary": "D",
+      "secondary": "RIGHT"
+    },
+    {
+      "action": "interact",
+      "primary": "E",
+      "secondary": "UNKNOWN"
+    }
+  ]
+}

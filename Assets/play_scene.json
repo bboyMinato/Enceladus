@@ -38,7 +38,9 @@
       "movement": {
         "moveSpeed": 200.0
       },
-      "controller": {},
+      "controller": {
+        "path": "Core/Config/player_controller.json"
+      },
       "sprite": {
         "texture": "player_v2_idle",
         "width": 128,

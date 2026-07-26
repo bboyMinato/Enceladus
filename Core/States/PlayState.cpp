@@ -471,6 +471,7 @@ void PlayState::RenderCameraTab(Entity cameraEntity)
 		ImGui::TextDisabled("No CameraComponent");
 	}
 }
+
 void PlayState::RenderInteractionTab(Entity selectedEntity)
 {
 	Interactable* interactable = selectedEntity.Get<Interactable>();

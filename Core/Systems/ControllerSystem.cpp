@@ -74,7 +74,7 @@ void ControllerSystem::HandleInteraction(Registry& registry, const InputSystem& 
 		return;
 	}
 
-	if (input.WasKeyPressed(controller.interactKey))
+	if (input.WasKeyPressed(controller.interactPrimary) || input.WasKeyPressed(controller.interactSecondary))
 	{
 		std::optional<Entity> closestInteractable = FindClosestInteractable(entity, registry);
 
