@@ -5,6 +5,7 @@
 #include "Managers/SoundManager.h"
 #include "Managers/DialogManager.h"
 #include "Managers/TextManager.h"
+#include "Managers/AnimationManager.h"
 #include "Systems/RenderSystem.h"
 #include "Systems/InputSystem.h"
 #include "Config/AppSetting.h"
@@ -34,13 +35,14 @@ public:
 	void Shutdown();
 	void PopState();
 
-	inline bool IsRunning() const { return m_isRunning; }
+	inline const bool IsRunning() const { return m_isRunning; }
 	inline EngineConfig GetConfig() const { return m_config; }
 	inline TextureManager& GetTextureManager() { return m_textureManager; }
 	inline RenderSystem& GetRenderSystem() { return m_renderSystem; }
 	inline InputSystem& GetInputSystem() { return m_inputSystem; }
 	inline SoundManager& GetSoundManager() { return m_soundManager; }
 	inline TextManager& GetTextManager() { return m_textManager; }
+	inline AnimationManager& GetAnimationManager() { return m_animationManager; }
 	inline DialogueManager& GetDialogManager() { return m_dialogManager; }
 	inline const AppSettings& GetAppSettings() const { return m_settings; }
 
@@ -76,11 +78,12 @@ private:
 	EngineConfig m_config;
 	TextureManager m_textureManager;
 	StateManager m_stateManager;
+	TextManager m_textManager;
+	SoundManager m_soundManager;
+	DialogueManager m_dialogManager;
+	AnimationManager m_animationManager;
 	RenderSystem m_renderSystem;
 	InputSystem m_inputSystem;
-	SoundManager m_soundManager;
-	TextManager m_textManager;
-	DialogueManager m_dialogManager;
 	AppSettings m_settings;
 
 	bool m_isRunning{ false };

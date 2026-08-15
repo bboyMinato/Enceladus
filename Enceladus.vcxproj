@@ -120,17 +120,19 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\Config\AppSetting.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\Events\Handlers.cpp" />
+    <ClCompile Include="Core\Managers\AnimationManager.cpp" />
     <ClCompile Include="Core\Managers\DialogManager.cpp" />
     <ClCompile Include="Core\Managers\SoundManager.cpp" />
     <ClCompile Include="Core\Managers\StateManager.cpp" />
@@ -149,7 +151,7 @@
     <ClCompile Include="Core\Systems\SpriteAnimationSystem.cpp" />
     <ClCompile Include="Core\UI\Button.cpp" />
     <ClCompile Include="Core\UI\Menu.cpp" />
-    <ClCompile Include="Core\Utility\AnimationUtils.cpp" />
+    <ClCompile Include="Core\Utility\DebugHelpers.cpp" />
     <ClCompile Include="Core\Utility\Dialogue.cpp" />
     <ClCompile Include="Core\Utility\DialogueRuntimeState.cpp" />
     <ClCompile Include="Core\World\SceneLoader.cpp" />
@@ -194,6 +196,7 @@
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\Events\Event.h" />
     <ClInclude Include="Core\Events\Handlers.h" />
+    <ClInclude Include="Core\Managers\AnimationManager.h" />
     <ClInclude Include="Core\Managers\DialogManager.h" />
     <ClInclude Include="Core\Managers\SoundManager.h" />
     <ClInclude Include="Core\Managers\StateManager.h" />
@@ -215,8 +218,7 @@
     <ClInclude Include="Core\Systems\SpriteAnimationSystem.h" />
     <ClInclude Include="Core\UI\Button.h" />
     <ClInclude Include="Core\UI\Menu.h" />
-    <ClInclude Include="Core\Utility\AnimationClip.h" />
-    <ClInclude Include="Core\Utility\AnimationUtils.h" />
+    <ClInclude Include="Core\Utility\DebugHelpers.h" />
     <ClInclude Include="Core\Utility\Dialogue.h" />
     <ClInclude Include="Core\Utility\DialogueRuntimeState.h" />
     <ClInclude Include="Core\World\SceneLoader.h" />
@@ -224,10 +226,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
+    <None Include="Assets\animations\animations.json" />
     <None Include="Assets\map\test.tmj" />
     <None Include="Assets\play_scene.json" />
     <None Include="config.ini" />
-    <None Include="Core\Config\player_controller.json" />
+    <None Include="Assets\player_controller.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\backgrounds\Enceladus_background.png" />

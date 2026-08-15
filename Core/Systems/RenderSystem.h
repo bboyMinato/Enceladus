@@ -23,6 +23,10 @@ public:
 
 	void RenderDialogue(const DialogueRuntimeState& dialogueState, int windowWidth, int windowHeight, TextManager& textManager) const;
 
+#ifdef _DEBUG
+	void RenderDebugCollider(Registry& registry, const CameraComponent& camera, int selectedEntityId, bool showDebug) const;
+#endif
+
 private:
 	SDL_Renderer* m_renderer{ nullptr };
 	TextureManager* m_textureManager{ nullptr };

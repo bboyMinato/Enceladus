@@ -52,11 +52,3 @@ DialogueEntry::DialogueEntry(const std::string_view &chunk) {
     m_name = std::string(chunk.substr(0, index));
     m_speech = std::string(chunk.substr(index + delimiter.length()));
 }
-
-const std::string &DialogueEntry::GetName() const {
-    return m_name;
-}
-
-const std::string &DialogueEntry::GetSpeech() const {
-    return m_speech;
-}

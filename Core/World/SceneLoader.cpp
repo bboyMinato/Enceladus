@@ -54,11 +54,12 @@ namespace
 			[](unsigned char c) { return std::tolower(c); });
 
 		static const std::unordered_map<std::string, InteractionType> map = {
-		{ "open",     InteractionType::Open },
-		{ "pickup",   InteractionType::Pickup },
-		{ "activate", InteractionType::Activate },
-		{ "dialogue", InteractionType::Dialogue },
-		{ "examine",  InteractionType::Examine } };
+			{ "open",     InteractionType::Open },
+			{ "pickup",   InteractionType::Pickup },
+			{ "activate", InteractionType::Activate },
+			{ "dialogue", InteractionType::Dialogue },
+			{ "examine",  InteractionType::Examine } 
+		};
 
 		auto it = map.find(str);
 		if (it != map.end())
@@ -290,40 +291,25 @@ namespace
 
 	void ApplyAnimationComponent(const Json& entityDef, Entity& entity)
 	{
-		if (!entityDef.contains("animations") || !entityDef["animations"].is_object())
+		if (!entityDef.contains("animation") || !entityDef["animation"].is_object())
 		{
+			return;
+		}
+
+		const Json& animDef = entityDef["animation"];
+
+		if (!animDef.contains("setName"))
+		{
+			SDL_Log("Animation component missing 'setName'.");
 			return;
 		}
 
 		auto& animation = entity.Add<SpriteAnimationComponent>();
 
-		for (const auto& [stateName, clipJson] : entityDef["animations"].items())
-		{
-			if (!clipJson.is_object())
-			{
-				SDL_Log("Animation clip for '%s' is not an object.", stateName.c_str());
-				continue;
-			}
-
-			AnimationState state;
-			if (!TryParseAnimation(stateName, state))
-			{
-				SDL_Log("Unknown animation state '%s'.", stateName.c_str());
-				continue;
-			}
-
-			AnimationClip clip;
-			clip.frameWidth = clipJson.value("frameWidth", 0);
-			clip.frameHeight = clipJson.value("frameHeight", 0);
-			clip.frameCount = clipJson.value("frameCount", 1);
-			clip.frameDuration = clipJson.value("frameDuration", 0.1f);
-			clip.row = clipJson.value("row", 0);
-			clip.startFrame = clipJson.value("startFrame", 0);
-			clip.isLooping = clipJson.value("isLooping", true);
-			clip.textureName = clipJson.value("textureName", "");
-
-			animation.m_animations[state] = clip;
-		}
+		animation.animationSetName = animDef["setName"].get<std::string>();
+		animation.currentAnimation = animDef.value("currentAnimation", "idle");
+		animation.speedMultiplier = animDef.value("speedMultiplier", 1.0f);
+		animation.isPlaying = animDef.value("isPlaying", true);
 	}
 
 	void ApplyTagComponent(const Json& entityDef, Entity& entity)
@@ -501,6 +487,40 @@ namespace
 		}
 	}
 
+	bool LoadAnimationSetDefinitions(const Json& animDef, Engine& engine)
+	{
+		if (!animDef.contains("animationSets"))
+		{
+			return true; // Optional section
+		}
+
+		if (!animDef["animationSets"].is_array())
+		{
+			SDL_Log("Scene file 'animationSets' must be an array.");
+			return false;
+		}
+
+		for (const Json& animSetDef : animDef["animationSets"])
+		{
+			if (!animSetDef.contains("name") || !animSetDef.contains("filePath"))
+			{
+				SDL_Log("AnimationSet definition is missing 'name' or 'filePath'.");
+				return false;
+			}
+
+			const std::string name = animSetDef["name"].get<std::string>();
+			const std::string filePath = animSetDef["filePath"].get<std::string>();
+
+			if (!engine.GetAnimationManager().LoadAnimationSet(filePath))
+			{
+				SDL_Log("Failed to load animation set from '%s'.", filePath.c_str());
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	bool LoadEntities(const Json& document, Registry& registry, SceneLoadResult& result)
 	{
 		if (!document.contains("entities") || !document["entities"].is_array())
@@ -546,14 +566,14 @@ namespace
 	}
 }
 
-SceneLoadResult SceneLoader::LoadScene(const std::string& filePath, Engine& engine, Registry& registry, TileMap& tileMap)
+SceneLoadResult SceneLoader::LoadScene(std::string_view filePath, Engine& engine, Registry& registry, TileMap& tileMap)
 {
 	SceneLoadResult result;
-	std::ifstream file(filePath);
+	std::ifstream file(filePath.data());
 
 	if (!file.is_open())
 	{
-		SDL_Log("Failed to open scene file: %s", filePath.c_str());
+		SDL_Log("Failed to open scene file: %s", filePath.data());
 		return result;
 	}
 
@@ -561,17 +581,36 @@ SceneLoadResult SceneLoader::LoadScene(const std::string& filePath, Engine& engi
 	
 	if (document.is_discarded())
 	{
-		SDL_Log("Failed to parse scene JSON file: %s", filePath.c_str());
+		SDL_Log("Failed to parse scene JSON file: %s", filePath.data());
 		return result;
 	}
 	
+	Json& animDef = document["animationSets"];
+		
+	if (!animDef.is_object() )
+	{
+		SDL_Log("Scene file 'animationSets' must be an object.");
+		result.loaded = false;
+
+		return result;
+	}
+
+	std::string animSetPath = animDef.value("path", "");
+
+	if (!engine.GetAnimationManager().LoadAnimationSet(animSetPath))
+	{
+		SDL_Log("Failed to load animation set from '%s'.", animSetPath.c_str());
+		result.loaded = false;
+		return result;
+	}
+
 	if (!LoadTextureDefinitions(document, engine, result) ||
 		!LoadSoundDefinitions(document, engine, result) ||
 		!LoadMusicDefinitions(document, engine, result) ||
 		!LoadTileMapDefinitions(document, engine, tileMap) ||
 		!LoadEntities(document, registry, result))
 	{
-		SDL_Log("Failed to load scene from file: %s", filePath.c_str());
+		SDL_Log("Failed to load scene from file: %s", filePath.data());
 		return result;
 	}
 

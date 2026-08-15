@@ -1,0 +1,47 @@
+[
+  {
+    "name": "witch",
+    "defaultTexture": "player_idle",
+    "animations": {
+      "idle": {
+        "frameWidth": 480,
+        "frameHeight": 480,
+        "frameCount": 5,
+        "frameDuration": 0.16,
+        "row": 0,
+        "startFrame": 0,
+        "isLooping": true,
+        "priority": 0,
+        "textureName": "player_idle"
+      },
+      "walk": {
+        "frameWidth": 480,
+        "frameHeight": 480,
+        "frameCount": 5,
+        "frameDuration": 0.16,
+        "row": 3,
+        "startFrame": 0,
+        "isLooping": true,
+        "priority": 1,
+        "textureName": "player_walk"
+      }
+    }
+  },
+  {
+    "name": "skeleton",
+    "defaultTexture": "player_walk",
+    "animations": {
+      "idle": {
+        "frameWidth": 480,
+        "frameHeight": 480,
+        "frameCount": 5,
+        "frameDuration": 0.16,
+        "row": 0,
+        "startFrame": 0,
+        "isLooping": true,
+        "priority": 0,
+        "textureName": "player_walk"
+      }
+    }
+  }
+]   

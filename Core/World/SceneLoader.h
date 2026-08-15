@@ -25,5 +25,5 @@ struct SceneLoadResult
 class SceneLoader final
 {
 public:
-	static SceneLoadResult LoadScene(const std::string& sceneFilePath, Engine& engine, Registry& registry, TileMap& tileMap);
+	static SceneLoadResult LoadScene(std::string_view sceneFilePath, Engine& engine, Registry& registry, TileMap& tileMap);
 };

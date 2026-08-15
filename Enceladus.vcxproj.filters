@@ -72,9 +72,6 @@
     <ClCompile Include="Core\Systems\SpriteAnimationSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Utility\AnimationUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Systems\AnimationStateSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -115,6 +112,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Managers\DialogManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Managers\AnimationManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Utility\DebugHelpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,12 +209,6 @@
     <ClInclude Include="Core\ECS\SpriteAnimationComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Utility\AnimationUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Utility\AnimationClip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Systems\AnimationStateSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -245,12 +242,23 @@
     <ClInclude Include="Core\Managers\DialogManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\ECS\InteractableComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Managers\AnimationManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Utility\DebugHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
     <None Include="config.ini" />
     <None Include="Assets\map\test.tmj" />
     <None Include="Assets\play_scene.json" />
+    <None Include="Assets\player_controller.json" />
+    <None Include="Assets\animations\animations.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\backgrounds\shinobu.jpg">

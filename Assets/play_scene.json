@@ -26,6 +26,9 @@
   "tileMap": {
     "filePath": "Assets/map/test.tmj"
   },
+  "animationSets": {
+    "path": "Assets/animations/animations.json"
+  },
   "sounds": [],
   "entities": [
     {
@@ -39,7 +42,7 @@
         "moveSpeed": 200.0
       },
       "controller": {
-        "path": "Core/Config/player_controller.json"
+        "path": "Assets/player_controller.json"
       },
       "sprite": {
         "texture": "player_v2_idle",
@@ -52,24 +55,11 @@
         "offsetX": 45,
         "offsetY": 35
       },
-      "animations": {
-        "Idle": {
-          "frameWidth": 480,
-          "frameHeight": 480,
-          "frameCount": 5,
-          "frameDuration": 0.16,
-          "isLooping": true,
-          "textureName": "player_v2_idle"
-        },
-        "Walking": {
-          "frameWidth": 480,
-          "frameHeight": 480,
-          "frameCount": 5,
-          "frameDuration": 0.16,
-          "row": 3,
-          "isLooping": true,
-          "textureName": "player_v2_walk"
-        }
+      "animation": {
+        "setName": "witch",
+        "currentAnimation": "idle",
+        "isLooping": true,
+        "speedMultiplier": 1.0
       }
     },
     {
@@ -89,15 +79,11 @@
         "offsetX": 45,
         "offsetY": 35
       },
-      "animations": {
-        "Idle": {
-          "frameWidth": 480,
-          "frameHeight": 500,
-          "frameCount": 5,
-          "frameDuration": 0.16,
-          "isLooping": true,
-          "textureName": "player_idle"
-        }
+      "animation": {
+        "setName": "witch",
+        "currentAnimation": "idle",
+        "isLooping": true,
+        "speedMultiplier": 1.0
       },
       "interactable": {
         "interactionType": "Dialogue",

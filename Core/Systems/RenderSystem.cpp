@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <sstream>
 #include <vector>
+#include "../ECS/ColliderComponent.h"
 
 namespace
 {
@@ -252,5 +253,36 @@ void RenderSystem::RenderDialogue(const DialogueRuntimeState& dialogueState, int
 
 		SDL_SetTextureColorMod(textTexture, 255, 255, 255);
 		SDL_SetTextureAlphaMod(textTexture, 255);
+	}
+}
+
+void RenderSystem::RenderDebugCollider(Registry& registry, const CameraComponent& camera, int selectedEntityId, bool showDebug) const
+{
+	if (!showDebug)
+	{
+		return;
+	}
+
+	for (auto& entity : registry.GetEntitiesWithComponents<ColliderComponent, TransformComponent>())
+	{
+		const auto& collider = entity.Get<ColliderComponent>();
+		const auto& transform = entity.Get<TransformComponent>();
+
+		SDL_Rect colliderRect
+		{
+			static_cast<int>(transform->x + collider->m_offsetX - camera.m_viewport.x),
+			static_cast<int>(transform->y + collider->m_offsetY - camera.m_viewport.y),
+			collider->m_width,
+			collider->m_height
+		};
+
+		SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255);
+
+		if (selectedEntityId == entity.GetId())
+		{
+			SDL_SetRenderDrawColor(m_renderer, 0, 255, 0, 255);
+		}
+
+		SDL_RenderDrawRect(m_renderer, &colliderRect);
 	}
 }

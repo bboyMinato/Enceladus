@@ -31,29 +31,30 @@ bool TextureManager::Init(SDL_Renderer* renderer)
 	return true;
 }
 
-bool TextureManager::LoadTexture(const std::string& textureName, const std::string& filePath)
+bool TextureManager::LoadTexture(std::string_view textureName, std::string_view filePath)
 {
-	SDL_Texture* texture = IMG_LoadTexture(m_renderer, filePath.c_str());
+	SDL_Texture* texture = IMG_LoadTexture(m_renderer, filePath.data());
 	if (!texture)
 	{
-		SDL_Log("Failed to load texture '%s': %s", filePath.c_str(), IMG_GetError());
+		SDL_Log("Failed to load texture '%s': %s", filePath.data(), IMG_GetError());
 		return false;
 	}
 
-	auto existingTextureIt = m_textures.find(textureName);
+	// TODO: This destroys existing texture if the same name is used. Consider whether this is the desired behavior.
+	auto existingTextureIt = m_textures.find(std::string(textureName));
 	if (existingTextureIt != m_textures.end())
 	{
 		SDL_DestroyTexture(existingTextureIt->second);
 	}
 
-	m_textures[textureName] = texture;
+	m_textures[std::string(textureName)] = texture;
 
 	return true;
 }
 
-void TextureManager::UnloadTexture(const std::string& textureName)
+void TextureManager::UnloadTexture(std::string_view textureName)
 {
-	auto it = m_textures.find(textureName);
+	auto it = m_textures.find(std::string(textureName));
 	if (it != m_textures.end())
 	{
 		SDL_DestroyTexture(it->second);
@@ -84,14 +85,14 @@ void TextureManager::GetTextureSize(SDL_Texture* texture, int& width, int& heigh
 	SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
 }
 
-void TextureManager::GetTextureSize(const std::string& textureName, int& width, int& height) const
+void TextureManager::GetTextureSize(std::string_view textureName, int& width, int& height) const
 {
 	GetTextureSize(GetTexture(textureName), width, height);
 }
 
-SDL_Texture* TextureManager::GetTexture(const std::string& textureName) const
+SDL_Texture* TextureManager::GetTexture(std::string_view textureName) const
 {
-	const auto it = m_textures.find(textureName);
+	const auto it = m_textures.find(std::string(textureName));
 	
 	if (it != m_textures.end())
 	{

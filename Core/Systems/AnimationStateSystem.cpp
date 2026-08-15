@@ -1,9 +1,7 @@
 #include "AnimationStateSystem.h"
-#include "../ECS/SpriteComponent.h"
-#include "../ECS/SpriteAnimationComponent.h"
 #include "../ECS/MovementComponent.h"
 
-void AnimationStateSystem::UpdateAnimationStates(Registry& registry)
+void AnimationStateSystem::UpdateAnimationStates(Registry& registry, AnimationManager& animationManager)
 {
     registry.ForEach<SpriteComponent, SpriteAnimationComponent, MovementComponent>(
             [&](Entity entity,
@@ -37,12 +35,41 @@ void AnimationStateSystem::UpdateAnimationStates(Registry& registry)
 
                 if (isMoving)
                 {
-                    AnimationUtils::PlayAnimation(sprite, anim, AnimationState::Walking);
+                    PlayAnimation(sprite, anim, animationManager, "walk");
                 }
                 else
                 {
-                    AnimationUtils::PlayAnimation(sprite, anim, AnimationState::Idle);
+                    PlayAnimation(sprite, anim, animationManager, "idle");
                 }
             }
         );
+}
+
+void AnimationStateSystem::PlayAnimation(SpriteComponent& sprite, SpriteAnimationComponent& anim, AnimationManager& animationManager, std::string_view animationName)
+{
+    if (anim.currentAnimation == animationName && anim.isPlaying)
+    {
+        return;
+    }
+
+    const AnimationDefinition* animDef = animationManager.GetAnimationDefinition(anim.animationSetName, animationName);
+    if (!animDef || !animDef->IsValid())
+    {
+        return;
+    }
+
+    if (!animDef->textureName.empty())
+    {
+        sprite.m_textureName = animDef->textureName;
+    }
+
+    anim.currentAnimation = animationName;
+    anim.currentFrame = 0;
+    anim.elapsedTime = 0.0f;
+    anim.isPlaying = true;
+}
+
+void AnimationStateSystem::SetSpeed(SpriteAnimationComponent& anim, float speedMultiplier)
+{
+    anim.speedMultiplier = std::max(0.0f, speedMultiplier);
 }

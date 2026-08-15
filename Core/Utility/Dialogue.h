@@ -16,8 +16,8 @@ private:
 class DialogueEntry {
 public:
     DialogueEntry(const std::string_view &chunk);
-    const std::string &GetName() const;
-    const std::string &GetSpeech() const;
+    const std::string& GetName() const { return m_name; }
+    const std::string& GetSpeech() const { return m_speech; }
 
 private:
     std::string m_name;

@@ -1,56 +1,70 @@
 #include "SpriteAnimationSystem.h"
+#include <algorithm>
 
-void SpriteAnimationSystem::Update(Registry& registry, float deltaTime)
+void AnimationSystem::Update(Registry& registry, AnimationManager& animationManager, float deltaTime)
 {
 	registry.ForEach<SpriteComponent, SpriteAnimationComponent>(
 		[&](Entity entity, SpriteComponent& sprite, SpriteAnimationComponent& animation)
 		{
-			UpdateSprite(sprite, animation, deltaTime);
+			UpdateSprite(sprite, animation, animationManager, deltaTime);
 		}
 	);
 }
 
-void SpriteAnimationSystem::UpdateSprite(SpriteComponent& sprite, SpriteAnimationComponent& animation, float deltaTime)
+void AnimationSystem::UpdateSprite(SpriteComponent& sprite, SpriteAnimationComponent& animation, AnimationManager& animationManager, float deltaTime)
 {
-	auto it = animation.m_animations.find(animation.m_currentState);
-	if (it == animation.m_animations.end())
+	const AnimationDefinition* animDef = animationManager.GetAnimationDefinition(animation.animationSetName, animation.currentAnimation);
+
+	if (!animDef || !animDef->IsValid())
 	{
 		return;
 	}
 
-	auto& clip = it->second;
-
+	// Update sprite source rect from shared definition
 	sprite.m_hasSourceRect = true;
+	sprite.m_sourceRect.w = animDef->frameWidth;
+	sprite.m_sourceRect.h = animDef->frameHeight;
+	sprite.m_sourceRect.y = animDef->row * animDef->frameHeight;
 
-	sprite.m_sourceRect.w = clip.frameWidth;
-	sprite.m_sourceRect.h = clip.frameHeight;
-	sprite.m_sourceRect.y = clip.row * clip.frameHeight;
-
-	if (animation.m_isPlaying && clip.frameDuration > 0.0f)
+	// Update sprite texture name if defined in the animation definition
+	if (!animDef->textureName.empty())
 	{
-		animation.m_elapsedTime += deltaTime;
+		sprite.m_textureName = animDef->textureName;
+	}
 
-		while (animation.m_elapsedTime >= clip.frameDuration)
+	if (animation.isPlaying && animDef->frameDuration > 0.0f)
+	{
+		const float adjustedDeltaTime = deltaTime * animation.speedMultiplier;
+		animation.elapsedTime += adjustedDeltaTime;
+
+		// Prevent performance issues by limiting the number of frame advances in a single update
+		const int maxAdvances = 10;
+		int advances = 0;
+
+		while (animation.elapsedTime >= animDef->frameDuration && advances < maxAdvances)
 		{
-			animation.m_elapsedTime -= clip.frameDuration;
-			++animation.m_currentFrame;
-
-			if (animation.m_currentFrame >= clip.frameCount)
+			animation.elapsedTime -= animDef->frameDuration;
+			++animation.currentFrame;
+			
+			if (animation.currentFrame >= animDef->frameCount)
 			{
-				if (clip.isLooping)
+				if (animDef->isLooping)
 				{
-					animation.m_currentFrame = 0;
+					animation.currentFrame = 0;
 				}
 				else
 				{
-					animation.m_currentFrame = clip.frameCount - 1;
-					animation.m_isPlaying = false;
-					animation.m_elapsedTime = 0.0f;
-					break;
+					animation.currentFrame = animDef->frameCount - 1;
+					animation.isPlaying = false;
+
+					break; // Stop advancing frames if the animation is not looping
 				}
 			}
+
+			++advances;
 		}
 	}
 
-	sprite.m_sourceRect.x = (clip.startFrame + animation.m_currentFrame) * clip.frameWidth;
+	animation.currentFrame = std::clamp(animation.currentFrame, 0, animDef->frameCount - 1);
+	sprite.m_sourceRect.x = (animDef->startFrame + animation.currentFrame) * animDef->frameWidth;
 }

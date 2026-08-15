@@ -1,9 +1,12 @@
 #pragma once
 #include "IState.h"	
 #include "../ECS/Registry.h"
-#include "../ECS/CameraComponent.h"
 #include "../World/TileMap.h"
 #include "../Events/EventBus.h"
+
+#ifdef _DEBUG
+#include "../Utility/DebugHelpers.h"
+#endif
 
 class PlayState final : public IGameState
 {
@@ -21,15 +24,6 @@ public:
 #endif 
 
 private:
-#ifdef _DEBUG
-	void RenderEntityTab(Entity selectedEntity);
-	void RenderColliderTab(Entity selectedEntity);
-	void RenderAnimationTab(Entity selectedEntity);
-	void RenderCameraTab(Entity cameraEntity);
-	void RenderInteractionTab(Entity selectedEntity);
-#endif 
-
-private:
 	Registry m_registry;
 	Entity m_player;
 	Entity m_camera;
@@ -37,8 +31,6 @@ private:
 	EventBus m_eventBus;
 
 #ifdef _DEBUG
-	bool m_showDebugWindow{ true };
-	bool m_showColliderDebug{ true };
-	int m_selectedDebugEntityId{ 0 };	
+	DebugHelper m_debugHelper;
 #endif
 };

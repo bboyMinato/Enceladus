@@ -77,15 +77,11 @@ bool TileMap::LoadFromTmj(const std::string& filePath, TextureManager& textureMa
 		return false;
 	}
 
-	Json document;
+	Json document = Json::parse(file, nullptr, false);
 
-	try
+	if (document.is_discarded())
 	{
-		file >> document;
-	}
-	catch (const Json::parse_error& e)
-	{
-		SDL_Log("Failed to parse tile map JSON: %s", e.what());
+		SDL_Log("Failed to parse scene JSON file: %s", filePath.data());
 
 		return false;
 	}
@@ -244,14 +240,16 @@ bool TileMap::LoadFromTmj(const std::string& filePath, TextureManager& textureMa
 
 void TileMap::Clear(TextureManager* textureManager)
 {
-	if (textureManager != nullptr)
+	if (textureManager == nullptr)
 	{
-		for (const TileSet& tileSet : m_tileSets)
+		return;
+	}
+
+	for (const TileSet& tileSet : m_tileSets)
+	{
+		if (!tileSet.textureName.empty())
 		{
-			if (!tileSet.textureName.empty())
-			{
-				textureManager->UnloadTexture(tileSet.textureName);
-			}
+			textureManager->UnloadTexture(tileSet.textureName);
 		}
 	}
 
