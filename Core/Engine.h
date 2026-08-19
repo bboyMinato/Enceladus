@@ -9,6 +9,8 @@
 #include "Systems/RenderSystem.h"
 #include "Systems/InputSystem.h"
 #include "Config/AppSetting.h"
+#include "Systems/MapSystem.h"
+#include "Managers/MapManager.h"
 
 struct EngineConfig
 {
@@ -37,14 +39,16 @@ public:
 
 	inline const bool IsRunning() const { return m_isRunning; }
 	inline EngineConfig GetConfig() const { return m_config; }
+	inline const AppSettings& GetAppSettings() const { return m_settings; }
 	inline TextureManager& GetTextureManager() { return m_textureManager; }
-	inline RenderSystem& GetRenderSystem() { return m_renderSystem; }
-	inline InputSystem& GetInputSystem() { return m_inputSystem; }
 	inline SoundManager& GetSoundManager() { return m_soundManager; }
-	inline TextManager& GetTextManager() { return m_textManager; }
 	inline AnimationManager& GetAnimationManager() { return m_animationManager; }
 	inline DialogueManager& GetDialogManager() { return m_dialogManager; }
-	inline const AppSettings& GetAppSettings() const { return m_settings; }
+	inline TextManager& GetTextManager() { return m_textManager; }
+	inline MapManager& GetMapManager() { return m_mapManager; }
+	inline RenderSystem& GetRenderSystem() { return m_renderSystem; }
+	inline InputSystem& GetInputSystem() { return m_inputSystem; }
+	inline MapSystem& GetMapSystem() { return m_mapSystem; }
 
 	void RequestShutdown() { m_isRunning = false; }
 
@@ -76,15 +80,21 @@ private:
 	SDL_Renderer* m_renderer{ nullptr };
 
 	EngineConfig m_config;
+	AppSettings m_settings;
+
+	// Managers
 	TextureManager m_textureManager;
 	StateManager m_stateManager;
 	TextManager m_textManager;
 	SoundManager m_soundManager;
 	DialogueManager m_dialogManager;
 	AnimationManager m_animationManager;
+	MapManager m_mapManager;
+	
+	// Systems
 	RenderSystem m_renderSystem;
 	InputSystem m_inputSystem;
-	AppSettings m_settings;
+	MapSystem m_mapSystem;
 
 	bool m_isRunning{ false };
 	bool m_hasFocus{ true };

@@ -134,6 +134,7 @@
     <ClCompile Include="Core\Events\Handlers.cpp" />
     <ClCompile Include="Core\Managers\AnimationManager.cpp" />
     <ClCompile Include="Core\Managers\DialogManager.cpp" />
+    <ClCompile Include="Core\Managers\MapManager.cpp" />
     <ClCompile Include="Core\Managers\SoundManager.cpp" />
     <ClCompile Include="Core\Managers\StateManager.cpp" />
     <ClCompile Include="Core\Managers\TextManager.cpp" />
@@ -146,6 +147,7 @@
     <ClCompile Include="Core\Systems\ControllerSystem.cpp" />
     <ClCompile Include="Core\Systems\InputSystem.cpp" />
     <ClCompile Include="Core\Systems\MapConstraintSystem.cpp" />
+    <ClCompile Include="Core\Systems\MapSystem.cpp" />
     <ClCompile Include="Core\Systems\MovementSystem.cpp" />
     <ClCompile Include="Core\Systems\RenderSystem.cpp" />
     <ClCompile Include="Core\Systems\SpriteAnimationSystem.cpp" />
@@ -155,7 +157,6 @@
     <ClCompile Include="Core\Utility\Dialogue.cpp" />
     <ClCompile Include="Core\Utility\DialogueRuntimeState.cpp" />
     <ClCompile Include="Core\World\SceneLoader.cpp" />
-    <ClCompile Include="Core\World\TileMap.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ThirdParty\ImGui\backends\imgui_impl_sdl2.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -198,6 +199,7 @@
     <ClInclude Include="Core\Events\Handlers.h" />
     <ClInclude Include="Core\Managers\AnimationManager.h" />
     <ClInclude Include="Core\Managers\DialogManager.h" />
+    <ClInclude Include="Core\Managers\MapManager.h" />
     <ClInclude Include="Core\Managers\SoundManager.h" />
     <ClInclude Include="Core\Managers\StateManager.h" />
     <ClInclude Include="Core\Managers\TextManager.h" />
@@ -213,6 +215,7 @@
     <ClInclude Include="Core\Events\EventBus.h" />
     <ClInclude Include="Core\Systems\InputSystem.h" />
     <ClInclude Include="Core\Systems\MapConstraintSystem.h" />
+    <ClInclude Include="Core\Systems\MapSystem.h" />
     <ClInclude Include="Core\Systems\MovementSystem.h" />
     <ClInclude Include="Core\Systems\RenderSystem.h" />
     <ClInclude Include="Core\Systems\SpriteAnimationSystem.h" />
@@ -234,7 +237,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\backgrounds\Enceladus_background.png" />
-    <Image Include="Assets\backgrounds\shinobu.jpg" />
     <Image Include="Assets\map\Texture\TX Plant with Shadow.png" />
     <Image Include="Assets\map\Texture\TX Plant.png" />
     <Image Include="Assets\map\Texture\TX Player.png" />

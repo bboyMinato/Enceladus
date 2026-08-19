@@ -8,7 +8,7 @@
 #endif
 
 Engine::Engine() 
-	: m_stateManager(*this)
+	: m_stateManager(*this), m_mapManager(m_textureManager)
 {
 }
 

@@ -12,6 +12,8 @@ void MovementSystem::Update(Registry& registry, float deltaTime)
 	);
 }
 
+#pragma region Private Functions
+
 void MovementSystem::ApplyMovement(Entity& entity, Registry& registry, float deltaTime)
 {
 	auto& transform = *entity.Get<TransformComponent>();
@@ -35,3 +37,5 @@ void MovementSystem::ApplyMovement(Entity& entity, Registry& registry, float del
 
 	transform.y += velocityY * movement.moveSpeed * deltaTime;
 }
+
+#pragma endregion

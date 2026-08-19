@@ -213,12 +213,17 @@ namespace
 			return false;
 		}
 
-		const std::string filePath = tileMapDef["filePath"].get<std::string>();
-		if (!tileMap.LoadFromTmj(filePath, engine.GetTextureManager()))
+		const std::filesystem::path filePath = tileMapDef["filePath"].get<std::string>();
+		
+		std::optional<TileMap> loadedTileMap = engine.GetMapManager().ParseFromTMJ(filePath);
+
+		if (!loadedTileMap.has_value())
 		{
-			SDL_Log("Failed to load tile map '%s'.", filePath.c_str());
+			SDL_Log("Failed to load tile map '%s'.", filePath.string().c_str());
 			return false;
 		}
+
+		tileMap = std::move(loadedTileMap.value());
 
 		return true;
 	}

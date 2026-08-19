@@ -80,7 +80,9 @@ void PlayState::OnExit(Engine& engine)
 	engine.GetTextureManager().UnloadTexture("player_walk");
 	engine.GetTextureManager().UnloadTexture("player_v2_walk");
 	engine.GetSoundManager().UnloadSound("background_forest_music");
-	m_tileMap.Clear(&engine.GetTextureManager());
+	engine.GetMapManager().Clear();
+
+	m_tileMap = {};
 }
 
 void PlayState::HandleEvent(Engine& engine, const SDL_Event& event)
@@ -150,14 +152,16 @@ void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
         return;
     }
 
-    const CameraComponent *camera = m_camera.Get<CameraComponent>();
+    const CameraComponent* camera = m_camera.Get<CameraComponent>();
     if (camera == nullptr)
     {
         return;
     }
 
-    auto &renderSystem = engine.GetRenderSystem();
-    m_tileMap.Render(renderSystem, camera->m_viewport, m_registry);
+    auto& renderSystem = engine.GetRenderSystem();
+
+	auto& mapSystem = engine.GetMapSystem();
+	mapSystem.Render(m_tileMap, renderSystem, *camera, m_registry);
 
     const auto &config = engine.GetConfig();
     auto& dialogManager = engine.GetDialogManager();
