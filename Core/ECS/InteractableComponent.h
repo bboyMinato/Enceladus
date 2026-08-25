@@ -1,14 +1,15 @@
 #pragma once
 #include <string>
+#include <nlohmann/json.hpp>
 
 enum class InteractionType
 {
+	Default,
 	Dialogue,
 	Open,
 	Activate,
 	Pickup,
-	Examine,
-	Default
+	Examine
 };
 
 struct InteractableComponent
@@ -20,3 +21,13 @@ struct InteractableComponent
 	bool used{ false };
 	std::string dialogueId;
 };
+
+NLOHMANN_JSON_SERIALIZE_ENUM(InteractionType,
+{
+	{ InteractionType::Default,  "default" },
+	{ InteractionType::Open,     "open" },
+	{ InteractionType::Pickup,   "pickup" },
+	{ InteractionType::Activate, "activate" },
+	{ InteractionType::Dialogue, "dialogue" },
+	{ InteractionType::Examine,  "examine" }
+})

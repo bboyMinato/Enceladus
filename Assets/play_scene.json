@@ -86,7 +86,7 @@
         "speedMultiplier": 1.0
       },
       "interactable": {
-        "interactionType": "Dialogue",
+        "interactionType": "dialogue",
         "interactionRange": 50,
         "requiresKey": true,
         "oneShot": false,
@@ -117,7 +117,7 @@
         "offsetY": 35
       },
       "interactable": {
-        "interactionType": "Dialogue",
+        "interactionType": "dialogue",
         "requiresKey": true,
         "oneShot": false,
         "used": false,
