@@ -69,7 +69,7 @@
         "y": 500.0
       },
       "sprite": {
-        "texture": "player_idle",
+        "texture": "player_v2_idle",
         "width": 128,
         "height": 120
       },
@@ -91,7 +91,7 @@
         "requiresKey": true,
         "oneShot": false,
         "used": false,
-        "dialogueId": "test_dialogue"
+        "dialogueId": "yuuki_intro"
       }
     },
     {
@@ -121,7 +121,7 @@
         "requiresKey": true,
         "oneShot": false,
         "used": false,
-        "dialogueId": "test_dialogue"
+        "dialogueId": "yuuki_intro"
       }
     }
   ]

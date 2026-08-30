@@ -14,6 +14,7 @@
 #include "../Systems/CameraSystem.h"
 #include "../Systems/SpriteAnimationSystem.h"
 #include "../Systems/CollisionSystem.h"
+#include "../Systems/DialogueSystem.h"
 #include "../Utility/DebugHelpers.h"
 #include "../World/SceneLoader.h"
 #include "../Events/Handlers.h"
@@ -54,8 +55,14 @@ void PlayState::OnEnter(Engine& engine)
 
 	engine.GetSoundManager().PlayMusic("background_forest_music", true);
     engine.GetTextManager().LoadFont("menuFont", "Assets/fonts/Uncial.ttf", 48);
+    engine.GetTextManager().LoadFont("dialogueFont", "Assets/fonts/dialogueFont.ttf", 42);
 
-	SetupInteractionHandlers(m_eventBus, m_registry, engine.GetDialogManager());
+	if (!engine.GetDialogueManager().LoadDialogue("Assets/dialogues/test_rework.json"))
+	{
+		SDL_Log("Failed to load dialogue: test_rework.json");
+	}
+
+	SetupInteractionHandlers(m_eventBus,  engine.GetDialogueManager(), m_dialogueState);
 }
 
 void PlayState::OnExit(Engine& engine)
@@ -71,8 +78,6 @@ void PlayState::OnExit(Engine& engine)
 		m_camera = {};
 	}
 
-	engine.GetDialogManager().ClearDialogue();
-
 	engine.GetAnimationManager().Clear();
 
 	engine.GetTextureManager().UnloadTexture("player_idle");
@@ -81,6 +86,8 @@ void PlayState::OnExit(Engine& engine)
 	engine.GetTextureManager().UnloadTexture("player_v2_walk");
 	engine.GetSoundManager().UnloadSound("background_forest_music");
 	engine.GetMapManager().Clear();
+	engine.GetTextManager().UnloadFont("menuFont");
+	engine.GetTextManager().UnloadFont("dialogueFont");
 
 	m_tileMap = {};
 }
@@ -94,7 +101,14 @@ void PlayState::HandleEvent(Engine& engine, const SDL_Event& event)
 void PlayState::Update(Engine& engine, float deltaTime)
 {
 	const InputSystem& input = engine.GetInputSystem();
-	DialogueManager& dialogManager = engine.GetDialogManager();
+
+	if (m_dialogueState.m_isActive)
+	{
+		DialogueSystem::Update(m_dialogueState, input);
+		AnimationSystem::Update(m_registry, engine.GetAnimationManager(), deltaTime);
+
+		return;
+	}
 
 	if (ControllerSystem::PopState(m_registry, input))
 	{
@@ -102,29 +116,7 @@ void PlayState::Update(Engine& engine, float deltaTime)
 		return;
 	}
 
-	dialogManager.Update(deltaTime);
-
-	if (dialogManager.HasActiveDialogue())
-	{
-		if (const ControllerComponent* controller = m_player.Get<ControllerComponent>(); controller != nullptr)
-		{
-			if (input.WasKeyPressed(controller->interactPrimary) || input.WasKeyPressed(controller->interactSecondary))
-			{
-				(void)dialogManager.AdvanceDialogue();
-			}
-		}
-
-		m_registry.ForEach<MovementComponent>(
-			[](Entity, MovementComponent& movement)
-			{
-				movement.velocity = {};
-			}
-		);
-	}
-	else
-	{
-		ControllerSystem::Update(m_registry, input, m_eventBus);
-	}
+	ControllerSystem::Update(m_registry, input, m_eventBus);
 
 	MovementSystem::Update(m_registry, deltaTime);
 	CollisionSystem::Update(m_registry);
@@ -163,11 +155,15 @@ void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
 	auto& mapSystem = engine.GetMapSystem();
 	mapSystem.Render(m_tileMap, renderSystem, *camera, m_registry);
 
-    const auto &config = engine.GetConfig();
-    auto& dialogManager = engine.GetDialogManager();
+	int windowWidth = 0;
+	int windowHeight = 0;
+	renderSystem.GetOutputSize(windowWidth, windowHeight);
 
-    auto& textManager = engine.GetTextManager();
-    renderSystem.RenderDialogue(dialogManager.GetRuntimeState(), config.windowWidth, config.windowHeight, textManager);
+	renderSystem.RenderDialogue(
+		m_dialogueState,
+		windowWidth,
+		windowHeight,
+		engine.GetTextManager());
 }
 
 #ifdef _DEBUG

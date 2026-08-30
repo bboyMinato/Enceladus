@@ -1,0 +1,87 @@
+{
+  "id": "yuuki_intro",
+  "nodes": {
+    "start": {
+      "entries": [
+        {
+          "name": "Yuuki",
+          "speech": "Hey! You're finally awake!"
+        }
+      ],
+      "options": [
+        {
+          "text": "What happened to me?",
+          "target": "asleep"
+        },
+        {
+          "text": "Who are you?",
+          "target": "name_yuuki"
+        }
+      ]
+    },
+
+    "asleep": {
+      "entries": [
+        {
+          "name": "Yuuki",
+          "speech": "You were out cold for a while. Are you feeling okay?"
+        }
+      ],
+      "options": [
+        {
+          "text": "I don't know.",
+          "target": "tea"
+        },
+        {
+          "text": "I feel fine.",
+          "target": "glad"
+        }
+      ]
+    },
+
+    "name_yuuki": {
+      "entries": [
+        {
+          "name": "Yuuki",
+          "speech": "I'm Yuuki. Nice to meet you."
+        }
+      ],
+      "options": [
+        {
+          "text": "I don't even remember my name.",
+          "target": "forgot_name"
+        }
+      ]
+    },
+
+    "tea": {
+      "entries": [
+        {
+          "name": "Yuuki",
+          "speech": "Here have some tea."
+        }
+      ],
+      "options": []
+    },
+
+    "glad": {
+      "entries": [
+        {
+          "name": "Yuuki",
+          "speech": "I'm glad to hear that."
+        }
+      ],
+      "options": []
+    },
+
+    "forgot_name": {
+      "entries": [
+        {
+          "name": "Yuuki",
+          "speech": "That's okay. We can figure it out together."
+        }
+      ],
+      "options": []
+    }
+  }
+}

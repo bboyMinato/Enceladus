@@ -102,15 +102,6 @@
     <ClCompile Include="Core\Events\Handlers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Utility\Dialogue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Utility\DialogueRuntimeState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Managers\DialogManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Managers\AnimationManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -121,6 +112,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Systems\MapSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Systems\DialogueSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Managers\DialogueManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,9 +239,6 @@
     <ClInclude Include="Core\Utility\DialogueRuntimeState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Managers\DialogManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\ECS\InteractableComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -260,6 +254,12 @@
     <ClInclude Include="Core\Systems\MapSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Systems\DialogueSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Managers\DialogueManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
@@ -268,6 +268,7 @@
     <None Include="Assets\play_scene.json" />
     <None Include="Assets\player_controller.json" />
     <None Include="Assets\animations\animations.json" />
+    <None Include="Assets\dialogues\test_rework.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\backgrounds\Enceladus_background.png">
@@ -312,5 +313,9 @@
     <Image Include="Assets\sprites\witch_walk.png">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Assets\fonts\Uncial.ttf" />
+    <Font Include="Assets\fonts\dialogueFont.ttf" />
   </ItemGroup>
 </Project>

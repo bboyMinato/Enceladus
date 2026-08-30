@@ -5,11 +5,9 @@
 #include "../ECS/TransformComponent.h"
 
 class DialogueManager;
+class DialogueRuntimeState;
 
-void SetupInteractionHandlers(
-	EventBus& eventBus,
-	Registry& registry,
-	DialogueManager& dialogueManager);
+void SetupInteractionHandlers(EventBus& eventBus, DialogueManager& dialogueManager, DialogueRuntimeState& dialogueState);
 
 std::optional<Entity> FindClosestInteractable(Entity player, Registry& registry);
 

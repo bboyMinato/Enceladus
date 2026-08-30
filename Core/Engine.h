@@ -3,7 +3,7 @@
 #include "Managers/TextureManager.h"
 #include "Managers/StateManager.h"
 #include "Managers/SoundManager.h"
-#include "Managers/DialogManager.h"
+#include "Managers/DialogueManager.h"
 #include "Managers/TextManager.h"
 #include "Managers/AnimationManager.h"
 #include "Systems/RenderSystem.h"
@@ -43,7 +43,7 @@ public:
 	inline TextureManager& GetTextureManager() { return m_textureManager; }
 	inline SoundManager& GetSoundManager() { return m_soundManager; }
 	inline AnimationManager& GetAnimationManager() { return m_animationManager; }
-	inline DialogueManager& GetDialogManager() { return m_dialogManager; }
+	inline DialogueManager& GetDialogueManager() { return m_dialogManager; }
 	inline TextManager& GetTextManager() { return m_textManager; }
 	inline MapManager& GetMapManager() { return m_mapManager; }
 	inline RenderSystem& GetRenderSystem() { return m_renderSystem; }

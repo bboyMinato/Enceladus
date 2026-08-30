@@ -1,21 +1,19 @@
 #include "Handlers.h"
-#include "../Managers/DialogManager.h"
+#include "../Managers/DialogueManager.h"
 #include "../ECS/InteractableComponent.h"
+#include "../Systems/DialogueSystem.h"
+#include "../Utility/DialogueRuntimeState.h"
 #include <cmath>
-#include <print>
 
-void SetupInteractionHandlers(EventBus &eventBus, Registry &registry, DialogueManager &dialogueManager)
+void SetupInteractionHandlers(EventBus& eventBus, DialogueManager& dialogueManager, DialogueRuntimeState& dialogueState)
 {
-    eventBus.Subscribe<InteractionEvent>([&eventBus, &registry](const InteractionEvent& event) 
+    eventBus.Subscribe<InteractionEvent>([&eventBus, &dialogueState](const InteractionEvent &event)
     {
-         auto* interactable = event.target.Get<InteractableComponent>();
-    });
+        auto* interactable = event.target.Get<InteractableComponent>();
 
-    eventBus.Subscribe<InteractionEvent>([&eventBus, &dialogueManager](const InteractionEvent &event) 
-    {
-        auto *interactable = event.target.Get<InteractableComponent>();
-
-        if (interactable->oneShot && interactable->used)
+        if (!interactable ||
+            (interactable->oneShot && interactable->used) ||
+            dialogueState.m_isActive)
         {
             return;
         }
@@ -23,11 +21,6 @@ void SetupInteractionHandlers(EventBus &eventBus, Registry &registry, DialogueMa
         switch (interactable->interactionType)
         {
         case InteractionType::Dialogue:
-            if (dialogueManager.HasActiveDialogue())
-            {
-                return;
-            }
-
             eventBus.Emit(DialogueEvent{event.player, event.target, interactable->dialogueId});
             break;
 
@@ -52,12 +45,20 @@ void SetupInteractionHandlers(EventBus &eventBus, Registry &registry, DialogueMa
         }
     });
 
-    eventBus.Subscribe<DialogueEvent>([&dialogueManager](const DialogueEvent &event) {
-        dialogueManager.SetDialogue(event.dialogueId);
-    });
+    eventBus.Subscribe<DialogueEvent>(
+        [&dialogueManager, &dialogueState](const DialogueEvent &event)
+        {
+            const Dialogue* dialogue = dialogueManager.FindDialogue(event.dialogueId);
+            if (!dialogue)
+            {
+                return;
+            }
+
+            DialogueSystem::Start(dialogueState, *dialogue, "start");
+        });
 }
 
-std::optional<Entity> FindClosestInteractable(Entity player, Registry &registry)
+std::optional<Entity> FindClosestInteractable(Entity player, Registry& registry)
 {
     const TransformComponent *playerTransform = player.Get<TransformComponent>();
 
@@ -88,7 +89,7 @@ std::optional<Entity> FindClosestInteractable(Entity player, Registry &registry)
     return closestEntity;
 }
 
-float CalculateDistance(const TransformComponent &a, const TransformComponent &b)
+float CalculateDistance(const TransformComponent& a, const TransformComponent& b)
 {
     float dx = b.x - a.x;
     float dy = b.y - a.y;

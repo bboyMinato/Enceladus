@@ -17,7 +17,6 @@
 #include <unordered_map>
 #include <algorithm>
 
-
 namespace
 {
 	SDL_Scancode StringToScanCode(const std::string& name)
@@ -208,7 +207,7 @@ bool SceneLoader::LoadTileMapDefinitions(const Json& document, Engine& engine, T
 {
 	if (!document.contains("tileMap"))
 	{
-		return true;
+		return false;
 	}
 
 	if (!document["tileMap"].is_object())

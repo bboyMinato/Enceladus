@@ -3,6 +3,7 @@
 #include "../ECS/Registry.h"
 #include "../World/TileMap.h"
 #include "../Events/EventBus.h"
+#include "../Utility/DialogueRuntimeState.h"
 
 #ifdef _DEBUG
 #include "../Utility/DebugHelpers.h"
@@ -29,6 +30,7 @@ private:
 	Entity m_camera;
 	TileMap m_tileMap;
 	EventBus m_eventBus;
+	DialogueRuntimeState m_dialogueState;
 
 #ifdef _DEBUG
 	DebugHelper m_debugHelper;

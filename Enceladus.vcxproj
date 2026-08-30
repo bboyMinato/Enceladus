@@ -133,7 +133,7 @@
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\Events\Handlers.cpp" />
     <ClCompile Include="Core\Managers\AnimationManager.cpp" />
-    <ClCompile Include="Core\Managers\DialogManager.cpp" />
+    <ClCompile Include="Core\Managers\DialogueManager.cpp" />
     <ClCompile Include="Core\Managers\MapManager.cpp" />
     <ClCompile Include="Core\Managers\SoundManager.cpp" />
     <ClCompile Include="Core\Managers\StateManager.cpp" />
@@ -145,6 +145,7 @@
     <ClCompile Include="Core\Systems\CameraSystem.cpp" />
     <ClCompile Include="Core\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Core\Systems\ControllerSystem.cpp" />
+    <ClCompile Include="Core\Systems\DialogueSystem.cpp" />
     <ClCompile Include="Core\Systems\InputSystem.cpp" />
     <ClCompile Include="Core\Systems\MapConstraintSystem.cpp" />
     <ClCompile Include="Core\Systems\MapSystem.cpp" />
@@ -154,8 +155,6 @@
     <ClCompile Include="Core\UI\Button.cpp" />
     <ClCompile Include="Core\UI\Menu.cpp" />
     <ClCompile Include="Core\Utility\DebugHelpers.cpp" />
-    <ClCompile Include="Core\Utility\Dialogue.cpp" />
-    <ClCompile Include="Core\Utility\DialogueRuntimeState.cpp" />
     <ClCompile Include="Core\World\SceneLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ThirdParty\ImGui\backends\imgui_impl_sdl2.cpp">
@@ -198,7 +197,7 @@
     <ClInclude Include="Core\Events\Event.h" />
     <ClInclude Include="Core\Events\Handlers.h" />
     <ClInclude Include="Core\Managers\AnimationManager.h" />
-    <ClInclude Include="Core\Managers\DialogManager.h" />
+    <ClInclude Include="Core\Managers\DialogueManager.h" />
     <ClInclude Include="Core\Managers\MapManager.h" />
     <ClInclude Include="Core\Managers\SoundManager.h" />
     <ClInclude Include="Core\Managers\StateManager.h" />
@@ -213,6 +212,7 @@
     <ClInclude Include="Core\Systems\CollisionSystem.h" />
     <ClInclude Include="Core\Systems\ControllerSystem.h" />
     <ClInclude Include="Core\Events\EventBus.h" />
+    <ClInclude Include="Core\Systems\DialogueSystem.h" />
     <ClInclude Include="Core\Systems\InputSystem.h" />
     <ClInclude Include="Core\Systems\MapConstraintSystem.h" />
     <ClInclude Include="Core\Systems\MapSystem.h" />
@@ -230,6 +230,7 @@
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
     <None Include="Assets\animations\animations.json" />
+    <None Include="Assets\dialogues\test_rework.json" />
     <None Include="Assets\map\test.tmj" />
     <None Include="Assets\play_scene.json" />
     <None Include="config.ini" />
@@ -250,6 +251,10 @@
     <Image Include="Assets\map\Texture\TX Tileset Wall.png" />
     <Image Include="Assets\sprites\witch_idle.png" />
     <Image Include="Assets\sprites\witch_walk.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Assets\fonts\dialogueFont.ttf" />
+    <Font Include="Assets\fonts\Uncial.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

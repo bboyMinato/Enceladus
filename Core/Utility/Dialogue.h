@@ -1,25 +1,31 @@
 #pragma once
 #include <filesystem>
 #include <vector>
+#include <string>
+#include <unordered_map>
 
-class DialogueEntry;
-
-class Dialogue {
-public:
-    Dialogue(const std::filesystem::path &path);
-    const std::vector<DialogueEntry>& GetEntries() const;
-
-private:
-    std::vector<DialogueEntry> m_entries;
-};
-
-class DialogueEntry {
-public:
-    DialogueEntry(const std::string_view &chunk);
-    const std::string& GetName() const { return m_name; }
-    const std::string& GetSpeech() const { return m_speech; }
-
-private:
+struct DialogueEntry 
+{
     std::string m_name;
     std::string m_speech;
+};
+
+struct DialogueOption
+{
+	std::string m_text;
+	std::string m_targetNode;
+};
+
+struct DialogueNode
+{
+	std::string m_nextNode;
+
+	std::vector<DialogueEntry> m_entries;
+	std::vector<DialogueOption> m_options;
+};
+
+struct Dialogue
+{
+	std::string m_id;
+	std::unordered_map<std::string, DialogueNode> m_nodes;
 };

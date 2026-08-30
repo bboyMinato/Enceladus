@@ -19,39 +19,39 @@ namespace
 		}
 
 		const auto appendParagraph = [&](const std::string& paragraph)
-		{
-			if (paragraph.empty())
 			{
-				lines.emplace_back();
-				return;
-			}
-
-			std::istringstream stream(paragraph);
-			std::string word;
-			std::string currentLine;
-
-			while (stream >> word)
-			{
-				const std::string candidate = currentLine.empty() ? word : currentLine + " " + word;
-				int candidateWidth = 0;
-				int candidateHeight = 0;
-				TTF_SizeUTF8(font, candidate.c_str(), &candidateWidth, &candidateHeight);
-
-				if (maxWidth > 0 && candidateWidth > maxWidth && !currentLine.empty())
+				if (paragraph.empty())
 				{
-					lines.push_back(currentLine);
-					currentLine = word;
-					continue;
+					lines.emplace_back();
+					return;
 				}
 
-				currentLine = candidate;
-			}
+				std::istringstream stream(paragraph);
+				std::string word;
+				std::string currentLine;
 
-			if (!currentLine.empty())
-			{
-				lines.push_back(currentLine);
-			}
-		};
+				while (stream >> word)
+				{
+					const std::string candidate = currentLine.empty() ? word : currentLine + " " + word;
+					int candidateWidth = 0;
+					int candidateHeight = 0;
+					TTF_SizeUTF8(font, candidate.c_str(), &candidateWidth, &candidateHeight);
+
+					if (maxWidth > 0 && candidateWidth > maxWidth && !currentLine.empty())
+					{
+						lines.push_back(currentLine);
+						currentLine = word;
+						continue;
+					}
+
+					currentLine = candidate;
+				}
+
+				if (!currentLine.empty())
+				{
+					lines.push_back(currentLine);
+				}
+			};
 
 		std::size_t start = 0;
 		while (start <= text.size())
@@ -73,9 +73,9 @@ namespace
 
 bool RenderSystem::Init(SDL_Renderer* renderer, TextureManager* textureManager)
 {
-    if (!renderer || !textureManager)
-    {
-        return false;
+	if (!renderer || !textureManager)
+	{
+		return false;
 	}
 
 	m_renderer = renderer;
@@ -148,7 +148,7 @@ void RenderSystem::RenderEntites(Registry& registry, const CameraComponent& came
 			const SDL_Rect* srcRect = sprite.m_hasSourceRect ? &sprite.m_sourceRect : nullptr;
 			RenderTexture(sprite.m_textureName, srcRect, &dstRect, sprite.m_flip);
 		}
-	);		
+	);
 }
 
 void RenderSystem::RenderDialogue(const DialogueRuntimeState& dialogueState, int windowWidth, int windowHeight, TextManager& textManager) const
@@ -158,101 +158,112 @@ void RenderSystem::RenderDialogue(const DialogueRuntimeState& dialogueState, int
 		return;
 	}
 
-	constexpr int paddingTopBottom = 16;
-    constexpr int paddingLeftRight = 256;
+	const DialogueEntry* entry = dialogueState.GetCurrentEntry();
+	const DialogueNode* node = dialogueState.GetCurrentNode();
+	TTF_Font* font = textManager.GetFont("dialogueFont");
 
-	const int x = paddingLeftRight;
-	const int w = windowWidth - 2 * paddingLeftRight;
-
-	TTF_Font* font = textManager.GetFont("menuFont");
-	if (!font)
+	if (!entry || !node || !font)
 	{
 		return;
 	}
 
-	constexpr std::size_t visibleLineCount = 2;
-	const int lineSkip = TTF_FontLineSkip(font);
-	const int dialogHeight = paddingTopBottom * 2 + static_cast<int>(visibleLineCount) * lineSkip;
-	const int y = windowHeight - paddingTopBottom - dialogHeight;
-	const int h = dialogHeight;
+	constexpr int horizontalMargin = 80;
+	constexpr int padding = 24;
+	constexpr int optionSpacing = 8;
 
-	SDL_Rect dialogRect{ x, y, w, h };
+	const int dialogWidth = windowWidth - horizontalMargin * 2;
+	const int lineHeight = TTF_FontLineSkip(font);
+	const int optionCount = dialogueState.m_showingOptions
+		? static_cast<int>(node->m_options.size())
+		: 0;
+	const int dialogHeight = padding * 2 + lineHeight * (3 + optionCount) +
+		optionSpacing * optionCount;
 
-	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	const SDL_Rect dialogRect
+	{
+		horizontalMargin,
+		windowHeight - dialogHeight - 48,
+		dialogWidth,
+		dialogHeight
+	};
+
+	SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
+
+	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 220);
 	SDL_RenderFillRect(m_renderer, &dialogRect);
-	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+
+	SDL_SetRenderDrawColor(m_renderer, 235, 225, 210, 255);
 	SDL_RenderDrawRect(m_renderer, &dialogRect);
 
-	const std::string text = dialogueState.GetVisibleText();
-	if (text.empty())
+	const auto renderText = [&](const std::string& name,
+		const std::string& value,
+		SDL_Color color,
+		int x,
+		int y,
+		int wrapWidth = 0)
+		{
+			if (!textManager.LoadText(name, "dialogueFont", value, color, wrapWidth))
+			{
+				return;
+			}
+
+			SDL_Texture* texture = textManager.GetText(name);
+			if (!texture)
+			{
+				return;
+			}
+
+			int width = 0;
+			int height = 0;
+			textManager.GetTextSize(name, width, height);
+
+			const SDL_Rect destination{ x, y, width, height };
+			SDL_RenderCopy(m_renderer, texture, nullptr, &destination);
+		};
+
+	const int textX = dialogRect.x + padding;
+	int textY = dialogRect.y + padding;
+
+	renderText(
+		"dialogueSpeaker",
+		entry->m_name,
+		{ 255, 215, 120, 255 },
+		textX,
+		textY);
+
+	textY += lineHeight + 8;
+
+	renderText(
+		"dialogueSpeech",
+		entry->m_speech,
+		{ 235, 225, 210, 255 },
+		textX,
+		textY,
+		dialogRect.w - padding * 2);
+
+	if (!dialogueState.m_showingOptions)
 	{
 		return;
 	}
 
-	const int wrapWidth = w > 32 ? w - 32 : 0;
-	const std::vector<std::string> wrappedLines = WrapTextToLines(font, text, wrapWidth);
-	if (wrappedLines.empty())
+	textY += lineHeight * 2 + 8;
+
+	for (std::size_t index = 0; index < node->m_options.size(); ++index)
 	{
-		return;
-	}
+		const bool isSelected = index == dialogueState.m_selectedOptionIndex;
+		const SDL_Color color = isSelected
+			? SDL_Color{ 255, 215, 120, 255 }
+			: SDL_Color{ 235, 225, 210, 255 };
 
-	const std::size_t linesToDraw = std::min(visibleLineCount, wrappedLines.size());
-	const std::size_t firstLine = wrappedLines.size() > linesToDraw ? wrappedLines.size() - linesToDraw : 0;
-	const int firstLineY = y + paddingTopBottom;
-
-	for (std::size_t lineIndex = 0; lineIndex < linesToDraw; ++lineIndex)
-	{
-		const std::string& line = wrappedLines[firstLine + lineIndex];
-		if (line.empty())
-		{
-			continue;
-		}
-
-		const std::string textName = "dialogueLine" + std::to_string(lineIndex);
-		if (!textManager.LoadText(textName, "menuFont", line, { 255, 255, 255, SDL_ALPHA_OPAQUE }))
-		{
-			continue;
-		}
-
-		SDL_Texture* textTexture = textManager.GetText(textName);
-		if (!textTexture)
-		{
-			continue;
-		}
-
-		int textWidth = 0;
-		int textHeight = 0;
-		textManager.GetTextSize(textName, textWidth, textHeight);
-
-		const int textX = x + (w - textWidth) / 2;
-		const int textY = firstLineY + static_cast<int>(lineIndex) * lineSkip;
-
-		SDL_Rect textRect
-		{
+		const std::string prefix = isSelected ? "> " : "  ";
+		renderText(
+			"dialogueOption" + std::to_string(index),
+			prefix + node->m_options[index].m_text,
+			color,
 			textX,
-			textY,
-			textWidth,
-			textHeight
-		};
+			textY);
 
-		SDL_Rect textShadowRect
-		{
-			textRect.x + 3,
-			textRect.y + 3,
-			textRect.w,
-			textRect.h
-		};
-
-		SDL_SetTextureColorMod(textTexture, 47, 47, 0);
-		SDL_SetTextureAlphaMod(textTexture, 170);
-		SDL_RenderCopy(m_renderer, textTexture, nullptr, &textShadowRect);
-
-		SDL_SetTextureColorMod(textTexture, 235, 225, 210);
-		SDL_SetTextureAlphaMod(textTexture, 255);
-		SDL_RenderCopy(m_renderer, textTexture, nullptr, &textRect);
-
-		SDL_SetTextureColorMod(textTexture, 255, 255, 255);
-		SDL_SetTextureAlphaMod(textTexture, 255);
+		textY += lineHeight + optionSpacing;
 	}
 }
 
