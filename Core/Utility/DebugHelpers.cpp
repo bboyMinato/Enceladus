@@ -268,12 +268,12 @@ void DebugHelper::RenderInteractionTab(Entity& selectedEntity)
 
 	if (interactable != nullptr)
 	{
-		const char* interactionTypes[] = { "Dialogue", "Open", "Activate", "Pickup", "Examine", "Default" };
+		/*const char* interactionTypes[] = { "Dialogue", "Open", "Activate", "Pickup", "Examine", "Default" };
 		int currentTypeIndex = static_cast<int>(interactable->interactionType);
 		if (ImGui::Combo("Interaction Type", &currentTypeIndex, interactionTypes, IM_ARRAYSIZE(interactionTypes)))
 		{
 			interactable->interactionType = static_cast<InteractionType>(currentTypeIndex);
-		}
+		}*/
 		ImGui::DragFloat("Interaction Distance", &interactable->interactionDistance, 1.0f, 0.0f, 1000.0f);
 		ImGui::Checkbox("Requires Key", &interactable->requiresKey);
 		ImGui::Checkbox("One Shot", &interactable->oneShot);

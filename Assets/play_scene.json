@@ -92,6 +92,10 @@
         "oneShot": false,
         "used": false,
         "dialogueId": "yuuki_intro"
+      },
+      "dialogue": {
+        "dialogueId": "yuuki_intro",
+        "startNodeId": "start"
       }
     },
     {

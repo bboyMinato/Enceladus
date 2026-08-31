@@ -16,6 +16,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <algorithm>
+#include "../ECS/DialogueComponent.h"
 
 namespace
 {
@@ -114,6 +115,7 @@ bool SceneLoader::LoadEntities(const Json& document, Registry& registry, SceneLo
 		ApplyColliderComponent(entityDef, entity);
 		ApplyCameraComponent(entityDef, entity);
 		ApplyInteractableComponent(entityDef, entity);
+		ApplyDialogueComponent(entityDef, entity);
 
 		const std::string key = entityDef.value("key", "");
 		if (!key.empty() && entity.IsValid())
@@ -400,7 +402,7 @@ void SceneLoader::ApplyInteractableComponent(const Json& entityDef, Entity& enti
 	const Json& interactableDef = entityDef["interactable"];
 
 	entity.Add<InteractableComponent>(
-		interactableDef.value("interactionType", InteractionType::Default),
+		//interactableDef.value("interactionType", InteractionType::Default),
 		interactableDef.value("interactionRange", 200.0f),
 		interactableDef.value("requiresKey", true),
 		interactableDef.value("oneShot", false),
@@ -572,6 +574,20 @@ void SceneLoader::ApplyTransformComponent(const Json& entityDef, Entity& entity)
 		transformDef.value("rotation", 0.0f),
 		transformDef.value("scaleX", 1.0f),
 		transformDef.value("scaleY", 1.0f));
+}
+
+void SceneLoader::ApplyDialogueComponent(const Json& entityDef, Entity& entity)
+{
+	if (!entityDef.contains("dialogue") || !entityDef["dialogue"].is_object())
+	{
+		return;
+	}
+
+	const Json& dialogueDef = entityDef["dialogue"];
+
+	entity.Add<DialogueComponent>(
+		dialogueDef.value("dialogueId", ""),
+		dialogueDef.value("startNodeId", ""));
 }
 
 #pragma endregion

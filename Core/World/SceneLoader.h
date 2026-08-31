@@ -47,4 +47,5 @@ private:
 	static void ApplyAnimationComponent(const Json& entityDef, Entity& entity);
 	static void ApplySpriteComponent(const Json& entityDef, Entity& entity);
 	static void ApplyTransformComponent(const Json& entityDef, Entity& entity);
+	static void ApplyDialogueComponent(const Json& entityDef, Entity& entity);
 };

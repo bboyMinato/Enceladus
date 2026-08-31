@@ -1,61 +1,38 @@
 #include "Handlers.h"
+#include <cmath>
 #include "../Managers/DialogueManager.h"
 #include "../ECS/InteractableComponent.h"
 #include "../Systems/DialogueSystem.h"
 #include "../Utility/DialogueRuntimeState.h"
-#include <cmath>
+#include "../ECS/DialogueComponent.h"
 
 void SetupInteractionHandlers(EventBus& eventBus, DialogueManager& dialogueManager, DialogueRuntimeState& dialogueState)
 {
     eventBus.Subscribe<InteractionEvent>([&eventBus, &dialogueState](const InteractionEvent &event)
     {
-        auto* interactable = event.target.Get<InteractableComponent>();
+        const auto* interactable = event.target.Get<InteractableComponent>();
+		const auto* dialogue = event.target.Get<DialogueComponent>();
 
-        if (!interactable ||
+		if (!interactable || !dialogue ||
             (interactable->oneShot && interactable->used) ||
             dialogueState.m_isActive)
         {
             return;
         }
 
-        switch (interactable->interactionType)
-        {
-        case InteractionType::Dialogue:
-            eventBus.Emit(DialogueEvent{event.player, event.target, interactable->dialogueId});
-            break;
-
-        case InteractionType::Open:
-            throw std::logic_error("Open interaction not implemented yet.");
-            break;
-
-        case InteractionType::Activate:
-            throw std::logic_error("Activate interaction not implemented yet.");
-            break;
-
-        case InteractionType::Pickup:
-            throw std::logic_error("Pickup interaction not implemented yet.");
-            break;
-
-        case InteractionType::Examine:
-            throw std::logic_error("Examine interaction not implemented yet.");
-            break;
-
-        default:
-            break;
-        }
+		eventBus.Emit(DialogueEvent{ event.player, event.target, dialogue->dialogueId });
     });
 
-    eventBus.Subscribe<DialogueEvent>(
-        [&dialogueManager, &dialogueState](const DialogueEvent &event)
+    eventBus.Subscribe<DialogueEvent>([&dialogueManager, &dialogueState](const DialogueEvent &event)
+    {
+        const Dialogue* dialogue = dialogueManager.FindDialogue(event.dialogueId);
+        if (!dialogue)
         {
-            const Dialogue* dialogue = dialogueManager.FindDialogue(event.dialogueId);
-            if (!dialogue)
-            {
-                return;
-            }
+            return;
+        }
 
-            DialogueSystem::Start(dialogueState, *dialogue, "start");
-        });
+        DialogueSystem::Start(dialogueState, *dialogue, "start");
+    });
 }
 
 std::optional<Entity> FindClosestInteractable(Entity player, Registry& registry)
