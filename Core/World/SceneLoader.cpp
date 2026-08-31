@@ -402,7 +402,6 @@ void SceneLoader::ApplyInteractableComponent(const Json& entityDef, Entity& enti
 	const Json& interactableDef = entityDef["interactable"];
 
 	entity.Add<InteractableComponent>(
-		//interactableDef.value("interactionType", InteractionType::Default),
 		interactableDef.value("interactionRange", 200.0f),
 		interactableDef.value("requiresKey", true),
 		interactableDef.value("oneShot", false),
@@ -439,15 +438,32 @@ void SceneLoader::ApplyCameraComponent(const Json& entityDef, Entity& entity)
 
 	const Json& cameraDef = entityDef["camera"];
 
-	auto& camera = entity.Add<CameraComponent>(
-		cameraDef.value("x", 0),
-		cameraDef.value("y", 0),
-		cameraDef.value("width", 800),
-		cameraDef.value("height", 600));
+	auto& camera = entity.Add<CameraComponent>();
 
-	camera.m_shouldFollow = cameraDef.value("shouldFollow", true);
-	camera.m_offsetX = cameraDef.value("offsetX", 0);
-	camera.m_offsetY = cameraDef.value("offsetY", 0);
+	camera.m_mode = cameraDef.value("mode", CameraMode::Follow);
+	camera.m_zoom = cameraDef.value("zoom", 1.0f);
+	camera.m_isActive = cameraDef.value("active", true);
+	camera.m_viewport.x = cameraDef.value("x", 0);
+
+	const nlohmann::json& viewport = entityDef.value(
+		"viewport",
+		nlohmann::json{ { "x", 0 }, { "y", 0 }, { "width", 800 }, { "height", 600 } });
+
+	camera.m_viewport = {
+		viewport.value("x", 0),
+		viewport.value("y", 0),
+		viewport.value("width", 800),
+		viewport.value("height", 600)
+	};
+
+	const nlohmann::json& offset = entityDef.value(
+		"followOffset",
+		nlohmann::json{ { "x", 0.0f }, { "y", 0.0f } });
+
+	camera.m_followOffset = {
+		offset.value("x", 0.0f),
+		offset.value("y", 0.0f)
+	};
 }
 
 void SceneLoader::ApplyColliderComponent(const Json& entityDef, Entity& entity)

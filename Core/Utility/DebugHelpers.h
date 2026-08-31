@@ -19,7 +19,7 @@ private:
 	void RenderSpriteTab(Entity& selectedEntity);
 	void RenderAnimationTab(Entity& selectedEntity, Engine& engine);
 	void RenderInteractionTab(Entity& selectedEntity);
-	void RenderCameraTab(Entity& cameraEntity);
+	void RenderCameraTab(Entity& cameraEntity, Registry& registry);
 
 private:
 	Uint8 m_selectedEntityId{ 1 };

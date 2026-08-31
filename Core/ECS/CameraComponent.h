@@ -1,17 +1,35 @@
 #pragma once 
 #include <SDL2/SDL.h>
+#include <nlohmann/json.hpp>
+#include "Entity.h"
+#include "../Math/Vector2.h"
+
+enum class CameraMode
+{
+	Follow,
+	Free,
+	Fixed
+};
+
+NLOHMANN_JSON_SERIALIZE_ENUM(CameraMode,
+{
+	{ CameraMode::Follow, "follow" },
+	{ CameraMode::Free, "free" },
+	{ CameraMode::Fixed, "fixed" }
+})
 
 struct CameraComponent
 {
-	CameraComponent() = default;
-	CameraComponent(int x, int y, int width, int height)
-		: m_viewport{ x, y, width, height }
-	{
-	}
+	Entity m_target{};
 
 	SDL_Rect m_viewport{ 0, 0, 800, 600 };
+	
+	Vector2f m_followOffset{ 0.0f, 0.0f };
+	float m_zoom{ 1.0f };
+
+	CameraMode m_mode{ CameraMode::Follow }; 
 
 	bool m_shouldFollow{ true };
-	int m_offsetX{ 0 };
-	int m_offsetY{ 0 };
+	bool m_isActive{ true };
 };
+

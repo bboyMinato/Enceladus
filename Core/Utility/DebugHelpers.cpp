@@ -95,7 +95,7 @@ void DebugHelper::RenderImGui(Engine& engine, Registry& registry)
 
 		if (ImGui::BeginTabItem("Camera"))
 		{
-			RenderCameraTab(selectedEntity);
+			RenderCameraTab(selectedEntity, registry);
 			ImGui::EndTabItem();
 		}
 
@@ -247,18 +247,98 @@ void DebugHelper::RenderAnimationTab(Entity& selectedEntity, Engine& engine)
 	ImGui::DragInt("Current Frame", &animDef->currentFrame, 1.0f, 0, 1000);
 }
 
-void DebugHelper::RenderCameraTab(Entity& cameraEntity)
+void DebugHelper::RenderCameraTab(Entity& cameraEntity, Registry& registry)
 {
 	CameraComponent* camera = cameraEntity.Get<CameraComponent>();
 
-	if (camera != nullptr)
-	{
-		ImGui::Text("Viewport Position: (%d, %d)", camera->m_viewport.x, camera->m_viewport.y);
-		ImGui::Text("Viewport Size: %d x %d", camera->m_viewport.w, camera->m_viewport.h);
-	}
-	else
+	if (camera == nullptr)
 	{
 		ImGui::TextDisabled("No CameraComponent");
+		return;
+	}
+
+	ImGui::SeparatorText("Camera");
+
+	ImGui::Checkbox("Active", &camera->m_isActive);
+	ImGui::DragFloat("Zoom", &camera->m_zoom, 0.05f, 0.1f, 10.0f);
+	camera->m_zoom = std::max(camera->m_zoom, 0.1f);
+
+	ImGui::DragInt("Viewport X", &camera->m_viewport.x, 1.0f);
+	ImGui::DragInt("Viewport Y", &camera->m_viewport.y, 1.0f);
+	ImGui::DragInt("Viewport Width", &camera->m_viewport.w, 1.0f, 1, 10000);
+	ImGui::DragInt("Viewport Height", &camera->m_viewport.h, 1.0f, 1, 10000);
+
+	camera->m_viewport.w = std::max(camera->m_viewport.w, 1);
+	camera->m_viewport.h = std::max(camera->m_viewport.h, 1);
+
+	constexpr const char* cameraModeNames[]
+	{
+		"Follow",
+		"Free",
+		"Fixed"
+	};
+
+	int cameraMode = static_cast<int>(camera->m_mode);
+
+	if (ImGui::Combo("Mode", &cameraMode, cameraModeNames, IM_ARRAYSIZE(cameraModeNames)))
+	{
+		camera->m_mode = static_cast<CameraMode>(cameraMode);
+	}
+
+	if (camera->m_mode != CameraMode::Follow)
+	{
+		return;
+	}
+
+	ImGui::SeparatorText("Follow");
+
+	ImGui::DragFloat2(
+		"Follow Offset",
+		&camera->m_followOffset.x,
+		1.0f);
+
+	std::string targetLabel = "None";
+
+	for (const Entity& entity : registry.GetAllEntities())
+	{
+		if (entity == camera->m_target)
+		{
+			const TagComponent* tag = entity.Get<TagComponent>();
+
+			targetLabel = "Entity [" + std::to_string(entity.GetId()) + "] - " +
+				(tag != nullptr ? tag->Tag : "Unknown");
+
+			break;
+		}
+	}
+
+	if (ImGui::BeginCombo("Follow Target", targetLabel.c_str()))
+	{
+		if (ImGui::Selectable("None", !camera->m_target.IsValid()))
+		{
+			camera->m_target = {};
+		}
+
+		for (const Entity& entity : registry.GetAllEntities())
+		{
+			const TagComponent* tag = entity.Get<TagComponent>();
+			const std::string label = "Entity [" + std::to_string(entity.GetId()) + "] - " +
+				(tag != nullptr ? tag->Tag : "Unknown");
+
+			const bool isSelected = entity == camera->m_target;
+
+			if (ImGui::Selectable(label.c_str(), isSelected))
+			{
+				camera->m_target = entity;
+			}
+
+			if (isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+
+		ImGui::EndCombo();
 	}
 }
 
@@ -268,12 +348,6 @@ void DebugHelper::RenderInteractionTab(Entity& selectedEntity)
 
 	if (interactable != nullptr)
 	{
-		/*const char* interactionTypes[] = { "Dialogue", "Open", "Activate", "Pickup", "Examine", "Default" };
-		int currentTypeIndex = static_cast<int>(interactable->interactionType);
-		if (ImGui::Combo("Interaction Type", &currentTypeIndex, interactionTypes, IM_ARRAYSIZE(interactionTypes)))
-		{
-			interactable->interactionType = static_cast<InteractionType>(currentTypeIndex);
-		}*/
 		ImGui::DragFloat("Interaction Distance", &interactable->interactionDistance, 1.0f, 0.0f, 1000.0f);
 		ImGui::Checkbox("Requires Key", &interactable->requiresKey);
 		ImGui::Checkbox("One Shot", &interactable->oneShot);

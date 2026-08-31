@@ -53,6 +53,11 @@ void PlayState::OnEnter(Engine& engine)
 		return;
 	}
 
+	CameraComponent* camera = m_camera.Get<CameraComponent>();
+	camera->m_target = m_player;
+	camera->m_viewport.w = engine.GetConfig().windowWidth;
+	camera->m_viewport.h = engine.GetConfig().windowHeight;
+
 	engine.GetSoundManager().PlayMusic("background_forest_music", true);
     engine.GetTextManager().LoadFont("menuFont", "Assets/fonts/Uncial.ttf", 48);
     engine.GetTextManager().LoadFont("dialogueFont", "Assets/fonts/dialogueFont.ttf", 42);
@@ -127,14 +132,7 @@ void PlayState::Update(Engine& engine, float deltaTime)
 	MapConstraintSystem::ClampToTileMap(*transform, *sprite, m_tileMap);
 	AnimationStateSystem::UpdateAnimationStates(m_registry, engine.GetAnimationManager());
 	AnimationSystem::Update(m_registry, engine.GetAnimationManager(), deltaTime);
-	
-	CameraComponent* camera = m_camera.Get<CameraComponent>();
-	if (camera == nullptr || transform == nullptr || sprite == nullptr)
-	{
-		return;
-	}
-
-	CameraSystem::UpdateFollow(*camera, *transform, *sprite, engine.GetRenderSystem(), m_tileMap);
+	CameraSystem::Update(m_registry, m_camera, engine.GetRenderSystem(), m_tileMap);
 }
 
 void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
@@ -159,11 +157,7 @@ void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
 	int windowHeight = 0;
 	renderSystem.GetOutputSize(windowWidth, windowHeight);
 
-	renderSystem.RenderDialogue(
-		m_dialogueState,
-		windowWidth,
-		windowHeight,
-		engine.GetTextManager());
+	renderSystem.RenderDialogue(m_dialogueState, windowWidth, windowHeight, engine.GetTextManager());
 }
 
 #ifdef _DEBUG

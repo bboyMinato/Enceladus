@@ -102,10 +102,23 @@
       "key": "main_camera",
       "tag": "Main Camera",
       "camera": {
-        "x": 2000,
-        "y": 0,
-        "width": 800,
-        "height": 600
+        "mode": "follow",
+        "zoom": 1.0,
+        "active": true,
+        "viewport": {
+          "x": 0,
+          "y": 0,
+          "width": 1280,
+          "height": 720
+        },
+        "followOffset": {
+          "x": 32.0,
+          "y": -16.0
+        }
+      },
+      "transform": {
+        "x": 2000.0,
+        "y": 480.0
       }
     },
     {
