@@ -99,8 +99,8 @@
       }
     },
     {
-      "key": "main_camera",
-      "tag": "Main Camera",
+      "key": "player_camera",
+      "tag": "Player Camera",
       "camera": {
         "mode": "follow",
         "zoom": 1.0,

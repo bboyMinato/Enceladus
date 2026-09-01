@@ -268,10 +268,15 @@
     <None Include=".github\copilot-instructions.md" />
     <None Include="config.ini" />
     <None Include="Assets\map\test.tmj" />
-    <None Include="Assets\play_scene.json" />
+    <None Include="Assets\scenes\play_scene.json" />
     <None Include="Assets\player_controller.json" />
     <None Include="Assets\animations\animations.json" />
     <None Include="Assets\dialogues\test_rework.json" />
+    <None Include="Assets\scenes\rework_scene.json" />
+    <None Include="Assets\entities\player.json" />
+    <None Include="Assets\entities\yuuki.json" />
+    <None Include="Assets\entities\player_camera.json" />
+    <None Include="Assets\scenes\rework_scene_entities.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\backgrounds\Enceladus_background.png">

@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include <nlohmann/json.hpp>
+#include <filesystem>
 
 class Engine;
 class Registry;
@@ -28,7 +29,7 @@ struct SceneLoadResult
 class SceneLoader final
 {
 public:
-	static SceneLoadResult LoadScene(std::string_view sceneFilePath, Engine& engine, Registry& registry, TileMap& tileMap);
+	static SceneLoadResult LoadScene(const std::filesystem::path& sceneFilePath, Engine& engine, Registry& registry, TileMap& tileMap);
 
 private:
 	static bool LoadEntities(const Json& document, Registry& registry, SceneLoadResult& result);

@@ -1,0 +1,35 @@
+{
+  "entities": [
+    {
+      "key": "player",
+      "definition": "Assets/entity_definitions/player.json",
+      "overrides": {
+        "transform": {
+          "x": 2000.0,
+          "y": 480.0
+        }
+      }
+    },
+    {
+      "key": "yuuki",
+      "definition": "Assets/entity_definitions/dialogue_npc.json",
+      "overrides": {
+        "tag": "Yuuki",
+        "transform": {
+          "x": 1500.0,
+          "y": 500.0
+        }
+      }
+    },
+    {
+      "key": "player_camera",
+      "definition": "Assets/entities/cameras/player_camera.json",
+      "overrides": {
+        "transform": {
+          "x": 2000.0,
+          "y": 480.0
+        }
+      }
+    }
+  ]
+}

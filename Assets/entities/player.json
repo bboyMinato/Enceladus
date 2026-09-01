@@ -1,0 +1,31 @@
+{
+  "key": "player",
+  "tag": "Player",
+  "transform": {
+    "x": 2000.0,
+    "y": 480.0
+  },
+  "movement": {
+    "moveSpeed": 200.0
+  },
+  "controller": {
+    "path": "Assets/player_controller.json"
+  },
+  "sprite": {
+    "texture": "player_v2_idle",
+    "width": 128,
+    "height": 120
+  },
+  "collider": {
+    "width": 35,
+    "height": 55,
+    "offsetX": 45,
+    "offsetY": 35
+  },
+  "animation": {
+    "setName": "witch",
+    "currentAnimation": "idle",
+    "isLooping": true,
+    "speedMultiplier": 1.0
+  }
+}

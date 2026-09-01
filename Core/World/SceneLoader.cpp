@@ -32,16 +32,57 @@ namespace
 
 		return SDL_GetScancodeFromKey(keycode);
 	}
+
+	std::filesystem::path FindAssetsDirectory(const std::filesystem::path& scenePath)
+	{
+		for (std::filesystem::path directory = scenePath.parent_path();
+			!directory.empty();
+			directory = directory.parent_path())
+		{
+			if (directory.filename() == "Assets")
+			{
+				return directory;
+			}
+
+			if (directory == directory.root_path())
+			{
+				break;
+			}
+		}
+
+		return {};
+	}
+
+	std::filesystem::path ResolveAssetPath(const std::filesystem::path& assetsDirectory, const std::filesystem::path& path)
+	{
+		if (path.is_absolute())
+		{
+			return path.lexically_normal();
+		}
+
+		return (assetsDirectory / path).lexically_normal();
+	}
 }
 
-SceneLoadResult SceneLoader::LoadScene(std::string_view filePath, Engine& engine, Registry& registry, TileMap& tileMap)
+SceneLoadResult SceneLoader::LoadScene(const std::filesystem::path& sceneFilePath, Engine& engine, Registry& registry, TileMap& tileMap)
 {
 	SceneLoadResult result;
-	std::ifstream file(filePath.data());
+
+	const std::filesystem::path scenePath = std::filesystem::absolute(sceneFilePath).lexically_normal();
+	const std::filesystem::path assetsDirectory = FindAssetsDirectory(scenePath);
+
+	if (assetsDirectory.empty())
+	{
+		SDL_Log("Unable to locate the Assets directory for scene: %s", scenePath.string().c_str());
+
+		return result;
+	}
+
+	std::ifstream file(scenePath);
 
 	if (!file.is_open())
 	{
-		SDL_Log("Failed to open scene file: %s", filePath.data());
+		SDL_Log("Failed to open scene file: %s", scenePath.string().c_str());
 		return result;
 	}
 
@@ -49,7 +90,7 @@ SceneLoadResult SceneLoader::LoadScene(std::string_view filePath, Engine& engine
 	
 	if (document.is_discarded())
 	{
-		SDL_Log("Failed to parse scene JSON file: %s", filePath.data());
+		SDL_Log("Failed to parse scene JSON file: %s", scenePath.string().c_str());
 		return result;
 	}
 	
@@ -78,7 +119,7 @@ SceneLoadResult SceneLoader::LoadScene(std::string_view filePath, Engine& engine
 		!LoadTileMapDefinitions(document, engine, tileMap) ||
 		!LoadEntities(document, registry, result))
 	{
-		SDL_Log("Failed to load scene from file: %s", filePath.data());
+		SDL_Log("Failed to load scene from file: %s", scenePath.string().c_str());
 		return result;
 	}
 
@@ -445,7 +486,7 @@ void SceneLoader::ApplyCameraComponent(const Json& entityDef, Entity& entity)
 	camera.m_isActive = cameraDef.value("active", true);
 	camera.m_viewport.x = cameraDef.value("x", 0);
 
-	const nlohmann::json& viewport = entityDef.value(
+	const nlohmann::json& viewport = cameraDef.value(
 		"viewport",
 		nlohmann::json{ { "x", 0 }, { "y", 0 }, { "width", 800 }, { "height", 600 } });
 
@@ -456,7 +497,7 @@ void SceneLoader::ApplyCameraComponent(const Json& entityDef, Entity& entity)
 		viewport.value("height", 600)
 	};
 
-	const nlohmann::json& offset = entityDef.value(
+	const nlohmann::json& offset = cameraDef.value(
 		"followOffset",
 		nlohmann::json{ { "x", 0.0f }, { "y", 0.0f } });
 

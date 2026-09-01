@@ -1,0 +1,36 @@
+{
+  "tag": "yuuki",
+  "transform": {
+    "x": 1500.0,
+    "y": 500.0
+  },
+  "sprite": {
+    "texture": "player_v2_idle",
+    "width": 128,
+    "height": 120
+  },
+  "collider": {
+    "width": 35,
+    "height": 55,
+    "offsetX": 45,
+    "offsetY": 35
+  },
+  "animation": {
+    "setName": "witch",
+    "currentAnimation": "idle",
+    "isLooping": true,
+    "speedMultiplier": 1.0
+  },
+  "interactable": {
+    "interactionType": "dialogue",
+    "interactionRange": 50,
+    "requiresKey": true,
+    "oneShot": false,
+    "used": false,
+    "dialogueId": "yuuki_intro"
+  },
+  "dialogue": {
+    "dialogueId": "yuuki_intro",
+    "startNodeId": "start"
+  }
+}

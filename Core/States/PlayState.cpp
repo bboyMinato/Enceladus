@@ -29,7 +29,7 @@
 void PlayState::OnEnter(Engine& engine)
 {
 	SceneLoader loader;
-	const SceneLoadResult result = loader.LoadScene("Assets/play_scene.json", engine, m_registry, m_tileMap);
+	const SceneLoadResult result = loader.LoadScene("Assets/scenes/play_scene.json", engine, m_registry, m_tileMap);
 
 	if (!result.loaded)
 	{
@@ -42,7 +42,7 @@ void PlayState::OnEnter(Engine& engine)
 		m_player = playerIt->second;
 	}
 
-	if (const auto cameraIt = result.entities.find("main_camera"); cameraIt != result.entities.end())
+	if (const auto cameraIt = result.entities.find("player_camera"); cameraIt != result.entities.end())
 	{
 		m_camera = cameraIt->second;
 	}

@@ -1,0 +1,36 @@
+{
+  "textures": [
+    {
+      "name": "player_idle",
+      "filePath": "Assets/sprites/witch_idle.png"
+    },
+    {
+      "name": "player_walk",
+      "filePath": "Assets/sprites/witch_walk.png"
+    },
+    {
+      "name": "player_v2_idle",
+      "filePath": "Assets/sprites/witch_v2_idle.png"
+    },
+    {
+      "name": "player_v2_walk",
+      "filePath": "Assets/sprites/witch_v2_walk.png"
+    }
+  ],
+  "music": [
+    {
+      "name": "background_forest_music",
+      "filePath": "Assets/sounds/forest.ogg"
+    }
+  ],
+  "tileMap": {
+    "filePath": "Assets/map/test.tmj"
+  },
+  "animationSets": {
+    "path": "Assets/animations/animations.json"
+  },
+  "sounds": [],
+  "entities": {
+    "path": "Assets/scenes/play_scene.entities.json"
+  }
+}
