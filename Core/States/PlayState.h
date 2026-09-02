@@ -1,7 +1,7 @@
 #pragma once
 #include "IState.h"	
 #include "../ECS/Registry.h"
-#include "../World/TileMap.h"
+#include "../Managers/SceneManager.h"
 #include "../Events/EventBus.h"
 #include "../Utility/DialogueRuntimeState.h"
 
@@ -25,10 +25,9 @@ public:
 #endif 
 
 private:
-	Registry m_registry;
+	SceneManager m_sceneManager;
 	Entity m_player;
 	Entity m_camera;
-	TileMap m_tileMap;
 	EventBus m_eventBus;
 	DialogueRuntimeState m_dialogueState;
 

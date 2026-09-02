@@ -20,7 +20,8 @@
   "music": [
     {
       "name": "background_forest_music",
-      "filePath": "Assets/sounds/forest.ogg"
+      "filePath": "Assets/sounds/forest.ogg",
+      "autoPlay": true
     }
   ],
   "tileMap": {

@@ -79,23 +79,20 @@ SceneLoadResult SceneLoader::LoadScene(const std::filesystem::path& sceneFilePat
 	}
 
 	std::ifstream file(scenePath);
-
 	if (!file.is_open())
 	{
 		SDL_Log("Failed to open scene file: %s", scenePath.string().c_str());
 		return result;
 	}
 
-	Json document = Json::parse(file, nullptr, false);
-	
+	Json document = Json::parse(file, nullptr, false);	
 	if (document.is_discarded())
 	{
 		SDL_Log("Failed to parse scene JSON file: %s", scenePath.string().c_str());
 		return result;
 	}
 	
-	Json& animDef = document["animationSets"];
-		
+	Json& animDef = document["animationSets"];		
 	if (!animDef.is_object() )
 	{
 		SDL_Log("Scene file 'animationSets' must be an object.");
@@ -313,6 +310,11 @@ bool SceneLoader::LoadMusicDefinitions(const Json& document, Engine& engine, Sce
 		}
 
 		result.loadedMusic.push_back(name);
+
+		if (musicDef.value("autoPlay", false))
+		{
+			result.autoPlayedMusic = name;
+		}
 	}
 
 	return true;

@@ -15,12 +15,24 @@ void MainMenuState::OnEnter(Engine& engine)
 
 	m_menu.Clear();
 
-	m_menu.AddMenuItem({ 540, 300, 300, 80 }, "playText", [&engine]()
+	int windowWidth = 0;
+	int windowHeight = 0;
+	engine.GetRenderSystem().GetOutputSize(windowWidth, windowHeight);
+
+	constexpr int itemWidth = 300;
+	constexpr int itemHeight = 80;
+	constexpr int itemSpacing = 20;
+	constexpr int menuHeight = (itemHeight * 2) + itemSpacing;
+
+	const int menuX = (windowWidth - itemWidth) / 2;
+	const int menuY = (windowHeight - menuHeight) / 2;
+
+	m_menu.AddMenuItem({ menuX, menuY, itemWidth, itemHeight }, "playText", [&engine]()
 		{
 			engine.ReplaceState<PlayState>();
 		});
 
-	m_menu.AddMenuItem({ 540, 400, 300, 80 }, "quitText", [&engine]()
+	m_menu.AddMenuItem({ menuX, menuY + itemHeight + itemSpacing, itemWidth, itemHeight }, "quitText", [&engine]()
 		{
 			engine.RequestShutdown();
 		});

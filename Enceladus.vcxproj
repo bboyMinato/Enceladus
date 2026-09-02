@@ -135,6 +135,7 @@
     <ClCompile Include="Core\Managers\AnimationManager.cpp" />
     <ClCompile Include="Core\Managers\DialogueManager.cpp" />
     <ClCompile Include="Core\Managers\MapManager.cpp" />
+    <ClCompile Include="Core\Managers\SceneManager.cpp" />
     <ClCompile Include="Core\Managers\SoundManager.cpp" />
     <ClCompile Include="Core\Managers\StateManager.cpp" />
     <ClCompile Include="Core\Managers\TextManager.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="Core\Managers\AnimationManager.h" />
     <ClInclude Include="Core\Managers\DialogueManager.h" />
     <ClInclude Include="Core\Managers\MapManager.h" />
+    <ClInclude Include="Core\Managers\SceneManager.h" />
     <ClInclude Include="Core\Managers\SoundManager.h" />
     <ClInclude Include="Core\Managers\StateManager.h" />
     <ClInclude Include="Core\Managers\TextManager.h" />

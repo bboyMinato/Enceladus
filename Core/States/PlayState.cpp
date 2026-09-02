@@ -28,24 +28,13 @@
 
 void PlayState::OnEnter(Engine& engine)
 {
-	SceneLoader loader;
-	const SceneLoadResult result = loader.LoadScene("Assets/scenes/play_scene.json", engine, m_registry, m_tileMap);
-
-	if (!result.loaded)
+	if (!m_sceneManager.LoadScene("Assets/scenes/play_scene.json", engine))
 	{
-		SDL_Log("Failed to load scene.");
 		return;
 	}
 
-	if (const auto playerIt = result.entities.find("player"); playerIt != result.entities.end())
-	{
-		m_player = playerIt->second;
-	}
-
-	if (const auto cameraIt = result.entities.find("player_camera"); cameraIt != result.entities.end())
-	{
-		m_camera = cameraIt->second;
-	}
+	m_player = m_sceneManager.FindEntity("player");
+	m_camera = m_sceneManager.FindEntity("player_camera");
 
 	if (!m_player || !m_camera)
 	{
@@ -58,7 +47,6 @@ void PlayState::OnEnter(Engine& engine)
 	camera->m_viewport.w = engine.GetConfig().windowWidth;
 	camera->m_viewport.h = engine.GetConfig().windowHeight;
 
-	engine.GetSoundManager().PlayMusic("background_forest_music", true);
     engine.GetTextManager().LoadFont("menuFont", "Assets/fonts/Uncial.ttf", 48);
     engine.GetTextManager().LoadFont("dialogueFont", "Assets/fonts/dialogueFont.ttf", 42);
 
@@ -72,29 +60,13 @@ void PlayState::OnEnter(Engine& engine)
 
 void PlayState::OnExit(Engine& engine)
 {
-	if (m_player)
-	{
-		m_player.Destroy();
-	}
+	m_player = {};
+	m_camera = {};
 
-	if (m_camera)
-	{
-		m_camera.Destroy();
-		m_camera = {};
-	}
+	m_sceneManager.Unload(engine);
 
-	engine.GetAnimationManager().Clear();
-
-	engine.GetTextureManager().UnloadTexture("player_idle");
-	engine.GetTextureManager().UnloadTexture("player_v2_idle");
-	engine.GetTextureManager().UnloadTexture("player_walk");
-	engine.GetTextureManager().UnloadTexture("player_v2_walk");
-	engine.GetSoundManager().UnloadSound("background_forest_music");
-	engine.GetMapManager().Clear();
 	engine.GetTextManager().UnloadFont("menuFont");
 	engine.GetTextManager().UnloadFont("dialogueFont");
-
-	m_tileMap = {};
 }
 
 void PlayState::HandleEvent(Engine& engine, const SDL_Event& event)
@@ -110,29 +82,29 @@ void PlayState::Update(Engine& engine, float deltaTime)
 	if (m_dialogueState.m_isActive)
 	{
 		DialogueSystem::Update(m_dialogueState, input);
-		AnimationSystem::Update(m_registry, engine.GetAnimationManager(), deltaTime);
+		AnimationSystem::Update(m_sceneManager.GetRegistry(), engine.GetAnimationManager(), deltaTime);
 
 		return;
 	}
 
-	if (ControllerSystem::PopState(m_registry, input))
+	if (ControllerSystem::PopState(m_sceneManager.GetRegistry(), input))
 	{
 		engine.PopState();
 		return;
 	}
 
-	ControllerSystem::Update(m_registry, input, m_eventBus);
+	ControllerSystem::Update(m_sceneManager.GetRegistry(), input, m_eventBus);
 
-	MovementSystem::Update(m_registry, deltaTime);
-	CollisionSystem::Update(m_registry);
+	MovementSystem::Update(m_sceneManager.GetRegistry(), deltaTime);
+	CollisionSystem::Update(m_sceneManager.GetRegistry());
 
 	TransformComponent* transform = m_player.Get<TransformComponent>();
 	const SpriteComponent* sprite = m_player.Get<SpriteComponent>();
 
-	MapConstraintSystem::ClampToTileMap(*transform, *sprite, m_tileMap);
-	AnimationStateSystem::UpdateAnimationStates(m_registry, engine.GetAnimationManager());
-	AnimationSystem::Update(m_registry, engine.GetAnimationManager(), deltaTime);
-	CameraSystem::Update(m_registry, m_camera, engine.GetRenderSystem(), m_tileMap);
+	MapConstraintSystem::ClampToTileMap(*transform, *sprite, m_sceneManager.GetTileMap());
+	AnimationStateSystem::UpdateAnimationStates(m_sceneManager.GetRegistry(), engine.GetAnimationManager());
+	AnimationSystem::Update(m_sceneManager.GetRegistry(), engine.GetAnimationManager(), deltaTime);
+	CameraSystem::Update(m_sceneManager.GetRegistry(), m_camera, engine.GetRenderSystem(), m_sceneManager.GetTileMap());
 }
 
 void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
@@ -151,7 +123,7 @@ void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
     auto& renderSystem = engine.GetRenderSystem();
 
 	auto& mapSystem = engine.GetMapSystem();
-	mapSystem.Render(m_tileMap, renderSystem, *camera, m_registry);
+	mapSystem.Render(m_sceneManager.GetTileMap(), renderSystem, *camera, m_sceneManager.GetRegistry());
 
 	int windowWidth = 0;
 	int windowHeight = 0;
@@ -163,8 +135,8 @@ void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
 #ifdef _DEBUG
 void PlayState::RenderImGui(Engine& engine)
 {
-	m_debugHelper.RenderImGui(engine, m_registry);
-	m_debugHelper.RenderDebugCollider(engine, m_registry, m_camera);
+	m_debugHelper.RenderImGui(engine, m_sceneManager.GetRegistry());
+	m_debugHelper.RenderDebugCollider(engine, m_sceneManager.GetRegistry(), m_camera);
 }
 
 #endif
