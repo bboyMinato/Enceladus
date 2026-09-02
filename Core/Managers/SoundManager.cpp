@@ -1,5 +1,6 @@
 #include "SoundManager.h"
 #include <SDL2/SDL.h>
+#include "../Utility/AssetFilePaths.h"
 
 SoundManager::~SoundManager()
 {
@@ -56,15 +57,17 @@ bool SoundManager::Init()
 	return true;
 }
 
-bool SoundManager::LoadSound(const std::string& soundName, const std::string& filePath)
+bool SoundManager::LoadSound(const std::string& soundName, const std::filesystem::path& filePath)
 {
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(filePath);
+
 	if (!m_initialized)
 	{
 		SDL_Log("SoundManager not initialized. Call Init() before loading sounds.");
 		return false;
 	}
 
-	Mix_Chunk* sound = Mix_LoadWAV(filePath.c_str());
+	Mix_Chunk* sound = Mix_LoadWAV(resolvedPath.string().c_str());
 	if (!sound)
 	{
 		SDL_Log("Failed to load sound: %s", Mix_GetError());
@@ -82,15 +85,17 @@ bool SoundManager::LoadSound(const std::string& soundName, const std::string& fi
 	return true;
 }
 
-bool SoundManager::LoadMusic(const std::string& musicName, const std::string& filePath)
+bool SoundManager::LoadMusic(const std::string& musicName, const std::filesystem::path& filePath)
 {
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(filePath);
+
 	if (!m_initialized)
 	{
 		SDL_Log("SoundManager not initialized. Call Init() before loading music.");
 		return false;
 	}
 	
-	Mix_Music* music = Mix_LoadMUS(filePath.c_str());
+	Mix_Music* music = Mix_LoadMUS(resolvedPath.string().c_str());
 	if (!music)
 	{
 		SDL_Log("Failed to load music: %s", Mix_GetError());

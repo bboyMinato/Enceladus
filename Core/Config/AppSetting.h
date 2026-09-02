@@ -1,6 +1,7 @@
 #pragma once 
 #include <string>
 #include <SDL2/SDL.h>
+#include <filesystem>
 
 struct WindowSettings
 {
@@ -22,6 +23,6 @@ struct AppSettings
 	WindowSettings windowSettings;
 	AudioSettings audioSettings;
 
-	static AppSettings LoadFromFile(const std::string& filePath);
-	bool SaveToFile(const std::string& filePath) const;
+	static AppSettings LoadFromFile(const std::filesystem::path& filePath);
+	bool SaveToFile(const std::filesystem::path& filePath) const;
 };

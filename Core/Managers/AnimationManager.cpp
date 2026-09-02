@@ -2,15 +2,19 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <SDL2/SDL.h>
+#include "../Utility/AssetFilePaths.h"
+
 
 using Json = nlohmann::json;
 
-bool AnimationManager::LoadAnimationSet(std::string_view filePath)
+bool AnimationManager::LoadAnimationSet(const std::filesystem::path& filePath)
 {
-	std::ifstream file(filePath.data());
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(filePath);
+
+	std::ifstream file(resolvedPath);
 	if (!file.is_open())
 	{
-		SDL_Log("Failed to open animation set file: %s", filePath.data());
+		SDL_Log("Failed to open animation set file: %s", resolvedPath.string().c_str());
 		return false;
 	}
 
@@ -18,13 +22,13 @@ bool AnimationManager::LoadAnimationSet(std::string_view filePath)
 
 	if (document.is_discarded())
 	{
-		SDL_Log("Failed to parse animation set JSON file: %s", filePath.data());
+		SDL_Log("Failed to parse animation set JSON file: %s", resolvedPath.string().c_str());
 		return false;
 	}
 
 	if (!document.is_array())
 	{
-		SDL_Log("Animation set JSON must be an array of sets. %s", filePath.data());
+		SDL_Log("Animation set JSON must be an array of sets. %s", resolvedPath.string().c_str());
 		return false;
 	}
 
@@ -32,7 +36,7 @@ bool AnimationManager::LoadAnimationSet(std::string_view filePath)
 	{
 		if (!set.contains("animations") || !set["animations"].is_object())
 		{
-			SDL_Log("Animation set JSON must contain an 'animations' object. %s", filePath.data());
+			SDL_Log("Animation set JSON must contain an 'animations' object. %s", resolvedPath.string().c_str());
 			return false;
 		}
 

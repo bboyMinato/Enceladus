@@ -1,6 +1,7 @@
 #include "AppSetting.h"
 #include <algorithm>
 #include <fstream>
+#include "../Utility/AssetFilePaths.h"
 
 namespace
 {
@@ -23,11 +24,13 @@ namespace
 	}
 }
 
-AppSettings AppSettings::LoadFromFile(const std::string& filePath)
+AppSettings AppSettings::LoadFromFile(const std::filesystem::path& filePath)
 {
 	AppSettings settings{};
 
-	std::ifstream file(filePath);
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(filePath);
+
+	std::ifstream file(resolvedPath);
 	if (!file.is_open())
 	{
 		return settings;
@@ -107,9 +110,11 @@ AppSettings AppSettings::LoadFromFile(const std::string& filePath)
 	return settings;
 }
 
-bool AppSettings::SaveToFile(const std::string& filePath) const
+bool AppSettings::SaveToFile(const std::filesystem::path& filePath) const
 {
-	std::ofstream file(filePath);
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(filePath);
+
+	std::ofstream file(resolvedPath);
 	if (!file.is_open())
 	{
 		return false;

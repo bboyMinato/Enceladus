@@ -1,5 +1,6 @@
 #include "TextureManager.h"
 #include <SDL2/SDL_image.h>
+#include "../Utility/AssetFilePaths.h"
 
 TextureManager::~TextureManager()
 {
@@ -31,12 +32,14 @@ bool TextureManager::Init(SDL_Renderer* renderer)
 	return true;
 }
 
-bool TextureManager::LoadTexture(std::string_view textureName, std::string_view filePath)
+bool TextureManager::LoadTexture(std::string_view textureName, std::filesystem::path filePath)
 {
-	SDL_Texture* texture = IMG_LoadTexture(m_renderer, filePath.data());
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(filePath);
+
+	SDL_Texture* texture = IMG_LoadTexture(m_renderer, resolvedPath.string().c_str());
 	if (!texture)
 	{
-		SDL_Log("Failed to load texture '%s': %s", filePath.data(), IMG_GetError());
+		SDL_Log("Failed to load texture '%s': %s", resolvedPath.string().c_str(), IMG_GetError());
 		return false;
 	}
 

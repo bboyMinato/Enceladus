@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_map>
 #include <SDL2/SDL.h>
+#include <filesystem>
 
 class TextureManager
 {
@@ -21,7 +22,7 @@ public:
 	/// <param name="textureName">The name to associate with the loaded texture.</param>
 	/// <param name="filePath">The file path of the texture to load.</param>
 	/// <returns>True if the texture was loaded successfully, false otherwise.</returns>
-	bool LoadTexture(std::string_view textureName, std::string_view filePath);
+	bool LoadTexture(std::string_view textureName, std::filesystem::path filePath);
 
 	/// <summary>
 	/// Unloads the texture associated with the given texture name.

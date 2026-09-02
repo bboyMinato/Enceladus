@@ -2,6 +2,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <string> 
 #include <unordered_map>
+#include <filesystem>
 
 class SoundManager
 {
@@ -9,8 +10,8 @@ public:
 	~SoundManager();
 
 	bool Init(); 
-	bool LoadSound(const std::string& soundName, const std::string& filePath);
-	bool LoadMusic(const std::string& musicName, const std::string& filePath);
+	bool LoadSound(const std::string& soundName, const std::filesystem::path& filePath);
+	bool LoadMusic(const std::string& musicName, const std::filesystem::path& filePath);
 
 	void UnloadSound(const std::string& soundName);
 	void UnloadMusic(const std::string& musicName);

@@ -25,7 +25,7 @@
 
 void PlayState::OnEnter(Engine& engine)
 {
-	auto result = m_sceneManager.LoadScene("Assets/scenes/play_scene.json", engine);
+	auto result = m_sceneManager.LoadScene("scenes/play_scene.json", engine);
 
 	if (!result)
 	{
@@ -68,10 +68,10 @@ void PlayState::OnEnter(Engine& engine)
 	camera->m_viewport.w = engine.GetConfig().windowWidth;
 	camera->m_viewport.h = engine.GetConfig().windowHeight;
 
-    engine.GetTextManager().LoadFont("menuFont", "Assets/fonts/Uncial.ttf", 48);
-    engine.GetTextManager().LoadFont("dialogueFont", "Assets/fonts/dialogueFont.ttf", 42);
+    engine.GetTextManager().LoadFont("menuFont", "fonts/Uncial.ttf", 48);
+    engine.GetTextManager().LoadFont("dialogueFont", "fonts/dialogueFont.ttf", 42);
 
-	if (!engine.GetDialogueManager().LoadDialogue("Assets/dialogues/test_rework.json"))
+	if (!engine.GetDialogueManager().LoadDialogue("dialogues/test_rework.json"))
 	{
 		SDL_Log("Failed to load dialogue: test_rework.json");
 	}

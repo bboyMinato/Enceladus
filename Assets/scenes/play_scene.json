@@ -2,32 +2,32 @@
   "textures": [
     {
       "name": "player_idle",
-      "filePath": "Assets/sprites/witch_idle.png"
+      "filePath": "sprites/witch_idle.png"
     },
     {
       "name": "player_walk",
-      "filePath": "Assets/sprites/witch_walk.png"
+      "filePath": "sprites/witch_walk.png"
     },
     {
       "name": "player_v2_idle",
-      "filePath": "Assets/sprites/witch_v2_idle.png"
+      "filePath": "sprites/witch_v2_idle.png"
     },
     {
       "name": "player_v2_walk",
-      "filePath": "Assets/sprites/witch_v2_walk.png"
+      "filePath": "sprites/witch_v2_walk.png"
     }
   ],
   "music": [
     {
       "name": "background_forest_music",
-      "filePath": "Assets/sounds/forest.ogg"
+      "filePath": "sounds/forest.ogg"
     }
   ],
   "tileMap": {
-    "filePath": "Assets/map/test.tmj"
+    "filePath": "map/test.tmj"
   },
   "animationSets": {
-    "path": "Assets/animations/animations.json"
+    "path": "animations/animations.json"
   },
   "sounds": [],
   "entities": [
@@ -42,7 +42,7 @@
         "moveSpeed": 200.0
       },
       "controller": {
-        "path": "Assets/player_controller.json"
+        "path": "player_controller.json"
       },
       "sprite": {
         "texture": "player_v2_idle",

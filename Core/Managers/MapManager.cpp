@@ -1,6 +1,7 @@
 #include "MapManager.h"
 #include <fstream>
 #include <nlohmann/json.hpp>
+#include "../Utility/AssetFilePaths.h"
 
 using Json = nlohmann::json;
 
@@ -11,17 +12,19 @@ MapManager::~MapManager()
 
 std::optional<TileMap> MapManager::ParseFromTMJ(const std::filesystem::path& filePath)
 {
-	if (filePath.extension() != ".tmj")
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(filePath);
+
+	if (resolvedPath.extension() != ".tmj")
 	{
-		SDL_Log("Invalid tile map file extension: %s", filePath.string().c_str());
+		SDL_Log("Invalid tile map file extension: %s", resolvedPath.string().c_str());
 
 		return std::nullopt;
 	}
 
-	std::ifstream file(filePath);
+	std::ifstream file(resolvedPath);
 	if (!file.is_open())
 	{
-		SDL_Log("Failed to open tile map file: %s", filePath.string().c_str());
+		SDL_Log("Failed to open tile map file: %s", resolvedPath.string().c_str());
 		
 		return std::nullopt;
 	}
@@ -30,7 +33,7 @@ std::optional<TileMap> MapManager::ParseFromTMJ(const std::filesystem::path& fil
 
 	if (document.is_discarded())
 	{
-		SDL_Log("Failed to parse scene JSON file: %s", filePath.string().c_str());
+		SDL_Log("Failed to parse scene JSON file: %s", resolvedPath.string().c_str());
 
 		return std::nullopt;
 	}
@@ -53,21 +56,21 @@ std::optional<TileMap> MapManager::ParseFromTMJ(const std::filesystem::path& fil
 
 	if (tileMap.m_orientation != "orthogonal")
 	{
-		SDL_Log("Only orthogonal tile maps are supported: %s", filePath.string().c_str());
+		SDL_Log("Only orthogonal tile maps are supported: %s", resolvedPath.string().c_str());
 
 		return fail();
 	}
 
 	if (tileMap.m_mapWidth <= 0 || tileMap.m_mapHeight <= 0 || tileMap.m_tileWidth <= 0 || tileMap.m_tileHeight <= 0)
 	{
-		SDL_Log("Invalid tile map dimensions in file: %s", filePath.string().c_str());
+		SDL_Log("Invalid tile map dimensions in file: %s", resolvedPath.string().c_str());
 
 		return fail();
 	}
 
 	if (!document.contains("tilesets") || !document["tilesets"].is_array())
 	{
-		SDL_Log("Tile map file does not contain a valid tilesets array: %s", filePath.string().c_str());
+		SDL_Log("Tile map file does not contain a valid tilesets array: %s", resolvedPath.string().c_str());
 
 		return fail();
 	}
@@ -85,8 +88,8 @@ std::optional<TileMap> MapManager::ParseFromTMJ(const std::filesystem::path& fil
 			.tileCount = tileSetDef.value("tilecount", 0)
 		};
 
-		tileSet.imagePath = BuildImagePath(filePath, tileSet.imagePath);
-		tileSet.textureName = BuildTextureName(filePath, tileSet);
+		tileSet.imagePath = BuildImagePath(resolvedPath, tileSet.imagePath);
+		tileSet.textureName = BuildTextureName(resolvedPath, tileSet);
 
 		if (!m_textureManager.LoadTexture(tileSet.textureName, tileSet.imagePath))
 		{

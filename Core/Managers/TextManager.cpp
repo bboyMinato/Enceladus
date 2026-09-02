@@ -1,4 +1,5 @@
 #include "TextManager.h"
+#include "../Utility/AssetFilePaths.h"
 
 TextManager::~TextManager()
 {
@@ -46,7 +47,7 @@ void TextManager::Shutdown()
 	m_renderer = nullptr;
 }
 
-bool TextManager::LoadFont(const std::string& fontName, const std::string& filePath, int fontSize)
+bool TextManager::LoadFont(const std::string& fontName, const std::filesystem::path& filePath, int fontSize)
 {
 	if (!m_isInitialized)
 	{
@@ -60,10 +61,12 @@ bool TextManager::LoadFont(const std::string& fontName, const std::string& fileP
 		return false;
 	}
 
-	TTF_Font* font = TTF_OpenFont(filePath.c_str(), fontSize);
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(filePath);
+
+	TTF_Font* font = TTF_OpenFont(resolvedPath.string().c_str(), fontSize);
 	if (!font)
 	{
-		SDL_Log("Failed to load font: %s", TTF_GetError());
+		SDL_Log("Failed to load font '%s': %s", resolvedPath.string().c_str(), TTF_GetError());
 		return false;
 	}
 

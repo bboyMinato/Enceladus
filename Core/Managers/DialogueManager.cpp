@@ -1,12 +1,15 @@
 #include "DialogueManager.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
+#include "../Utility/AssetFilePaths.h"
 
 using Json = nlohmann::json;
 
 bool DialogueManager::LoadDialogue(const std::filesystem::path& filePath)
 {
-	std::ifstream file(filePath);
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(filePath);
+
+	std::ifstream file(resolvedPath);
 	
 	if (!file.is_open()) 
 	{

@@ -111,6 +111,15 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>robocopy "$(ProjectDir)Assets" "$(OutDir)Assets" /E /XO /NFL /NDL /NJH /NJS
+if %ERRORLEVEL% LEQ 7 exit /B 0
+exit /B %ERRORLEVEL%
+copy /Y "$(ProjectDir)config.ini" "$(OutDir)config.ini"
+robocopy "$(ProjectDir)Assets" "$(OutDir)Assets" /E /XO /NFL /NDL /NJH /NJS
+if %ERRORLEVEL% LEQ 7 exit /B 0
+exit /B %ERRORLEVEL%</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -127,6 +136,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
+    <PostBuildEvent>
+      <Command>robocopy "$(ProjectDir)Assets" "$(OutDir)Assets" /E /XO /NFL /NDL /NJH /NJS
+if %ERRORLEVEL% LEQ 7 exit /B 0
+exit /B %ERRORLEVEL%
+copy /Y "$(ProjectDir)config.ini" "$(OutDir)config.ini"
+robocopy "$(ProjectDir)Assets" "$(OutDir)Assets" /E /XO /NFL /NDL /NJH /NJS
+if %ERRORLEVEL% LEQ 7 exit /B 0
+exit /B %ERRORLEVEL%</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\Config\AppSetting.cpp" />
@@ -155,6 +173,7 @@
     <ClCompile Include="Core\Systems\SpriteAnimationSystem.cpp" />
     <ClCompile Include="Core\UI\Button.cpp" />
     <ClCompile Include="Core\UI\Menu.cpp" />
+    <ClCompile Include="Core\Utility\AssetFilePaths.cpp" />
     <ClCompile Include="Core\Utility\DebugHelpers.cpp" />
     <ClCompile Include="Core\World\Scene.cpp" />
     <ClCompile Include="Core\World\SceneLoader.cpp" />
@@ -225,6 +244,7 @@
     <ClInclude Include="Core\Systems\SpriteAnimationSystem.h" />
     <ClInclude Include="Core\UI\Button.h" />
     <ClInclude Include="Core\UI\Menu.h" />
+    <ClInclude Include="Core\Utility\AssetFilePaths.h" />
     <ClInclude Include="Core\Utility\DebugHelpers.h" />
     <ClInclude Include="Core\Utility\Dialogue.h" />
     <ClInclude Include="Core\Utility\DialogueRuntimeState.h" />

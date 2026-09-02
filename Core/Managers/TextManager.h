@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <filesystem>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -13,7 +14,7 @@ public:
 	bool Init(SDL_Renderer* renderer);
 	void Shutdown();
 
-	bool LoadFont(const std::string& fontName, const std::string& filePath, int fontSize);
+	bool LoadFont(const std::string& fontName, const std::filesystem::path& filePath, int fontSize);
 	void UnloadFont(const std::string& fontName);
 	void UnloadAllFonts();
 

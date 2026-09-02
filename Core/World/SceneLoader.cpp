@@ -18,6 +18,7 @@
 #include <algorithm>
 #include "../ECS/DialogueComponent.h"
 #include "Scene.h"
+#include "../Utility/AssetFilePaths.h"
 
 namespace
 {
@@ -33,49 +34,11 @@ namespace
 
 		return SDL_GetScancodeFromKey(keycode);
 	}
-
-	std::filesystem::path FindAssetsDirectory(const std::filesystem::path& scenePath)
-	{
-		for (std::filesystem::path directory = scenePath.parent_path();
-			!directory.empty();
-			directory = directory.parent_path())
-		{
-			if (directory.filename() == "Assets")
-			{
-				return directory;
-			}
-
-			if (directory == directory.root_path())
-			{
-				break;
-			}
-		}
-
-		return {};
-	}
-
-	std::filesystem::path ResolveAssetPath(const std::filesystem::path& assetsDirectory, const std::filesystem::path& path)
-	{
-		if (path.is_absolute())
-		{
-			return path.lexically_normal();
-		}
-
-		return (assetsDirectory / path).lexically_normal();
-	}
 }
 
 std::expected<void, std::string> SceneLoader::LoadScene(const std::filesystem::path& sceneFilePath, Engine& engine, Scene& scene)
 {
-	const std::filesystem::path scenePath = std::filesystem::absolute(sceneFilePath).lexically_normal();
-	const std::filesystem::path assetsDirectory = FindAssetsDirectory(scenePath);
-
-	if (assetsDirectory.empty())
-	{
-		SDL_Log("Unable to locate the Assets directory for scene: %s", scenePath.string().c_str());
-
-		return std::unexpected("Unable to locate the Assets directory for scene: " + scenePath.string());
-	}
+	const std::filesystem::path scenePath = AssetPaths::ResolveAsset(sceneFilePath);
 
 	std::ifstream file(scenePath);
 	if (!file.is_open())
@@ -351,11 +314,13 @@ void SceneLoader::ApplyControllerComponent(const Json& entityDef, Entity& entity
 
 	const std::string path = controllerDef["path"].get<std::string>();
 
-	std::ifstream file(path);
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(path);
+
+	std::ifstream file(resolvedPath);
 
 	if (!file.is_open())
 	{
-		SDL_Log("Failed to open controller path file: %s", path.c_str());
+		SDL_Log("Failed to open controller path file: %s", resolvedPath.string().c_str());
 		return;
 	}
 
@@ -363,7 +328,7 @@ void SceneLoader::ApplyControllerComponent(const Json& entityDef, Entity& entity
 
 	if (controllerJson.is_discarded())
 	{
-		SDL_Log("Failed to parse controller JSON file: %s", path.c_str());
+		SDL_Log("Failed to parse controller JSON file: %s", resolvedPath.string().c_str());
 		return;
 	}
 

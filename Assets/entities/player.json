@@ -9,7 +9,7 @@
     "moveSpeed": 200.0
   },
   "controller": {
-    "path": "Assets/player_controller.json"
+    "path": "player_controller.json"
   },
   "sprite": {
     "texture": "player_v2_idle",
