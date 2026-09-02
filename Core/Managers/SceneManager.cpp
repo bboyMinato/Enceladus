@@ -1,79 +1,63 @@
 #include "SceneManager.h"
+#include "../World/SceneLoader.h"
 #include "../Engine.h"
 
-std::expected<bool, std::string> SceneManager::LoadScene(const std::filesystem::path& sceneFilePath, Engine& engine)
+std::expected<void, std::string> SceneManager::LoadScene(const std::filesystem::path& sceneFilePath, Engine& engine)
 {
 	Unload(engine);
 
-	m_sceneLoadResult = SceneLoader::LoadScene(sceneFilePath, engine, m_registry, m_tileMap);
+	m_scene = std::make_unique<Scene>();
 
-	if (!m_sceneLoadResult.loaded)
+	auto result = SceneLoader::LoadScene(sceneFilePath, engine, *m_scene);
+
+	if (!result)
 	{
 		Unload(engine);
 
-		return std::unexpected("Failed to load scene: " + sceneFilePath.string());
+		return std::unexpected(result.error());
 	}
 
-	if (!m_sceneLoadResult.autoPlayedSound.empty())
-	{
-		engine.GetSoundManager().PlaySound(m_sceneLoadResult.autoPlayedSound);
-	}
-
-	if (!m_sceneLoadResult.autoPlayedMusic.empty())
-	{
-		engine.GetSoundManager().PlayMusic(m_sceneLoadResult.autoPlayedMusic);
-	}
-
-	return std::expected<bool, std::string>();
+	return std::expected<void, std::string>();
 }
 
 void SceneManager::Unload(Engine& engine)
 {
+	if (!m_scene)
+	{
+		return;
+	}
+
 	DestroySceneEntities();
 
 	engine.GetSoundManager().StopMusic();
 
-	for (const std::string& musicName : m_sceneLoadResult.loadedMusic)
+	for (const std::string& musicName : m_scene->GetMusic())
 	{
 		engine.GetSoundManager().UnloadMusic(musicName);
 	}
 
-	for (const std::string& soundName : m_sceneLoadResult.loadedSounds)
+	for (const std::string& soundName : m_scene->GetSounds())
 	{
 		engine.GetSoundManager().UnloadSound(soundName);
 	}
 
-	// This also unloads textures created for the scene tile map.
 	engine.GetMapManager().Clear();
 
-	for (const std::string& textureName : m_sceneLoadResult.loadedTextures)
+	for (const std::string& textureName : m_scene->GetTextures())
 	{
 		engine.GetTextureManager().UnloadTexture(textureName);
 	}
 
 	engine.GetAnimationManager().Clear();
 
-	m_tileMap = {};
-	m_sceneLoadResult = {};
-}
-
-Entity SceneManager::FindEntity(std::string_view key) const
-{
-	const auto it = m_sceneLoadResult.entities.find(std::string(key));
-
-	if (it == m_sceneLoadResult.entities.end())
-	{
-		return {};
-	}
-
-	return it->second;
+	m_scene.reset();
 }
 
 #pragma region Private functions
 
 void SceneManager::DestroySceneEntities()
 {
-	for (Entity entity : m_registry.GetAllEntities())
+	for (Entity entity : m_scene->GetRegistry().GetAllEntities())
 	{
 		entity.Destroy();
 	}

@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include "../ECS/DialogueComponent.h"
+#include "Scene.h"
 
 namespace
 {
@@ -64,10 +65,8 @@ namespace
 	}
 }
 
-SceneLoadResult SceneLoader::LoadScene(const std::filesystem::path& sceneFilePath, Engine& engine, Registry& registry, TileMap& tileMap)
+std::expected<void, std::string> SceneLoader::LoadScene(const std::filesystem::path& sceneFilePath, Engine& engine, Scene& scene)
 {
-	SceneLoadResult result;
-
 	const std::filesystem::path scenePath = std::filesystem::absolute(sceneFilePath).lexically_normal();
 	const std::filesystem::path assetsDirectory = FindAssetsDirectory(scenePath);
 
@@ -75,30 +74,28 @@ SceneLoadResult SceneLoader::LoadScene(const std::filesystem::path& sceneFilePat
 	{
 		SDL_Log("Unable to locate the Assets directory for scene: %s", scenePath.string().c_str());
 
-		return result;
+		return std::unexpected("Unable to locate the Assets directory for scene: " + scenePath.string());
 	}
 
 	std::ifstream file(scenePath);
 	if (!file.is_open())
 	{
 		SDL_Log("Failed to open scene file: %s", scenePath.string().c_str());
-		return result;
+		return std::unexpected("Failed to open scene file: " + scenePath.string());
 	}
 
-	Json document = Json::parse(file, nullptr, false);	
+	Json document = Json::parse(file, nullptr, false);
 	if (document.is_discarded())
 	{
 		SDL_Log("Failed to parse scene JSON file: %s", scenePath.string().c_str());
-		return result;
+		return std::unexpected("Failed to parse scene JSON file: " + scenePath.string());
 	}
-	
-	Json& animDef = document["animationSets"];		
-	if (!animDef.is_object() )
+
+	Json& animDef = document["animationSets"];
+	if (!animDef.is_object())
 	{
 		SDL_Log("Scene file 'animationSets' must be an object.");
-		result.loaded = false;
-
-		return result;
+		return std::unexpected("Scene file 'animationSets' must be an object.");
 	}
 
 	std::string animSetPath = animDef.value("path", "");
@@ -106,27 +103,25 @@ SceneLoadResult SceneLoader::LoadScene(const std::filesystem::path& sceneFilePat
 	if (!engine.GetAnimationManager().LoadAnimationSet(animSetPath))
 	{
 		SDL_Log("Failed to load animation set from '%s'.", animSetPath.c_str());
-		result.loaded = false;
-		return result;
+		return std::unexpected("Failed to load animation set from '" + animSetPath + "'.");
 	}
 
-	if (!LoadTextureDefinitions(document, engine, result) ||
-		!LoadSoundDefinitions(document, engine, result) ||
-		!LoadMusicDefinitions(document, engine, result) ||
-		!LoadTileMapDefinitions(document, engine, tileMap) ||
-		!LoadEntities(document, registry, result))
+	if (!LoadTextureDefinitions(document, engine, scene) ||
+		!LoadSoundDefinitions(document, engine, scene) ||
+		!LoadMusicDefinitions(document, engine, scene) ||
+		!LoadTileMapDefinitions(document, engine, scene) ||
+		!LoadEntities(document, scene))
 	{
 		SDL_Log("Failed to load scene from file: %s", scenePath.string().c_str());
-		return result;
+		return std::unexpected("Failed to load scene from file: " + scenePath.string());
 	}
 
-	result.loaded = true;
-	return result;
+	return std::expected<void, std::string>();
 }
 
 #pragma region Private functions
 
-bool SceneLoader::LoadEntities(const Json& document, Registry& registry, SceneLoadResult& result)
+bool SceneLoader::LoadEntities(const Json& document, Scene& scene)
 {
 	if (!document.contains("entities") || !document["entities"].is_array())
 	{
@@ -134,15 +129,18 @@ bool SceneLoader::LoadEntities(const Json& document, Registry& registry, SceneLo
 		return false;
 	}
 
-	for (const Json& entityDef : document["entities"])
+	for (const auto& entityDef : document["entities"])
 	{
-		if (!entityDef.is_object())
+		const std::string key = entityDef.value("key", "");
+
+		Entity entity = scene.CreateEntity(key);
+
+		if (!entity.IsValid())
 		{
-			SDL_Log("Entity definition is not an object.");
+			SDL_Log("Failed to create entity with key '%s'.", key.c_str());
+
 			return false;
 		}
-
-		Entity entity = registry.CreateEntity();
 
 		ApplyTransformComponent(entityDef, entity);
 		ApplyControllerComponent(entityDef, entity);
@@ -154,24 +152,12 @@ bool SceneLoader::LoadEntities(const Json& document, Registry& registry, SceneLo
 		ApplyCameraComponent(entityDef, entity);
 		ApplyInteractableComponent(entityDef, entity);
 		ApplyDialogueComponent(entityDef, entity);
-
-		const std::string key = entityDef.value("key", "");
-		if (!key.empty() && entity.IsValid())
-		{
-			result.entities[key] = entity;
-		}
-		else
-		{
-			const TagComponent* tagComponent = entity.Get<TagComponent>();
-			const std::string tag = tagComponent ? tagComponent->Tag : "Entity" + std::to_string(entity.GetId());
-			result.entities[tag] = entity;
-		}
 	}
 
 	return true;
 }
 
-bool SceneLoader::LoadTextureDefinitions(const Json& document, Engine& engine, SceneLoadResult& result)
+bool SceneLoader::LoadTextureDefinitions(const Json& document, Engine& engine, Scene& scene)
 {
 	if (!document.contains("textures"))
 	{
@@ -201,13 +187,13 @@ bool SceneLoader::LoadTextureDefinitions(const Json& document, Engine& engine, S
 			return false;
 		}
 
-		result.loadedTextures.push_back(name);
+		scene.AddTexture(name);
 	}
 
 	return true;
 }
 
-bool SceneLoader::LoadSoundDefinitions(const Json& document, Engine& engine, SceneLoadResult& result)
+bool SceneLoader::LoadSoundDefinitions(const Json& document, Engine& engine, Scene& scene)
 {
 	if (!document.contains("sounds"))
 	{
@@ -237,13 +223,13 @@ bool SceneLoader::LoadSoundDefinitions(const Json& document, Engine& engine, Sce
 			return false;
 		}
 
-		result.loadedSounds.push_back(name);
+		scene.AddSound(name);
 	}
 
 	return true;
 }
 
-bool SceneLoader::LoadTileMapDefinitions(const Json& document, Engine& engine, TileMap& tileMap)
+bool SceneLoader::LoadTileMapDefinitions(const Json& document, Engine& engine, Scene& scene)
 {
 	if (!document.contains("tileMap"))
 	{
@@ -274,12 +260,12 @@ bool SceneLoader::LoadTileMapDefinitions(const Json& document, Engine& engine, T
 		return false;
 	}
 
-	tileMap = std::move(loadedTileMap.value());
+	scene.GetTileMap() = std::move(loadedTileMap.value());
 
 	return true;
 }
 
-bool SceneLoader::LoadMusicDefinitions(const Json& document, Engine& engine, SceneLoadResult& result)
+bool SceneLoader::LoadMusicDefinitions(const Json& document, Engine& engine, Scene& scene)
 {
 	if (!document.contains("music"))
 	{
@@ -309,12 +295,7 @@ bool SceneLoader::LoadMusicDefinitions(const Json& document, Engine& engine, Sce
 			return false;
 		}
 
-		result.loadedMusic.push_back(name);
-
-		if (musicDef.value("autoPlay", false))
-		{
-			result.autoPlayedMusic = name;
-		}
+		scene.AddMusic(name);
 	}
 
 	return true;

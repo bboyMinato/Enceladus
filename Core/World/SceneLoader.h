@@ -5,38 +5,24 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 #include <filesystem>
+#include <expected>
 
 class Engine;
-class Registry;
-class TileMap;
+class Scene;
 
 using Json = nlohmann::json;
 
-struct SceneLoadResult
-{
-	bool loaded{ false };	
-	
-	std::unordered_map<std::string, Entity> entities;
-
-	std::vector<std::string> loadedTextures;
-	std::vector<std::string> loadedSounds;
-	std::vector<std::string> loadedMusic;
-
-	std::string autoPlayedSound;
-	std::string autoPlayedMusic;
-};
-
 class SceneLoader final
 {
-public:
-	static SceneLoadResult LoadScene(const std::filesystem::path& sceneFilePath, Engine& engine, Registry& registry, TileMap& tileMap);
+public:	
+	static std::expected<void, std::string> LoadScene(const std::filesystem::path& sceneFilePath, Engine& engine, Scene& scene);
 
 private:
-	static bool LoadEntities(const Json& document, Registry& registry, SceneLoadResult& result);
-	static bool LoadTextureDefinitions(const Json& document, Engine& engine, SceneLoadResult& result);
-	static bool LoadSoundDefinitions(const Json& document, Engine& engine, SceneLoadResult& result);
-	static bool LoadTileMapDefinitions(const Json& document, Engine& engine, TileMap& tileMap);
-	static bool LoadMusicDefinitions(const Json& document, Engine& engine, SceneLoadResult& result);
+	static bool LoadEntities(const Json& document, Scene& scene);
+	static bool LoadTextureDefinitions(const Json& document, Engine& engine, Scene& scene);
+	static bool LoadSoundDefinitions(const Json& document, Engine& engine, Scene& scene);
+	static bool LoadTileMapDefinitions(const Json& document, Engine& engine, Scene& scene);
+	static bool LoadMusicDefinitions(const Json& document, Engine& engine, Scene& scene);
 	static bool LoadAnimationSetDefinitions(const Json& animDef, Engine& engine);
 	
 	static void ApplyControllerComponent(const Json& entityDef, Entity& entity);

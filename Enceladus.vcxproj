@@ -156,6 +156,7 @@
     <ClCompile Include="Core\UI\Button.cpp" />
     <ClCompile Include="Core\UI\Menu.cpp" />
     <ClCompile Include="Core\Utility\DebugHelpers.cpp" />
+    <ClCompile Include="Core\World\Scene.cpp" />
     <ClCompile Include="Core\World\SceneLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ThirdParty\ImGui\backends\imgui_impl_sdl2.cpp">
@@ -227,6 +228,7 @@
     <ClInclude Include="Core\Utility\DebugHelpers.h" />
     <ClInclude Include="Core\Utility\Dialogue.h" />
     <ClInclude Include="Core\Utility\DialogueRuntimeState.h" />
+    <ClInclude Include="Core\World\Scene.h" />
     <ClInclude Include="Core\World\SceneLoader.h" />
     <ClInclude Include="Core\World\TileMap.h" />
   </ItemGroup>

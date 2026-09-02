@@ -16,10 +16,7 @@
 #include "../Systems/CollisionSystem.h"
 #include "../Systems/DialogueSystem.h"
 #include "../Utility/DebugHelpers.h"
-#include "../World/SceneLoader.h"
 #include "../Events/Handlers.h"
-#include <algorithm>
-#include <string>
 
 #ifdef _DEBUG
 #include <imgui.h>
@@ -28,21 +25,45 @@
 
 void PlayState::OnEnter(Engine& engine)
 {
-	if (!m_sceneManager.LoadScene("Assets/scenes/play_scene.json", engine))
+	auto result = m_sceneManager.LoadScene("Assets/scenes/play_scene.json", engine);
+
+	if (!result)
+	{
+		SDL_Log("Failed to load scene: %s", result.error().c_str());
+		return;
+	}
+
+	Scene* scene = m_sceneManager.GetScene();
+
+	if (scene == nullptr)
 	{
 		return;
 	}
 
-	m_player = m_sceneManager.FindEntity("player");
-	m_camera = m_sceneManager.FindEntity("player_camera");
+	engine.GetSoundManager().PlayMusic("background_forest_music", -1);
+
+	m_player = scene->FindEntity("player");
+	m_camera = scene->FindEntity("player_camera");
 
 	if (!m_player || !m_camera)
 	{
 		SDL_Log("Scene loaded but player or camera entity is missing.");
+
+		m_sceneManager.Unload(engine);
 		return;
 	}
 
 	CameraComponent* camera = m_camera.Get<CameraComponent>();
+	
+	if (camera == nullptr)
+	{
+		SDL_Log("Scene camera entity is missing CameraComponent.");
+		m_sceneManager.Unload(engine);
+		m_player = {};
+		m_camera = {};
+		return;
+	}
+	
 	camera->m_target = m_player;
 	camera->m_viewport.w = engine.GetConfig().windowWidth;
 	camera->m_viewport.h = engine.GetConfig().windowHeight;
@@ -77,38 +98,53 @@ void PlayState::HandleEvent(Engine& engine, const SDL_Event& event)
 
 void PlayState::Update(Engine& engine, float deltaTime)
 {
-	const InputSystem& input = engine.GetInputSystem();
+	Scene* scene = m_sceneManager.GetScene();
 
-	if (m_dialogueState.m_isActive)
-	{
-		DialogueSystem::Update(m_dialogueState, input);
-		AnimationSystem::Update(m_sceneManager.GetRegistry(), engine.GetAnimationManager(), deltaTime);
-
-		return;
-	}
-
-	if (ControllerSystem::PopState(m_sceneManager.GetRegistry(), input))
+	if (scene == nullptr || !m_player || !m_camera)
 	{
 		engine.PopState();
 		return;
 	}
 
-	ControllerSystem::Update(m_sceneManager.GetRegistry(), input, m_eventBus);
+	const InputSystem& input = engine.GetInputSystem();
 
-	MovementSystem::Update(m_sceneManager.GetRegistry(), deltaTime);
-	CollisionSystem::Update(m_sceneManager.GetRegistry());
+	if (m_dialogueState.m_isActive)
+	{
+		DialogueSystem::Update(m_dialogueState, input);
+		AnimationSystem::Update(scene->GetRegistry(), engine.GetAnimationManager(), deltaTime);
+
+		return;
+	}
+
+	if (ControllerSystem::PopState(scene->GetRegistry(), input))
+	{
+		engine.PopState();
+		return;
+	}
+
+	ControllerSystem::Update(scene->GetRegistry(), input, m_eventBus);
+
+	MovementSystem::Update(scene->GetRegistry(), deltaTime);
+	CollisionSystem::Update(scene->GetRegistry());
 
 	TransformComponent* transform = m_player.Get<TransformComponent>();
 	const SpriteComponent* sprite = m_player.Get<SpriteComponent>();
 
-	MapConstraintSystem::ClampToTileMap(*transform, *sprite, m_sceneManager.GetTileMap());
-	AnimationStateSystem::UpdateAnimationStates(m_sceneManager.GetRegistry(), engine.GetAnimationManager());
-	AnimationSystem::Update(m_sceneManager.GetRegistry(), engine.GetAnimationManager(), deltaTime);
-	CameraSystem::Update(m_sceneManager.GetRegistry(), m_camera, engine.GetRenderSystem(), m_sceneManager.GetTileMap());
+	MapConstraintSystem::ClampToTileMap(*transform, *sprite, scene->GetTileMap());
+	AnimationStateSystem::UpdateAnimationStates(scene->GetRegistry(), engine.GetAnimationManager());
+	AnimationSystem::Update(scene->GetRegistry(), engine.GetAnimationManager(), deltaTime);
+	CameraSystem::Update(scene->GetRegistry(), m_camera, engine.GetRenderSystem(), scene->GetTileMap());
 }
 
 void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
 {
+	Scene* scene = m_sceneManager.GetScene();
+
+	if (scene == nullptr || !m_player || !m_camera)
+	{
+		return;
+	}
+
     if (renderer == nullptr)
     {
         return;
@@ -123,7 +159,7 @@ void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
     auto& renderSystem = engine.GetRenderSystem();
 
 	auto& mapSystem = engine.GetMapSystem();
-	mapSystem.Render(m_sceneManager.GetTileMap(), renderSystem, *camera, m_sceneManager.GetRegistry());
+	mapSystem.Render(scene->GetTileMap(), renderSystem, *camera, scene->GetRegistry());
 
 	int windowWidth = 0;
 	int windowHeight = 0;
@@ -135,8 +171,15 @@ void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
 #ifdef _DEBUG
 void PlayState::RenderImGui(Engine& engine)
 {
-	m_debugHelper.RenderImGui(engine, m_sceneManager.GetRegistry());
-	m_debugHelper.RenderDebugCollider(engine, m_sceneManager.GetRegistry(), m_camera);
+	Scene* scene = m_sceneManager.GetScene();
+
+	if (scene == nullptr || !m_player || !m_camera)
+	{
+		return;
+	}
+
+	m_debugHelper.RenderImGui(engine, scene->GetRegistry());
+	m_debugHelper.RenderDebugCollider(engine, scene->GetRegistry(), m_camera);
 }
 
 #endif
