@@ -19,7 +19,6 @@ Entity Scene::CreateEntity(std::string_view key)
 	return entity;
 }
 
-
 Entity* Scene::FindEntity(std::string_view key)
 {
 	const auto it = m_entities.find(std::string(key));

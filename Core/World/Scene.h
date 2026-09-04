@@ -1,9 +1,9 @@
 #pragma once
-#include <unordered_map>
-#include <string>
-#include <vector>
 #include "../ECS/Registry.h"
 #include "TileMap.h"
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 class Scene
 {

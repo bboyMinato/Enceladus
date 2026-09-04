@@ -1,9 +1,9 @@
 #pragma once
-#include "IState.h"	
 #include "../ECS/Registry.h"
-#include "../Managers/SceneManager.h"
 #include "../Events/EventBus.h"
+#include "../Managers/SceneManager.h"
 #include "../Utility/DialogueRuntimeState.h"
+#include "IState.h"	
 
 #ifdef _DEBUG
 #include "../Utility/DebugHelpers.h"
