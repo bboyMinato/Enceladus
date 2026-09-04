@@ -1,8 +1,8 @@
 #pragma once
-#include <string>
-#include <filesystem>
-#include <unordered_map>
 #include "../ECS/SpriteAnimationComponent.h"
+#include <filesystem>
+#include <string>
+#include <unordered_map>
 
 class AnimationManager
 {
@@ -14,7 +14,7 @@ public:
 	/// <returns></returns>
 	bool LoadAnimationSet(const std::filesystem::path& filePath);
 
-	const AnimationDefinition* GetAnimationDefinition(std::string_view setName, std::string_view animationName) const;
+	const AnimationDefinition* GetAnimationDefinition(std::string_view setName, AnimationState animationState) const;
 
 	const AnimationSet* GetAnimationSet(std::string_view setName) const;
 

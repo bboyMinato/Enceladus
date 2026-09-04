@@ -1,24 +1,36 @@
 #pragma once
-#include <unordered_map>
 #include <functional>
+#include <nlohmann/json.hpp>
 #include <string>
+#include <unordered_map>
 
 enum class AnimationState
 {
 	Idle,
-	Walking,
-	Running,
-	Jumping,
-	Falling,
-	Attacking,
-	Dying
+	Walk,
+	Run,
+	Jump,
+	Fall,
+	Attack,
+	Die
 };
+
+NLOHMANN_JSON_SERIALIZE_ENUM(AnimationState, 
+{
+	{ AnimationState::Idle, "idle" },
+	{ AnimationState::Walk, "walk" },
+	{ AnimationState::Run, "run" },
+	{ AnimationState::Jump, "jump" },
+	{ AnimationState::Fall, "fall" },
+	{ AnimationState::Attack, "attack" },
+	{ AnimationState::Die, "die" }	
+})
 
 struct SpriteAnimationComponent
 {
 	std::string animationSetName;
 
-	std::string currentAnimation{ "idle" };
+	AnimationState currentAnimation{ AnimationState::Idle };
 
 	int currentFrame{ 0 };
 	float elapsedTime{ 0.0f };

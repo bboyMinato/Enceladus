@@ -35,38 +35,35 @@ void AnimationStateSystem::UpdateAnimationStates(Registry& registry, AnimationMa
 
                 if (isMoving)
                 {
-                    PlayAnimation(sprite, anim, animationManager, "walk");
+                    PlayAnimation(sprite, anim, animationManager, AnimationState::Walk);
                 }
                 else
                 {
-                    PlayAnimation(sprite, anim, animationManager, "idle");
+                    PlayAnimation(sprite, anim, animationManager, AnimationState::Idle);
                 }
             }
         );
 }
 
-void AnimationStateSystem::PlayAnimation(SpriteComponent& sprite, SpriteAnimationComponent& anim, AnimationManager& animationManager, std::string_view animationName)
+void AnimationStateSystem::PlayAnimation(SpriteComponent& sprite, SpriteAnimationComponent& anim, AnimationManager& animationManager, AnimationState animationState)
 {
-    if (anim.currentAnimation == animationName && anim.isPlaying)
-    {
-        return;
-    }
-
-    const AnimationDefinition* animDef = animationManager.GetAnimationDefinition(anim.animationSetName, animationName);
-    if (!animDef || !animDef->IsValid())
-    {
-        return;
-    }
-
-    if (!animDef->textureName.empty())
-    {
-        sprite.m_textureName = animDef->textureName;
-    }
-
-    anim.currentAnimation = animationName;
-    anim.currentFrame = 0;
-    anim.elapsedTime = 0.0f;
-    anim.isPlaying = true;
+	if (anim.currentAnimation == animationState && anim.isPlaying)
+	{
+		return;
+	}
+	const AnimationDefinition* animDef = animationManager.GetAnimationDefinition(anim.animationSetName, animationState);
+	if (!animDef || !animDef->IsValid())
+	{
+		return;
+	}
+	if (!animDef->textureName.empty())
+	{
+		sprite.m_textureName = animDef->textureName;
+	}
+	anim.currentAnimation = animationState;
+	anim.currentFrame = 0;
+	anim.elapsedTime = 0.0f;
+	anim.isPlaying = true;
 }
 
 void AnimationStateSystem::SetSpeed(SpriteAnimationComponent& anim, float speedMultiplier)

@@ -510,7 +510,7 @@ void SceneLoader::ApplyAnimationComponent(const Json& entityDef, Entity& entity)
 	auto& animation = entity.Add<SpriteAnimationComponent>();
 
 	animation.animationSetName = animDef["setName"].get<std::string>();
-	animation.currentAnimation = animDef.value("currentAnimation", "idle");
+	animation.currentAnimation = animDef.value("currentAnimation", AnimationState::Idle);
 	animation.speedMultiplier = animDef.value("speedMultiplier", 1.0f);
 	animation.isPlaying = animDef.value("isPlaying", true);
 }

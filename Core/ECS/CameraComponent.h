@@ -1,8 +1,8 @@
 #pragma once 
+#include "../Math/Vector2.h"
+#include "Entity.h"
 #include <SDL2/SDL.h>
 #include <nlohmann/json.hpp>
-#include "Entity.h"
-#include "../Math/Vector2.h"
 
 enum class CameraMode
 {
@@ -32,4 +32,3 @@ struct CameraComponent
 	bool m_shouldFollow{ true };
 	bool m_isActive{ true };
 };
-

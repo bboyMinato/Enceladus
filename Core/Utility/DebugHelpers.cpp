@@ -8,6 +8,7 @@
 #include "../ECS/ColliderComponent.h"
 #include "../ECS/SpriteComponent.h"
 #include "../ECS/InteractableComponent.h"
+#include <nlohmann/json.hpp>
 
 void DebugHelper::RenderImGui(Engine& engine, Registry& registry)
 {
@@ -240,10 +241,12 @@ void DebugHelper::RenderAnimationTab(Entity& selectedEntity, Engine& engine)
 	static int currentAnimationIndex = 0;
 	if (ImGui::Combo("Animations", &currentAnimationIndex, animationNames.data(), static_cast<int>(animationNames.size())))
 	{
-		animDef->currentAnimation = animationNames[currentAnimationIndex];
+		auto test = animationNames[currentAnimationIndex];
+		
+		animDef->currentAnimation = nlohmann::json(animationNames[currentAnimationIndex]).get<AnimationState>();
 	}
 
-	ImGui::Text("Current animation: %s", animDef->currentAnimation.c_str());
+	ImGui::Text("Current animation: %s", nlohmann::json(animDef->currentAnimation).get<std::string>().c_str());
 	ImGui::DragInt("Current Frame", &animDef->currentFrame, 1.0f, 0, 1000);
 }
 

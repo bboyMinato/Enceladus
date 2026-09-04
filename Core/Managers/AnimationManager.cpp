@@ -1,9 +1,8 @@
+#include "../Utility/AssetFilePaths.h"
 #include "AnimationManager.h"
+#include <SDL2/SDL.h>
 #include <fstream>
 #include <nlohmann/json.hpp>
-#include <SDL2/SDL.h>
-#include "../Utility/AssetFilePaths.h"
-
 
 using Json = nlohmann::json;
 
@@ -82,14 +81,15 @@ bool AnimationManager::LoadAnimationSet(const std::filesystem::path& filePath)
 	return true;
 }
 
-const AnimationDefinition* AnimationManager::GetAnimationDefinition(std::string_view setName, std::string_view animationName) const
+const AnimationDefinition* AnimationManager::GetAnimationDefinition(std::string_view setName, AnimationState animationState) const
 {
 	auto it = m_animationSets.find(std::string(setName));
 	if (it != m_animationSets.end())
 	{
 		const auto& animationSet = it->second;
-		auto animIt = animationSet.animations.find(std::string(animationName));
-
+		std::string animName = Json(animationState).get<std::string>();
+		auto animIt = animationSet.animations.find(animName);
+		
 		if (animIt != animationSet.animations.end())
 		{
 			return &animIt->second;
