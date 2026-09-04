@@ -1,24 +1,25 @@
-#include "SceneLoader.h"
-#include "../ECS/SpriteAnimationComponent.h"
-#include "../ECS/TransformComponent.h"
-#include "../ECS/ColliderComponent.h"
-#include "../ECS/SpriteComponent.h"
-#include "../ECS/MovementComponent.h"
-#include "../ECS/ControllerComponent.h"
-#include "../ECS/TagComponent.h"
 #include "../ECS/CameraComponent.h"
-#include "../ECS/Registry.h"
+#include "../ECS/ColliderComponent.h"
+#include "../ECS/ControllerComponent.h"
+#include "../ECS/DialogueComponent.h"
 #include "../ECS/InteractableComponent.h"
+#include "../ECS/MovementComponent.h"
+#include "../ECS/Registry.h"
+#include "../ECS/SpriteAnimationComponent.h"
+#include "../ECS/SpriteComponent.h"
+#include "../ECS/TagComponent.h"
+#include "../ECS/TransformComponent.h"
 #include "../Engine.h"
 #include "../Events/Event.h"
+#include "../Utility/AssetFilePaths.h"
+#include "Scene.h"
+#include "SceneLoader.h"
 #include "TileMap.h"
 #include <SDL2/SDL.h>
+#include <algorithm>
 #include <fstream>
 #include <unordered_map>
-#include <algorithm>
-#include "../ECS/DialogueComponent.h"
-#include "Scene.h"
-#include "../Utility/AssetFilePaths.h"
+#include <format>
 
 namespace
 {
@@ -69,6 +70,8 @@ std::expected<void, std::string> SceneLoader::LoadScene(const std::filesystem::p
 		return std::unexpected("Failed to load animation set from '" + animSetPath + "'.");
 	}
 
+	scene.SetAnimationSetFilePath(animSetPath);
+
 	if (!LoadTextureDefinitions(document, engine, scene) ||
 		!LoadSoundDefinitions(document, engine, scene) ||
 		!LoadMusicDefinitions(document, engine, scene) ||
@@ -80,6 +83,121 @@ std::expected<void, std::string> SceneLoader::LoadScene(const std::filesystem::p
 	}
 
 	return std::expected<void, std::string>();
+}
+
+std::expected<void, std::string> SceneLoader::SaveScene(const std::filesystem::path& sceneFilePath, Scene& scene)
+{
+	if (scene.GetAnimationSetFilePath().empty())
+	{
+		return std::unexpected("Cannot save scene: animation set path is empty.");
+	}
+
+	if (scene.GetTileMapFilePath().empty())
+	{
+		return std::unexpected("Cannot save scene: tile map path is empty.");
+	}
+
+	const auto textures = SerializeAssetDefinitions(scene.GetTextures(), scene.GetTextureFilePaths(), "texture");
+
+	if (!textures)
+	{
+		return std::unexpected(textures.error());
+	}
+
+	const auto sounds = SerializeAssetDefinitions(scene.GetSounds(), scene.GetSoundFilePaths(), "sound");
+
+	if (!sounds)
+	{
+		return std::unexpected(sounds.error());
+	}
+
+	const auto music = SerializeAssetDefinitions(scene.GetMusic(), scene.GetMusicFilePaths(), "music");
+
+	if (!music)
+	{
+		return std::unexpected(music.error());
+	}
+
+	Json document =
+	{
+		{
+			"textures",
+			textures.value()
+		},
+		{
+			"sounds",
+			sounds.value()
+		},
+		{
+			"music",
+			music.value()
+		},
+		{
+			"tileMap",
+			{
+				{
+					"filePath",
+					ToAssetPathString(scene.GetTileMapFilePath())
+				}
+			}
+		},
+		{
+			"animationSets",
+			{
+				{
+					"path",
+					ToAssetPathString(scene.GetAnimationSetFilePath())
+				}
+			}
+		},
+		{ "entities", Json::array() }
+	};
+
+	std::vector<Entity> entities = scene.GetRegistry().GetAllEntities();
+
+	std::sort(entities.begin(), entities.end(), 
+		[](const Entity& left, const Entity& right)
+		{
+			return left.GetId() < right.GetId();
+		});
+
+	for (Entity entity : entities)
+	{
+		const auto entityDefinition = SerializeEntity(scene, entity);
+
+		if (!entityDefinition)
+		{
+			return std::unexpected(entityDefinition.error());
+		}
+
+		document["entities"].push_back(entityDefinition.value());
+	}
+
+	const std::filesystem::path outputPath = AssetPaths::ResolveProjectAsset(sceneFilePath);
+
+	std::error_code error;
+	std::filesystem::create_directories(outputPath.parent_path(), error);
+
+	if (error)
+	{
+		return std::unexpected(std::format("Failed to create scene directory: {}", error.message()));
+	}
+
+	std::ofstream file(outputPath);
+
+	if (!file.is_open())
+	{
+		return std::unexpected(std::format("Failed to open scene file for writing: {}", outputPath.string()));
+	}
+
+	file << document.dump(2) << '\n';
+
+	if (!file.good())
+	{
+		return std::unexpected(std::format("Failed to write scene file: {}", outputPath.string()));
+	}
+
+	return {};
 }
 
 #pragma region Private functions
@@ -150,7 +268,7 @@ bool SceneLoader::LoadTextureDefinitions(const Json& document, Engine& engine, S
 			return false;
 		}
 
-		scene.AddTexture(name);
+		scene.AddTexture(name, filePath);
 	}
 
 	return true;
@@ -186,7 +304,7 @@ bool SceneLoader::LoadSoundDefinitions(const Json& document, Engine& engine, Sce
 			return false;
 		}
 
-		scene.AddSound(name);
+		scene.AddSound(name, filePath);
 	}
 
 	return true;
@@ -224,6 +342,7 @@ bool SceneLoader::LoadTileMapDefinitions(const Json& document, Engine& engine, S
 	}
 
 	scene.GetTileMap() = std::move(loadedTileMap.value());
+	scene.SetTileMapFilePath(filePath);
 
 	return true;
 }
@@ -258,7 +377,7 @@ bool SceneLoader::LoadMusicDefinitions(const Json& document, Engine& engine, Sce
 			return false;
 		}
 
-		scene.AddMusic(name);
+		scene.AddMusic(name, filePath);
 	}
 
 	return true;
@@ -339,6 +458,7 @@ void SceneLoader::ApplyControllerComponent(const Json& entityDef, Entity& entity
 	}
 
 	auto& controller = entity.Add<ControllerComponent>();
+	controller.m_sourcePath = path;
 
 	// Loop through actions array
 	for (const auto& action : controllerJson["actions"])
@@ -432,11 +552,12 @@ void SceneLoader::ApplyCameraComponent(const Json& entityDef, Entity& entity)
 	camera.m_mode = cameraDef.value("mode", CameraMode::Follow);
 	camera.m_zoom = cameraDef.value("zoom", 1.0f);
 	camera.m_isActive = cameraDef.value("active", true);
+	camera.m_shouldFollow = cameraDef.value("shouldFollow", true);
 	camera.m_viewport.x = cameraDef.value("x", 0);
 
-	const nlohmann::json& viewport = cameraDef.value(
+	const Json& viewport = cameraDef.value(
 		"viewport",
-		nlohmann::json{ { "x", 0 }, { "y", 0 }, { "width", 800 }, { "height", 600 } });
+		Json{ { "x", 0 }, { "y", 0 }, { "width", 800 }, { "height", 600 } });
 
 	camera.m_viewport = {
 		viewport.value("x", 0),
@@ -445,9 +566,9 @@ void SceneLoader::ApplyCameraComponent(const Json& entityDef, Entity& entity)
 		viewport.value("height", 600)
 	};
 
-	const nlohmann::json& offset = cameraDef.value(
+	const Json& offset = cameraDef.value(
 		"followOffset",
-		nlohmann::json{ { "x", 0.0f }, { "y", 0.0f } });
+		Json{ { "x", 0.0f }, { "y", 0.0f } });
 
 	camera.m_followOffset = {
 		offset.value("x", 0.0f),
@@ -593,6 +714,190 @@ void SceneLoader::ApplyDialogueComponent(const Json& entityDef, Entity& entity)
 	entity.Add<DialogueComponent>(
 		dialogueDef.value("dialogueId", ""),
 		dialogueDef.value("startNodeId", ""));
+}
+
+std::string SceneLoader::ToAssetPathString(const std::filesystem::path& filePath)
+{
+	return filePath.generic_string();
+}
+
+std::expected<Json, std::string> SceneLoader::SerializeAssetDefinitions(const std::vector<std::string>& assetNames, const AssetFilePaths& filePaths, 
+																		std::string_view assetType) 
+{
+	Json definitions = Json::array();
+
+	for (const std::string& name : assetNames)
+	{
+		const auto pathIt = filePaths.find(name);
+
+		if (pathIt == filePaths.end() || pathIt->second.empty())
+		{			
+			return std::unexpected(std::format("Missing file path for {} asset '{}'.", assetType, name));
+		}
+
+		definitions.push_back(
+			{
+				{ "name", name },
+				{ "filePath", ToAssetPathString(pathIt->second) }
+			});
+	}
+
+	return definitions;
+}
+
+std::expected<Json, std::string> SceneLoader::SerializeEntity(Scene& scene, const Entity& entity)
+{
+	Json entityDefinition = Json::object();
+
+	const std::string_view key = scene.GetEntityKey(entity);
+
+	if (!key.empty())
+	{
+		entityDefinition["key"] = key;
+	}
+
+	if (const TransformComponent* transform = entity.Get<TransformComponent>())
+	{
+		entityDefinition["transform"] =
+		{
+			{ "x", transform->x },
+			{ "y", transform->y },
+			{ "rotation", transform->rotation },
+			{ "scaleX", transform->scaleX },
+			{ "scaleY", transform->scaleY }
+		};
+	}
+
+	if (const TagComponent* tag = entity.Get<TagComponent>())
+	{
+		entityDefinition["tag"] = tag->Tag;
+	}
+
+	if (const MovementComponent* movement = entity.Get<MovementComponent>())
+	{
+		entityDefinition["movement"] =
+		{
+			{ "moveSpeed", movement->moveSpeed }
+		};
+	}
+
+	if (const SpriteComponent* sprite = entity.Get<SpriteComponent>())
+	{
+		Json spriteDefinition =
+		{
+			{ "texture", sprite->m_textureName },
+			{ "width", sprite->m_width },
+			{ "height", sprite->m_height },
+			{ "isVisible", sprite->m_isVisible }
+		};
+
+		if (sprite->m_hasSourceRect)
+		{
+			spriteDefinition["sourceRect"] =
+			{
+				{ "x", sprite->m_sourceRect.x },
+				{ "y", sprite->m_sourceRect.y },
+				{ "w", sprite->m_sourceRect.w },
+				{ "h", sprite->m_sourceRect.h }
+			};
+		}
+
+		entityDefinition["sprite"] = std::move(spriteDefinition);
+	}
+
+	if (const ColliderComponent* collider = entity.Get<ColliderComponent>())
+	{
+		entityDefinition["collider"] =
+		{
+			{ "width", collider->m_width },
+			{ "height", collider->m_height },
+			{ "offsetX", collider->m_offsetX },
+			{ "offsetY", collider->m_offsetY },
+			{ "isStatic", collider->m_isStatic },
+			{ "isTrigger", collider->m_isTrigger }
+		};
+	}
+
+	if (const CameraComponent* camera = entity.Get<CameraComponent>())
+	{
+		entityDefinition["camera"] =
+		{
+			{ "mode", camera->m_mode },
+			{ "zoom", camera->m_zoom },
+			{ "active", camera->m_isActive },
+			{ "shouldFollow", camera->m_shouldFollow },
+			{
+				"viewport",
+				{
+					{ "x", camera->m_viewport.x },
+					{ "y", camera->m_viewport.y },
+					{ "width", camera->m_viewport.w },
+					{ "height", camera->m_viewport.h }
+				}
+			},
+			{
+				"followOffset",
+				{
+					{ "x", camera->m_followOffset.x },
+					{ "y", camera->m_followOffset.y }
+				}
+			}
+		};
+	}
+
+	if (const SpriteAnimationComponent* animation = entity.Get<SpriteAnimationComponent>())
+	{
+		entityDefinition["animation"] =
+		{
+			{ "setName", animation->animationSetName },
+			{ "currentAnimation", animation->currentAnimation },
+			{ "speedMultiplier", animation->speedMultiplier },
+			{ "isPlaying", animation->isPlaying }
+		};
+	}
+
+	if (const InteractableComponent* interactable = entity.Get<InteractableComponent>())
+	{
+		entityDefinition["interactable"] =
+		{
+			{ "interactionRange", interactable->interactionDistance },
+			{ "requiresKey", interactable->requiresKey },
+			{ "oneShot", interactable->oneShot },
+			{ "used", interactable->used },
+			{ "dialogueId", interactable->dialogueId }
+		};
+	}
+
+
+	if (const DialogueComponent* dialogue = entity.Get<DialogueComponent>())
+	{
+		entityDefinition["dialogue"] =
+		{
+			{ "dialogueId", dialogue->dialogueId },
+			{ "startNodeId", dialogue->startNodeId }
+		};
+	}
+
+	if (const ControllerComponent* controller = entity.Get<ControllerComponent>())
+	{
+		if (controller->m_sourcePath.empty())
+		{
+			return std::unexpected(
+				"Entity " +
+				std::to_string(entity.GetId()) +
+				" has a controller with no source path.");
+		}
+
+		entityDefinition["controller"] =
+		{
+			{
+				"path",
+				ToAssetPathString(controller->m_sourcePath)
+			}
+		};
+	}
+
+	return entityDefinition;
 }
 
 #pragma endregion

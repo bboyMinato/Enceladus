@@ -148,6 +148,16 @@ exit /B 0</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Core\Config\AppSetting.cpp" />
+    <ClCompile Include="Core\Editor\Components\CameraComponentEditor.cpp" />
+    <ClCompile Include="Core\Editor\Components\SpriteAnimationComponentEditor.cpp" />
+    <ClCompile Include="Core\Editor\Components\ColliderComponentEditor.cpp" />
+    <ClCompile Include="Core\Editor\Components\MovementComponentEditor.cpp" />
+    <ClCompile Include="Core\Editor\Components\SpriteComponentEditor.cpp" />
+    <ClCompile Include="Core\Editor\Components\TagComponentEditor.cpp" />
+    <ClCompile Include="Core\Editor\Components\TransformComponentEditor.cpp" />
+    <ClCompile Include="Core\Editor\Editor.cpp" />
+    <ClCompile Include="Core\Editor\Panels\AssetPanel.cpp" />
+    <ClCompile Include="Core\Editor\Panels\SceneHierarchyPanel.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\Events\Handlers.cpp" />
     <ClCompile Include="Core\Managers\AnimationManager.cpp" />
@@ -158,6 +168,7 @@ exit /B 0</Command>
     <ClCompile Include="Core\Managers\StateManager.cpp" />
     <ClCompile Include="Core\Managers\TextManager.cpp" />
     <ClCompile Include="Core\Managers\TextureManager.cpp" />
+    <ClCompile Include="Core\States\EditorState.cpp" />
     <ClCompile Include="Core\States\MainMenuState.cpp" />
     <ClCompile Include="Core\States\PlayState.cpp" />
     <ClCompile Include="Core\Systems\AnimationStateSystem.cpp" />
@@ -177,6 +188,7 @@ exit /B 0</Command>
     <ClCompile Include="Core\Utility\DebugHelpers.cpp" />
     <ClCompile Include="Core\World\Scene.cpp" />
     <ClCompile Include="Core\World\SceneLoader.cpp" />
+    <ClCompile Include="Core\Editor\Panels\InspectorPanel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ThirdParty\ImGui\backends\imgui_impl_sdl2.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -215,6 +227,17 @@ exit /B 0</Command>
     <ClInclude Include="Core\ECS\SpriteComponent.h" />
     <ClInclude Include="Core\ECS\TagComponent.h" />
     <ClInclude Include="Core\ECS\TransformComponent.h" />
+    <ClInclude Include="Core\Editor\Components\SpriteAnimationComponentEditor.h" />
+    <ClInclude Include="Core\Editor\Components\CameraComponentEditor.h" />
+    <ClInclude Include="Core\Editor\Components\ColliderComponentEditor.h" />
+    <ClInclude Include="Core\Editor\Components\MovementComponentEditor.h" />
+    <ClInclude Include="Core\Editor\Components\SpriteComponentEditor.h" />
+    <ClInclude Include="Core\Editor\Components\TagComponentEditor.h" />
+    <ClInclude Include="Core\Editor\Components\TransformComponentEditor.h" />
+    <ClInclude Include="Core\Editor\Editor.h" />
+    <ClInclude Include="Core\Editor\EditorContext.h" />
+    <ClInclude Include="Core\Editor\Panels\AssetPanel.h" />
+    <ClInclude Include="Core\Editor\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\Events\Event.h" />
     <ClInclude Include="Core\Events\Handlers.h" />
@@ -227,6 +250,7 @@ exit /B 0</Command>
     <ClInclude Include="Core\Managers\TextManager.h" />
     <ClInclude Include="Core\Managers\TextureManager.h" />
     <ClInclude Include="Core\Math\Vector2.h" />
+    <ClInclude Include="Core\States\EditorState.h" />
     <ClInclude Include="Core\States\IState.h" />
     <ClInclude Include="Core\States\MainMenuState.h" />
     <ClInclude Include="Core\States\PlayState.h" />
@@ -251,6 +275,7 @@ exit /B 0</Command>
     <ClInclude Include="Core\World\Scene.h" />
     <ClInclude Include="Core\World\SceneLoader.h" />
     <ClInclude Include="Core\World\TileMap.h" />
+    <ClInclude Include="Core\Editor\Panels\InspectorPanel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
@@ -263,6 +288,7 @@ exit /B 0</Command>
     <None Include="Assets\scenes\play_scene.json" />
     <None Include="Assets\scenes\rework_scene.json" />
     <None Include="Assets\scenes\rework_scene_entities.json" />
+    <None Include="Assets\scenes\save_scene_test.json" />
     <None Include="config.ini" />
     <None Include="Assets\player_controller.json" />
   </ItemGroup>

@@ -16,8 +16,11 @@ class SceneLoader final
 {
 public:	
 	static std::expected<void, std::string> LoadScene(const std::filesystem::path& sceneFilePath, Engine& engine, Scene& scene);
+	static std::expected<void, std::string> SaveScene(const std::filesystem::path& sceneFilePath, Scene& scene);
 
 private:
+	using AssetFilePaths = std::unordered_map<std::string, std::filesystem::path>;
+
 	static bool LoadEntities(const Json& document, Scene& scene);
 	static bool LoadTextureDefinitions(const Json& document, Engine& engine, Scene& scene);
 	static bool LoadSoundDefinitions(const Json& document, Engine& engine, Scene& scene);
@@ -35,4 +38,10 @@ private:
 	static void ApplySpriteComponent(const Json& entityDef, Entity& entity);
 	static void ApplyTransformComponent(const Json& entityDef, Entity& entity);
 	static void ApplyDialogueComponent(const Json& entityDef, Entity& entity);
+
+	static std::string ToAssetPathString(const std::filesystem::path& filePath);
+	static std::expected<Json, std::string> SerializeAssetDefinitions(const std::vector<std::string>& assetNames, const AssetFilePaths& filePaths,
+																      std::string_view assetType);
+
+	static std::expected<Json, std::string> SerializeEntity(Scene& scene, const Entity& entity);
 };

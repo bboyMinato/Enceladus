@@ -1,0 +1,169 @@
+{
+  "animationSets": {
+    "path": "animations/animations.json"
+  },
+  "entities": [
+    {
+      "animation": {
+        "currentAnimation": "idle",
+        "isPlaying": true,
+        "setName": "witch",
+        "speedMultiplier": 1.0
+      },
+      "collider": {
+        "height": 55,
+        "isStatic": false,
+        "isTrigger": false,
+        "offsetX": 45,
+        "offsetY": 35,
+        "width": 35
+      },
+      "controller": {
+        "path": "player_controller.json"
+      },
+      "key": "player",
+      "movement": {
+        "moveSpeed": 200.0
+      },
+      "sprite": {
+        "height": 120,
+        "isVisible": true,
+        "texture": "player_v2_idle",
+        "width": 128
+      },
+      "tag": "Player",
+      "transform": {
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "x": 2000.0,
+        "y": 480.0
+      }
+    },
+    {
+      "animation": {
+        "currentAnimation": "idle",
+        "isPlaying": true,
+        "setName": "witch",
+        "speedMultiplier": 1.0
+      },
+      "collider": {
+        "height": 55,
+        "isStatic": false,
+        "isTrigger": false,
+        "offsetX": 45,
+        "offsetY": 35,
+        "width": 35
+      },
+      "dialogue": {
+        "dialogueId": "yuuki_intro",
+        "startNodeId": "start"
+      },
+      "interactable": {
+        "dialogueId": "yuuki_intro",
+        "interactionRange": 50.0,
+        "oneShot": false,
+        "requiresKey": true,
+        "used": false
+      },
+      "sprite": {
+        "height": 120,
+        "isVisible": true,
+        "texture": "player_v2_idle",
+        "width": 128
+      },
+      "tag": "Test Entity",
+      "transform": {
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "x": 1500.0,
+        "y": 500.0
+      }
+    },
+    {
+      "camera": {
+        "active": true,
+        "followOffset": {
+          "x": 32.0,
+          "y": -16.0
+        },
+        "mode": "follow",
+        "shouldFollow": true,
+        "viewport": {
+          "height": 720,
+          "width": 1280,
+          "x": 0,
+          "y": 0
+        },
+        "zoom": 1.0
+      },
+      "key": "player_camera",
+      "tag": "Player Camera",
+      "transform": {
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "x": 2000.0,
+        "y": 480.0
+      }
+    },
+    {
+      "collider": {
+        "height": 55,
+        "isStatic": false,
+        "isTrigger": false,
+        "offsetX": 45,
+        "offsetY": 35,
+        "width": 35
+      },
+      "interactable": {
+        "dialogueId": "yuuki_intro",
+        "interactionRange": 200.0,
+        "oneShot": false,
+        "requiresKey": true,
+        "used": false
+      },
+      "tag": "Interactable Test Entity",
+      "transform": {
+        "rotation": 0.0,
+        "scaleX": 1.0,
+        "scaleY": 1.0,
+        "x": 2000.0,
+        "y": 500.0
+      }
+    },
+    {
+      "key": "Save Entity",
+      "tag": "small test"
+    }
+  ],
+  "music": [
+    {
+      "filePath": "sounds/forest.ogg",
+      "name": "background_forest_music"
+    }
+  ],
+  "sounds": [],
+  "textures": [
+    {
+      "filePath": "sprites/witch_idle.png",
+      "name": "player_idle"
+    },
+    {
+      "filePath": "sprites/witch_walk.png",
+      "name": "player_walk"
+    },
+    {
+      "filePath": "sprites/witch_v2_idle.png",
+      "name": "player_v2_idle"
+    },
+    {
+      "filePath": "sprites/witch_v2_walk.png",
+      "name": "player_v2_walk"
+    }
+  ],
+  "tileMap": {
+    "filePath": "map/test.tmj"
+  }
+}

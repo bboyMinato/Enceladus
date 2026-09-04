@@ -1,6 +1,7 @@
 #include "MainMenuState.h"
 #include "../Engine.h"
 #include "PlayState.h"
+#include "EditorState.h"
 
 void MainMenuState::OnEnter(Engine& engine)
 {
@@ -11,6 +12,7 @@ void MainMenuState::OnEnter(Engine& engine)
 
 	engine.GetTextManager().LoadFont("menuFont", "Assets/fonts/Uncial.ttf", 48);
 	engine.GetTextManager().LoadText("playText", "menuFont", "Play", { 255, 255, 255, 255 });
+	engine.GetTextManager().LoadText("editorText", "menuFont", "Editor", { 255, 255, 255, 255 });
 	engine.GetTextManager().LoadText("quitText", "menuFont", "Quit", { 255, 255, 255, 255 });
 
 	m_menu.Clear();
@@ -20,7 +22,12 @@ void MainMenuState::OnEnter(Engine& engine)
 			engine.ReplaceState<PlayState>();
 		});
 
-	m_menu.AddMenuItem({ }, "quitText", [&engine]()
+	m_menu.AddMenuItem({}, "editorText", [&engine]()
+		{
+			engine.PushState<EditorState>();
+		});
+
+	m_menu.AddMenuItem({}, "quitText", [&engine]()
 		{
 			engine.RequestShutdown();
 		});
@@ -106,22 +113,20 @@ void MainMenuState::UpdateLayout(Engine& engine)
 	constexpr int itemSpacing = 20;
 
 	constexpr int menuHeight =
-		(itemHeight * 2) + itemSpacing;
+		(itemHeight * 3) + (itemSpacing * 2);
 
-	const int menuX =
-		(windowWidth - itemWidth) / 2;
+	const int menuX = (windowWidth - itemWidth) / 2;
+	const int menuY = (windowHeight - menuHeight) / 2;
 
-	const int menuY =
-		(windowHeight - menuHeight) / 2;
-
-	m_menu.SetMenuItemBounds(
-		0,
-		{ menuX, menuY, itemWidth, itemHeight }
-	);
-
-	m_menu.SetMenuItemBounds(
-		1,
-		{ menuX, menuY + itemHeight + itemSpacing,
-		  itemWidth, itemHeight }
-	);
+	for (std::size_t index = 0; index < 3; ++index)
+	{
+		m_menu.SetMenuItemBounds(
+			index,
+			{
+				menuX,
+				menuY + static_cast<int>(index) * (itemHeight + itemSpacing),
+				itemWidth,
+				itemHeight
+			});
+	}
 }

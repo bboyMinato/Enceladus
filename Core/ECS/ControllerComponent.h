@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include <filesystem>
 
 struct ControllerComponent
 {
@@ -21,4 +22,6 @@ struct ControllerComponent
 	SDL_Scancode interactPrimary{ };
 	SDL_Scancode interactSecondary { };
 	SDL_Scancode backKey{ };
+
+	std::filesystem::path m_sourcePath{ };
 };

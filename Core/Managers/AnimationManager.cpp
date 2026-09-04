@@ -112,13 +112,13 @@ const AnimationSet* AnimationManager::GetAnimationSet(std::string_view setName) 
 
 const std::unordered_map<std::string, AnimationDefinition>& AnimationManager::GetAnimations(std::string_view setName) const
 {
-	auto it = m_animationSets.find(std::string(setName));
-	if (it != m_animationSets.end())
-	{
-		return it->second.animations;
-	}
+	static const std::unordered_map<std::string, AnimationDefinition> emptyAnimations;
 
-	return std::unordered_map<std::string, AnimationDefinition>();
+	const auto it = m_animationSets.find(std::string(setName));
+
+	return it != m_animationSets.end()
+		? it->second.animations
+		: emptyAnimations;
 }
 
 void AnimationManager::Clear()

@@ -41,6 +41,13 @@ public:
 		m_entities.erase(entityId);
 	}
 
+	void Clear()
+	{
+		m_components.clear();
+		m_entities.clear();
+		m_nextEntityId = 0;
+	}
+
 	bool IsValid(Entity entity) const
 	{		
 		return entity.IsValid() &&
