@@ -14,6 +14,8 @@ public:
 
 	void SetAction(Action action);
 	void SetTextName(const std::string& textName);
+	void SetBounds(const SDL_Rect& bounds);
+
 	void HandleEvent(const SDL_Event& event);
 	void Render(SDL_Renderer* renderer, TextManager& textManager) const;
 	void SetHovered(bool isHovered);
@@ -38,6 +40,7 @@ public:
 	void SelectFirstItem();
 	void SetOnSelectionChanged(Callback callback);
 	void SetOnItemActivated(Callback callback);
+	void SetMenuItemBounds(std::size_t index, const SDL_Rect& bounds);
 
 	inline bool IsEmpty() const { return m_menuItems.empty(); }
 

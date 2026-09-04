@@ -112,13 +112,13 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "$(ProjectDir)Assets" "$(OutDir)Assets" /E /XO /NFL /NDL /NJH /NJS
-if %ERRORLEVEL% LEQ 7 exit /B 0
-exit /B %ERRORLEVEL%
-copy /Y "$(ProjectDir)config.ini" "$(OutDir)config.ini"
-robocopy "$(ProjectDir)Assets" "$(OutDir)Assets" /E /XO /NFL /NDL /NJH /NJS
-if %ERRORLEVEL% LEQ 7 exit /B 0
-exit /B %ERRORLEVEL%</Command>
+      <Command>copy /Y "$(ProjectDir)config.ini" "$(OutDir)config.ini"
+if %ERRORLEVEL% NEQ 0 exit /B %ERRORLEVEL%
+
+robocopy "$(ProjectDir)Assets" "$(OutDir)Assets" /E /IS /IT /NFL /NDL /NJH /NJS
+if %ERRORLEVEL% GEQ 8 exit /B %ERRORLEVEL%
+
+exit /B 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,13 +137,13 @@ exit /B %ERRORLEVEL%</Command>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "$(ProjectDir)Assets" "$(OutDir)Assets" /E /XO /NFL /NDL /NJH /NJS
-if %ERRORLEVEL% LEQ 7 exit /B 0
-exit /B %ERRORLEVEL%
-copy /Y "$(ProjectDir)config.ini" "$(OutDir)config.ini"
-robocopy "$(ProjectDir)Assets" "$(OutDir)Assets" /E /XO /NFL /NDL /NJH /NJS
-if %ERRORLEVEL% LEQ 7 exit /B 0
-exit /B %ERRORLEVEL%</Command>
+      <Command>copy /Y "$(ProjectDir)config.ini" "$(OutDir)config.ini"
+if %ERRORLEVEL% NEQ 0 exit /B %ERRORLEVEL%
+
+robocopy "$(ProjectDir)Assets" "$(OutDir)Assets" /E /IS /IT /NFL /NDL /NJH /NJS
+if %ERRORLEVEL% GEQ 8 exit /B %ERRORLEVEL%
+
+exit /B 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

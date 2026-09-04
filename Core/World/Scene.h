@@ -23,7 +23,10 @@ public:
 	Entity CreateEntity(std::string_view key = {});
 
 	[[nodiscard]]
-	Entity FindEntity(std::string_view key) const;
+	Entity* FindEntity(std::string_view key);
+
+	[[nodiscard]]
+	const Entity* FindEntity(std::string_view key) const;
 
 	void AddTexture(std::string_view textureName);
 

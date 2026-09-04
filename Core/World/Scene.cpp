@@ -20,11 +20,18 @@ Entity Scene::CreateEntity(std::string_view key)
 }
 
 
-Entity Scene::FindEntity(std::string_view key) const
+Entity* Scene::FindEntity(std::string_view key)
 {
 	const auto it = m_entities.find(std::string(key));
 
-	return it != m_entities.end() ? it->second : Entity();
+	return it != m_entities.end() ? &it->second : nullptr;
+}
+
+const Entity* Scene::FindEntity(std::string_view key) const
+{
+	const auto it = m_entities.find(std::string(key));
+
+	return it != m_entities.end() ? &it->second : nullptr;
 }
 
 void Scene::AddTexture(std::string_view textureName)

@@ -28,7 +28,7 @@ AppSettings AppSettings::LoadFromFile(const std::filesystem::path& filePath)
 {
 	AppSettings settings{};
 
-	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(filePath);
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAppFile(filePath);
 
 	std::ifstream file(resolvedPath);
 	if (!file.is_open())
@@ -112,7 +112,7 @@ AppSettings AppSettings::LoadFromFile(const std::filesystem::path& filePath)
 
 bool AppSettings::SaveToFile(const std::filesystem::path& filePath) const
 {
-	const std::filesystem::path resolvedPath = AssetPaths::ResolveAsset(filePath);
+	const std::filesystem::path resolvedPath = AssetPaths::ResolveAppFile(filePath);
 
 	std::ofstream file(resolvedPath);
 	if (!file.is_open())

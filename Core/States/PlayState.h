@@ -26,8 +26,8 @@ public:
 
 private:
 	SceneManager m_sceneManager;
-	Entity m_player;
-	Entity m_camera;
+	Entity* m_player;
+	Entity* m_camera;
 	EventBus m_eventBus;
 	DialogueRuntimeState m_dialogueState;
 

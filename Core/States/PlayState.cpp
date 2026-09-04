@@ -53,7 +53,7 @@ void PlayState::OnEnter(Engine& engine)
 		return;
 	}
 
-	CameraComponent* camera = m_camera.Get<CameraComponent>();
+	CameraComponent* camera = m_camera->Get<CameraComponent>();
 	
 	if (camera == nullptr)
 	{
@@ -64,7 +64,7 @@ void PlayState::OnEnter(Engine& engine)
 		return;
 	}
 	
-	camera->m_target = m_player;
+	camera->m_target = *m_player;
 	camera->m_viewport.w = engine.GetConfig().windowWidth;
 	camera->m_viewport.h = engine.GetConfig().windowHeight;
 
@@ -127,13 +127,13 @@ void PlayState::Update(Engine& engine, float deltaTime)
 	MovementSystem::Update(scene->GetRegistry(), deltaTime);
 	CollisionSystem::Update(scene->GetRegistry());
 
-	TransformComponent* transform = m_player.Get<TransformComponent>();
-	const SpriteComponent* sprite = m_player.Get<SpriteComponent>();
+	TransformComponent* transform = m_player->Get<TransformComponent>();
+	const SpriteComponent* sprite = m_player->Get<SpriteComponent>();
 
 	MapConstraintSystem::ClampToTileMap(*transform, *sprite, scene->GetTileMap());
 	AnimationStateSystem::UpdateAnimationStates(scene->GetRegistry(), engine.GetAnimationManager());
 	AnimationSystem::Update(scene->GetRegistry(), engine.GetAnimationManager(), deltaTime);
-	CameraSystem::Update(scene->GetRegistry(), m_camera, engine.GetRenderSystem(), scene->GetTileMap());
+	CameraSystem::Update(scene->GetRegistry(), *m_camera, engine.GetRenderSystem(), scene->GetTileMap());
 }
 
 void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
@@ -150,7 +150,7 @@ void PlayState::Render(Engine &engine, SDL_Renderer *renderer)
         return;
     }
 
-    const CameraComponent* camera = m_camera.Get<CameraComponent>();
+    const CameraComponent* camera = m_camera->Get<CameraComponent>();
     if (camera == nullptr)
     {
         return;
@@ -179,7 +179,7 @@ void PlayState::RenderImGui(Engine& engine)
 	}
 
 	m_debugHelper.RenderImGui(engine, scene->GetRegistry());
-	m_debugHelper.RenderDebugCollider(engine, scene->GetRegistry(), m_camera);
+	m_debugHelper.RenderDebugCollider(engine, scene->GetRegistry(), *m_camera);
 }
 
 #endif

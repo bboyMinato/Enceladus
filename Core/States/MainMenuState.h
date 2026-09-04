@@ -16,5 +16,8 @@ public:
 	void Render(Engine& engine, SDL_Renderer* renderer) override;
 
 private:
+	void UpdateLayout(Engine& engine);
+
+private:
 	Menu m_menu;
 };

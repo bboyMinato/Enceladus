@@ -16,6 +16,11 @@ void MenuItem::SetTextName(const std::string& textName)
 	m_button.SetTextName(textName);
 }
 
+void MenuItem::SetBounds(const SDL_Rect& bounds)
+{
+	m_button.SetBounds(bounds);
+}
+
 void MenuItem::HandleEvent(const SDL_Event& event)
 {
 	m_button.HandleEvent(event);
@@ -223,4 +228,14 @@ void Menu::SetSelectedIndex(std::size_t index, bool notify)
 	{
 		m_onSelectionChanged();
 	}
+}
+
+void Menu::SetMenuItemBounds(std::size_t index, const SDL_Rect& bounds)
+{
+	if (index >= m_menuItems.size())
+	{
+		return;
+	}
+
+	m_menuItems[index].SetBounds(bounds);
 }
