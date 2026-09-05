@@ -158,6 +158,7 @@ exit /B 0</Command>
     <ClCompile Include="Core\Editor\Editor.cpp" />
     <ClCompile Include="Core\Editor\Panels\AssetPanel.cpp" />
     <ClCompile Include="Core\Editor\Panels\SceneHierarchyPanel.cpp" />
+    <ClCompile Include="Core\Editor\Panels\ViewportPanel.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\Events\Handlers.cpp" />
     <ClCompile Include="Core\Managers\AnimationManager.cpp" />
@@ -238,6 +239,7 @@ exit /B 0</Command>
     <ClInclude Include="Core\Editor\EditorContext.h" />
     <ClInclude Include="Core\Editor\Panels\AssetPanel.h" />
     <ClInclude Include="Core\Editor\Panels\SceneHierarchyPanel.h" />
+    <ClInclude Include="Core\Editor\Panels\ViewportPanel.h" />
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\Events\Event.h" />
     <ClInclude Include="Core\Events\Handlers.h" />
@@ -276,6 +278,11 @@ exit /B 0</Command>
     <ClInclude Include="Core\World\SceneLoader.h" />
     <ClInclude Include="Core\World\TileMap.h" />
     <ClInclude Include="Core\Editor\Panels\InspectorPanel.h" />
+    <ClInclude Include="ThirdParty\ImGui\imconfig.h" />
+    <ClInclude Include="ThirdParty\ImGui\imgui_internal.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_textedit.h" />
+    <ClInclude Include="ThirdParty\ImGui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".github\copilot-instructions.md" />
