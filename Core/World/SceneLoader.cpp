@@ -39,7 +39,7 @@ namespace
 
 std::expected<void, std::string> SceneLoader::LoadScene(const std::filesystem::path& sceneFilePath, Engine& engine, Scene& scene)
 {
-	const std::filesystem::path scenePath = AssetPaths::ResolveAsset(sceneFilePath);
+	const std::filesystem::path scenePath = AssetPaths::ResolveProjectAsset(sceneFilePath);
 
 	std::ifstream file(scenePath);
 	if (!file.is_open())

@@ -23,6 +23,9 @@ public:
 
 	void RenderDialogue(const DialogueRuntimeState& dialogueState, int windowWidth, int windowHeight, TextManager& textManager) const;
 
+	[[nodiscard]] 
+	SDL_Renderer* GetRenderer() const { return m_renderer; }
+
 #ifdef _DEBUG
 	void RenderDebugCollider(Registry& registry, const CameraComponent& camera, int selectedEntityId, bool showDebug) const;
 #endif
