@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /.github/copilot-instructions.md
 /imgui.ini
 /.clang-format
+/vcpkg_installed/x64-windows
