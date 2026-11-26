@@ -82,6 +82,16 @@
         }
       ],
       "options": []
+    },
+
+    "repeat": {
+      "entries": [
+        {
+          "name": "Yuuki",
+          "speech": "Good to see you again!"
+        }
+      ],
+      "options": []
     }
   }
 }

@@ -57,7 +57,8 @@
       },
       "dialogue": {
         "dialogueId": "yuuki_intro",
-        "startNodeId": "start"
+        "startNodeId": "start",
+        "repeatNodeId": "repeat"
       },
       "interactable": {
         "interactionRange": 50.0,

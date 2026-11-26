@@ -23,27 +23,40 @@ void SetupInteractionHandlers(EventBus& eventBus, DialogueManager& dialogueManag
 		eventBus.Emit(DialogueEvent{ event.player, event.target, dialogue->dialogueId, dialogue->startNodeId });
     });
 
-    eventBus.Subscribe<DialogueEvent>([&dialogueManager, &dialogueState](const DialogueEvent &event)
-    {
-        const Dialogue* dialogue = dialogueManager.FindDialogue(event.dialogueId);
-        if (!dialogue)
+    eventBus.Subscribe<DialogueEvent>(
+        [&dialogueManager, &dialogueState](const DialogueEvent& event)
         {
-            return;
-        }
+            const Dialogue* dialogue = dialogueManager.FindDialogue(event.dialogueId);
+            if (!dialogue)
+            {
+                return;
+            }
 
-        if (!DialogueSystem::Start(dialogueState, *dialogue, event.startNodeId))
-        {
-            return;
-        }
+            Entity target = event.npc;
+            auto* dialogueComponent = target.Get<DialogueComponent>();
 
-        Entity target = event.npc;
+            if (dialogueComponent && !dialogueComponent->repeatNodeId.empty() &&
+                !dialogue->m_nodes.contains(dialogueComponent->repeatNodeId))
+            {
+                return;
+            }
 
-        if (auto* interactable = target.Get<InteractableComponent>(); 
+            if (!DialogueSystem::Start(dialogueState, *dialogue, event.startNodeId))
+            {
+                return;
+            }
+
+            if (dialogueComponent && !dialogueComponent->repeatNodeId.empty())
+            {
+                dialogueComponent->startNodeId = dialogueComponent->repeatNodeId;
+            }
+
+            if (auto* interactable = target.Get<InteractableComponent>();
                 interactable && interactable->oneShot)
-        {
-            interactable->used = true;
-        }
-    });
+            {
+                interactable->used = true;
+            }
+        });
 }
 
 std::optional<Entity> FindClosestInteractable(Entity player, Registry& registry)

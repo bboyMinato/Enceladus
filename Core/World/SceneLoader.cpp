@@ -698,7 +698,8 @@ void SceneLoader::ApplyTransformComponent(const Json& entityDef, Entity& entity)
 		transformDef.value("y", 0.0f),
 		transformDef.value("rotation", 0.0f),
 		transformDef.value("scaleX", 1.0f),
-		transformDef.value("scaleY", 1.0f));
+		transformDef.value("scaleY", 1.0f)
+	);
 }
 
 void SceneLoader::ApplyDialogueComponent(const Json& entityDef, Entity& entity)
@@ -712,7 +713,9 @@ void SceneLoader::ApplyDialogueComponent(const Json& entityDef, Entity& entity)
 
 	entity.Add<DialogueComponent>(
 		dialogueDef.value("dialogueId", ""),
-		dialogueDef.value("startNodeId", "start"));
+		dialogueDef.value("startNodeId", "start"),
+		dialogueDef.value("repeatNodeId", "")
+	);
 }
 
 std::string SceneLoader::ToAssetPathString(const std::filesystem::path& filePath)
@@ -872,7 +875,8 @@ std::expected<Json, std::string> SceneLoader::SerializeEntity(Scene& scene, cons
 		entityDefinition["dialogue"] =
 		{
 			{ "dialogueId", dialogue->dialogueId },
-			{ "startNodeId", dialogue->startNodeId }
+			{ "startNodeId", dialogue->startNodeId },
+			{ "repeatNodeId", dialogue->repeatNodeId }
 		};
 	}
 

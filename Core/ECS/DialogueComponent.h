@@ -5,4 +5,5 @@ struct DialogueComponent
 {
 	std::string dialogueId;
 	std::string startNodeId{ "start" };
+	std::string repeatNodeId;
 };

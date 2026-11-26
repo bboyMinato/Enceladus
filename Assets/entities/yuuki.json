@@ -25,7 +25,7 @@
     "interactionType": "dialogue",
     "interactionRange": 50,
     "requiresKey": true,
-    "oneShot": true,
+    "oneShot": false,
     "used": false
   },
   "dialogue": {
