@@ -25,4 +25,5 @@ struct DialogueEvent
 	Entity player;
 	Entity npc;
 	std::string dialogueId;
+	std::string startNodeId;
 };

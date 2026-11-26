@@ -74,7 +74,7 @@ void ControllerSystem::HandleInteraction(Registry& registry, const InputSystem& 
 		return;
 	}
 
-	if (IsDown(input, controller.interactPrimary, controller.interactSecondary))
+	if (WasKeyPressed(input, controller.interactPrimary, controller.interactSecondary))
 	{
 		std::optional<Entity> closestInteractable = FindClosestInteractable(entity, registry);
 
@@ -89,4 +89,9 @@ void ControllerSystem::HandleInteraction(Registry& registry, const InputSystem& 
 bool ControllerSystem::IsDown(const InputSystem& input, SDL_Scancode primary, SDL_Scancode secondary)
 {
 	return input.IsKeyDown(primary) || input.IsKeyDown(secondary);
+}
+
+bool ControllerSystem::WasKeyPressed(const InputSystem& input, SDL_Scancode primary, SDL_Scancode secondary)
+{
+	return input.WasKeyPressed(primary) || input.WasKeyPressed(secondary);
 }

@@ -60,7 +60,6 @@
         "startNodeId": "start"
       },
       "interactable": {
-        "dialogueId": "yuuki_intro",
         "interactionRange": 50.0,
         "oneShot": false,
         "requiresKey": true,
@@ -118,7 +117,6 @@
         "width": 35
       },
       "interactable": {
-        "dialogueId": "yuuki_intro",
         "interactionRange": 200.0,
         "oneShot": false,
         "requiresKey": true,

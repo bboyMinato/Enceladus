@@ -25,9 +25,8 @@
     "interactionType": "dialogue",
     "interactionRange": 50,
     "requiresKey": true,
-    "oneShot": false,
-    "used": false,
-    "dialogueId": "yuuki_intro"
+    "oneShot": true,
+    "used": false
   },
   "dialogue": {
     "dialogueId": "yuuki_intro",

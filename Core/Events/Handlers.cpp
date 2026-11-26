@@ -20,7 +20,7 @@ void SetupInteractionHandlers(EventBus& eventBus, DialogueManager& dialogueManag
             return;
         }
 
-		eventBus.Emit(DialogueEvent{ event.player, event.target, dialogue->dialogueId });
+		eventBus.Emit(DialogueEvent{ event.player, event.target, dialogue->dialogueId, dialogue->startNodeId });
     });
 
     eventBus.Subscribe<DialogueEvent>([&dialogueManager, &dialogueState](const DialogueEvent &event)
@@ -31,7 +31,18 @@ void SetupInteractionHandlers(EventBus& eventBus, DialogueManager& dialogueManag
             return;
         }
 
-        DialogueSystem::Start(dialogueState, *dialogue, "start");
+        if (!DialogueSystem::Start(dialogueState, *dialogue, event.startNodeId))
+        {
+            return;
+        }
+
+        Entity target = event.npc;
+
+        if (auto* interactable = target.Get<InteractableComponent>(); 
+                interactable && interactable->oneShot)
+        {
+            interactable->used = true;
+        }
     });
 }
 

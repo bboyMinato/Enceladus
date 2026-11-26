@@ -514,8 +514,7 @@ void SceneLoader::ApplyInteractableComponent(const Json& entityDef, Entity& enti
 		interactableDef.value("interactionRange", 200.0f),
 		interactableDef.value("requiresKey", true),
 		interactableDef.value("oneShot", false),
-		interactableDef.value("used", false),
-		interactableDef.value("dialogueId", "")
+		interactableDef.value("used", false)
 	);
 }
 
@@ -713,7 +712,7 @@ void SceneLoader::ApplyDialogueComponent(const Json& entityDef, Entity& entity)
 
 	entity.Add<DialogueComponent>(
 		dialogueDef.value("dialogueId", ""),
-		dialogueDef.value("startNodeId", ""));
+		dialogueDef.value("startNodeId", "start"));
 }
 
 std::string SceneLoader::ToAssetPathString(const std::filesystem::path& filePath)
@@ -863,8 +862,7 @@ std::expected<Json, std::string> SceneLoader::SerializeEntity(Scene& scene, cons
 			{ "interactionRange", interactable->interactionDistance },
 			{ "requiresKey", interactable->requiresKey },
 			{ "oneShot", interactable->oneShot },
-			{ "used", interactable->used },
-			{ "dialogueId", interactable->dialogueId }
+			{ "used", interactable->used }
 		};
 	}
 

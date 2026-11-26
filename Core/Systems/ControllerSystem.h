@@ -15,4 +15,5 @@ private:
 	static void UpdateMovement(const InputSystem& input, const ControllerComponent& controller, MovementComponent& movement);
 	static void HandleInteraction(Registry& registry, const InputSystem& input, const ControllerComponent& controller, Entity entity, EventBus& eventBus);
 	static bool IsDown(const InputSystem& input, SDL_Scancode primary, SDL_Scancode secondary);
+	static bool WasKeyPressed(const InputSystem& input, SDL_Scancode primary, SDL_Scancode secondary);
 };

@@ -7,5 +7,4 @@ struct InteractableComponent
 	bool requiresKey{ true };
 	bool oneShot{ false };
 	bool used{ false };
-	std::string dialogueId;
 };

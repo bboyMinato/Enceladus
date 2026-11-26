@@ -355,7 +355,6 @@ void DebugHelper::RenderInteractionTab(Entity& selectedEntity)
 		ImGui::Checkbox("Requires Key", &interactable->requiresKey);
 		ImGui::Checkbox("One Shot", &interactable->oneShot);
 		ImGui::Checkbox("Used", &interactable->used);
-		ImGui::InputText("Dialogue ID", &interactable->dialogueId[0], interactable->dialogueId.size() + 1);
 	}
 	else
 	{
